@@ -1,6 +1,11 @@
 ﻿Imports RestSharp
 Imports Newtonsoft.Json
 Public Class Form1
+    Public fsurname As String
+    Public firstName As String
+    Public department As String
+    Public mondayID As String
+
     Public titaVersion As String = "3.0"
     Dim accounts
     'Classes Declaration
@@ -36,28 +41,33 @@ Public Class Form1
         response = Await client.ExecuteAsync(request)
         Return response.Content
     End Function
-
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
         '0 - First Name
         '1 - Monday ID
         '2 - Password
         '3 - Department
+
         For Each x In accounts.data.boards(0).items
             If x.name = surname Then
                 'account found.
                 If x.column_values(2).text = password Then
                     'account verified
                     'save all account details in a global variable.
+                    fsurname = x.name
+                    firstName = x.column_values(0).text
+                    mondayID = x.column_values(1).text
+                    department = x.column_values(3).text
+                    Console.WriteLine($"User: {surname} {firstName} | monday.com ID: {mondayID} | Department: {department}")
                     MessageBox.Show("Success!")
+                    Return True
                 Else
                     MessageBox.Show("Incorrect Password.")
+                    Return False
                 End If
             End If
         Next
 
     End Function
-
-
 
     Public Sub DisableAllControls()
         tbPassword.Enabled = False
@@ -92,6 +102,9 @@ Public Class Form1
     End Sub
 
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
-        checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts)
+        If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
+            Me.Hide()
+            Dashboard1.Show()
+        End If
     End Sub
 End Class

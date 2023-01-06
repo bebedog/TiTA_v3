@@ -4,6 +4,12 @@ Public Class Form1
     Public titaVersion As String = "3.0"
     Dim accounts
     Dim namesList
+
+    Public fSurname As String
+    Public fFirstName As String
+    Public mondayID As String
+    Public department As String
+
     'Classes Declaration
     Public Class ColumnValue
         Public Property title As String
@@ -37,33 +43,37 @@ Public Class Form1
         response = Await client.ExecuteAsync(request)
         Return response.Content
     End Function
-
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
         '0 - First Name
         '1 - Monday ID
         '2 - Password
         '3 - Department
+
         For Each x In accounts.data.boards(0).items
             If x.name = surname Then
                 'account found.
                 If x.column_values(2).text = password Then
                     'account verified
                     'save all account details in a global variable.
-                    MessageBox.Show("Success!")
+                    fSurname = x.name
+                    fFirstName = x.column_values(0).text
+                    mondayID = x.column_values(1).text
+                    department = x.column_values(3).text
+                    Return True
+
                 Else
-                    MessageBox.Show("Incorrect Password.")
+
+                    Return False
                 End If
             End If
         Next
 
     End Function
-
     Public Function populateCB(ByVal namesList As Root)
         For Each x In namesList.data.boards(0).items
             cbUsername.Items.Add(x.name)
         Next
     End Function
-
     Public Sub DisableAllControls()
         tbPassword.Enabled = False
         cbUsername.Enabled = False
@@ -97,6 +107,7 @@ Public Class Form1
                     id
                 }
                 }}"
+
         lblStatus.Text = "Fetching Accounts..."
         DisableAllControls()
         Dim result As String = Await SendMondayRequest(fetchAccountQuery)
@@ -104,12 +115,22 @@ Public Class Form1
         accounts = JsonConvert.DeserializeObject(Of Root)(result)
         namesList = JsonConvert.DeserializeObject(Of Root)(result2)
         populateCB(namesList)
+
+
         EnableAllControls()
         lblStatus.Text = "Accounts Fetched."
         Console.Write(result2)
     End Sub
 
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
-        checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts)
+        If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
+            'Account detail matches
+            MessageBox.Show("Success!")
+            Me.Hide()
+            Dashboard1.Show()
+        Else
+            MessageBox.Show("Incorrect Password.")
+            'Account Detail don't match.
+        End If
     End Sub
 End Class

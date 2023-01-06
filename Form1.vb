@@ -3,6 +3,7 @@ Imports Newtonsoft.Json
 Public Class Form1
     Public titaVersion As String = "3.0"
     Dim accounts
+    Dim namesList
     'Classes Declaration
     Public Class ColumnValue
         Public Property title As String
@@ -57,7 +58,11 @@ Public Class Form1
 
     End Function
 
-
+    Public Function populateCB(ByVal namesList As Root)
+        For Each x In namesList.data.boards(0).items
+            cbUsername.Items.Add(x.name)
+        Next
+    End Function
 
     Public Sub DisableAllControls()
         tbPassword.Enabled = False
@@ -83,12 +88,25 @@ Public Class Form1
                     }
                 }
             }"
+        Dim fetchNames As String =
+            "query{
+                boards(ids:[3428362986]) 
+                {
+                  items{
+                    name
+                    id
+                }
+                }}"
         lblStatus.Text = "Fetching Accounts..."
         DisableAllControls()
         Dim result As String = Await SendMondayRequest(fetchAccountQuery)
+        Dim result2 As String = Await SendMondayRequest(fetchNames)
         accounts = JsonConvert.DeserializeObject(Of Root)(result)
+        namesList = JsonConvert.DeserializeObject(Of Root)(result2)
+        populateCB(namesList)
         EnableAllControls()
         lblStatus.Text = "Accounts Fetched."
+        Console.Write(result2)
     End Sub
 
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click

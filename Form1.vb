@@ -33,15 +33,21 @@ Public Class Form1
     Public Async Function SendMondayRequest(ByVal myQuery As String) As Task(Of String)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
         options.ThrowOnAnyError = True
-        options.MaxTimeout = -1
+        options.MaxTimeout = 6000
         Dim client = New RestClient(options)
         Dim request = New RestRequest()
+        request.Timeout = 5000
         request.Method = Method.Post
         request.AddHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjE1MjU2NzQ3OCwidWlkIjoxNTA5MzQwNywiaWFkIjoiMjAyMi0wMy0yNVQwMTo0Njo1My4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.F1TqwLS-QsuM8Ss3UcgskbNFUIer1dfwfoLyPMq1pbc")
         request.AddQueryParameter("query", myQuery)
         Dim response = New RestResponse
-        response = Await client.ExecuteAsync(request)
-        Return response.Content
+        response = Await client.PostAsync(request)
+        If response.IsSuccessStatusCode = True Then
+            Return response.Content
+        Else
+            Return False
+        End If
+
     End Function
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
         '0 - First Name
@@ -60,14 +66,11 @@ Public Class Form1
                     mondayID = x.column_values(1).text
                     department = x.column_values(3).text
                     Return True
-
                 Else
-
                     Return False
                 End If
             End If
         Next
-
     End Function
     Public Function populateCB(ByVal namesList As Root)
         For Each x In namesList.data.boards(0).items
@@ -85,6 +88,7 @@ Public Class Form1
         btnSignin.Enabled = True
     End Sub
     Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.CenterToParent()
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         Dim fetchAccountQuery As String =
             "query{
@@ -110,18 +114,25 @@ Public Class Form1
 
         lblStatus.Text = "Fetching Accounts..."
         DisableAllControls()
-        Dim result As String = Await SendMondayRequest(fetchAccountQuery)
-        Dim result2 As String = Await SendMondayRequest(fetchNames)
-        accounts = JsonConvert.DeserializeObject(Of Root)(result)
-        namesList = JsonConvert.DeserializeObject(Of Root)(result2)
+
+        Try
+            Dim result As String = Await SendMondayRequest(fetchAccountQuery)
+            Dim result2 As String = Await SendMondayRequest(fetchNames)
+            accounts = JsonConvert.DeserializeObject(Of Root)(result)
+            namesList = JsonConvert.DeserializeObject(Of Root)(result2)
+        Catch ex As Exception
+            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            If result = DialogResult.Retry Then
+                Application.Restart()
+            Else
+                Me.Close()
+            End If
+            Exit Sub
+        End Try
         populateCB(namesList)
-
-
         EnableAllControls()
         lblStatus.Text = "Accounts Fetched."
-        Console.Write(result2)
     End Sub
-
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches

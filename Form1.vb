@@ -130,6 +130,9 @@ Public Class Form1
             Exit Sub
         End Try
         populateCB(namesList)
+        If TiTA_v3.My.Settings.recentUser <> "" Then
+            cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
+        End If
         EnableAllControls()
         lblStatus.Text = "Accounts Fetched."
     End Sub
@@ -143,5 +146,7 @@ Public Class Form1
             MessageBox.Show("Incorrect Password.")
             'Account Detail don't match.
         End If
+        TiTA_v3.My.Settings.recentUser = cbUsername.Text
+        My.Settings.Save()
     End Sub
 End Class

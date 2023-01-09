@@ -149,4 +149,5 @@ Public Class Form1
         TiTA_v3.My.Settings.recentUser = cbUsername.Text
         My.Settings.Save()
     End Sub
+
 End Class

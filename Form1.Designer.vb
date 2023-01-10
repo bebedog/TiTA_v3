@@ -98,7 +98,7 @@ Partial Class Form1
         '
         'cbUsername
         '
-        Me.cbUsername.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend
+        Me.cbUsername.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
         Me.cbUsername.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbUsername.FormattingEnabled = True
         Me.cbUsername.Location = New System.Drawing.Point(100, 122)

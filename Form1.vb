@@ -2,25 +2,34 @@
 Imports Newtonsoft.Json
 Public Class Form1
     Public titaVersion As String = "3.0"
+    Public allTasks As Root
     Dim accounts
     Dim namesList
-
+    Public currentID As String
     Public fSurname As String
     Public fFirstName As String
     Public mondayID As String
     Public department As String
 
     'Classes Declaration
+    Public Class Subitem
+        Public Property name As String
+    End Class
     Public Class ColumnValue
         Public Property title As String
         Public Property text As String
     End Class
     Public Class Item
         Public Property name As String
+        Public Property subitems As Subitem()
         Public Property column_values As ColumnValue()
+    End Class
+    Public Class Group
+        Public Property items As Item()
     End Class
     Public Class Board
         Public Property items As Item()
+        Public Property groups As Group()
     End Class
     Public Class Data
         Public Property boards As Board()
@@ -87,9 +96,28 @@ Public Class Form1
         cbUsername.Enabled = True
         btnSignin.Enabled = True
     End Sub
+
+
     Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.CenterToParent()
         Me.Text = $"Lasermet TiTA v{titaVersion}"
+        cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
+        Dim fetchTasksQuery As String =
+            "query{
+                boards(ids: 2718204773){
+                    groups(ids:[""topics"",""group_title"", ""new_group1823""]){
+                        items{
+                            name
+                            subitems{
+                                name
+                            }
+                            column_values(ids:""text""){
+                                text
+                            }
+                        }
+                    }
+                }
+            }"
         Dim fetchAccountQuery As String =
             "query{
                 boards(ids:3428362986){
@@ -118,8 +146,10 @@ Public Class Form1
         Try
             Dim result As String = Await SendMondayRequest(fetchAccountQuery)
             Dim result2 As String = Await SendMondayRequest(fetchNames)
+            Dim result3 As String = Await SendMondayRequest(fetchTasksQuery)
             accounts = JsonConvert.DeserializeObject(Of Root)(result)
             namesList = JsonConvert.DeserializeObject(Of Root)(result2)
+            allTasks = JsonConvert.DeserializeObject(Of Root)(result3)
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
@@ -149,5 +179,6 @@ Public Class Form1
         TiTA_v3.My.Settings.recentUser = cbUsername.Text
         My.Settings.Save()
     End Sub
+
 
 End Class

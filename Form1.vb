@@ -1,6 +1,11 @@
 ﻿Imports RestSharp
 Imports Newtonsoft.Json
 Public Class Form1
+    Public fsurname As String
+    Public firstName As String
+    Public department As String
+    Public mondayID As String
+
     Public titaVersion As String = "3.0"
     Public allTasks As Root
     Dim accounts

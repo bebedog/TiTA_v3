@@ -11,6 +11,7 @@ Public Class Form1
     Public fFirstName As String
     Public mondayID As String
     Public department As String
+    Public manualLogInID As String
 
     'Classes Declaration
     Public Class Subitem

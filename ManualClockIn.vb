@@ -1,9 +1,12 @@
-﻿Imports Newtonsoft.Json
+﻿Imports RestSharp
+Imports Newtonsoft.Json
 
 
 Public Class ManualClockIn
 
     Dim projectsList
+    Public newItemID
+    Public newItemObj
 
     Public Class PersonsAndTeam
         Public Property id As Integer
@@ -31,12 +34,20 @@ Public Class ManualClockIn
         Public Property items As Item()
     End Class
 
+    Public Class CreateItem
+        Public Property id As String
+        Public Property name As String
+    End Class
+
+
+
     Public Class Board
         Public Property groups As Group()
     End Class
 
     Public Class Data
         Public Property boards As Board()
+        Public Property create_item As CreateItem
     End Class
 
     Public Class Root
@@ -50,12 +61,36 @@ Public Class ManualClockIn
         Next
     End Function
 
+    'Add new item to TiTO timeline
+    Public Async Function createNewItem() As Task
+        Dim createItemQuery As String
+        createItemQuery =
+        "mutation{
+          create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
+            id
+            name
+          }
+        }"
+        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+        Await getItemID(newItemObj)
+    End Function
+
+    'Retrieve Item ID from created Manual Clock In Record (currently blank)
+    Public Async Function getItemID(createdItem As Root) As Task
+        newItemID = createdItem.data.create_item.id
+        ToolLabel1.Text = newItemID
+        Dim currentJob = cbProjectsList.SelectedItem
+        Dim logInTime = DateTimePicker1.Value.ToString("HH:mm:ss")
+        Await buildQuery(newItemID, currentJob, logInTime)
+    End Function
+
     Public Async Function buildQuery(ByVal personID As String, ByVal currentJob As String, ByVal logInTime As String) As Task
 
         Dim mutatePOST = New Example()
         mutatePOST.job = currentJob
         mutatePOST.text = logInTime
-        mutatePOST.text_1 = "Start_TEST"
+        mutatePOST.text_1 = "START_" + Form1.fSurname
         mutatePOST.text64 = "3.0"
         Dim person As New Person()
         Dim personIDandKind As New PersonsAndTeam()
@@ -168,12 +203,9 @@ Public Class ManualClockIn
 
     End Sub
 
-    Private Sub btnTimeIn_Click(sender As Object, e As EventArgs) Handles btnTimeIn.Click
+    Private Async Sub btnTimeIn_Click(sender As Object, e As EventArgs) Handles btnTimeIn.Click
 
-        Dim personId = Dashboard1.newItemID
-        Dim currentJob = cbProjectsList.SelectedItem
-        Dim logInTime = DateTimePicker1.Value.ToString("HH:mm:ss")
-        buildQuery(personId, currentJob, logInTime)
+        Await createNewItem()
 
     End Sub
 End Class

@@ -6,8 +6,8 @@ Public Class Dashboard1
 
     Dim previousLog As Root
     Dim duplicateIDstoDelete As New List(Of String)
-Public newItemID
-Public newItemObj
+    Public newItemID
+    Public newItemObj
 
     Public Class ChangeMultipleColumnValues
         Public Property id As String
@@ -21,16 +21,16 @@ Public newItemObj
     Public Property text As String
     Public Property title As String
     Public Property value As String
-End Class
+    End Class
 
-Public Class Item
-    Public Property name As String
-    Public Property column_values As ColumnValue()
-End Class
+    Public Class Item
+        Public Property name As String
+        Public Property column_values As ColumnValue()
+    End Class
 
-Public Class Group
-    Public Property items As Item()
-End Class
+    Public Class Group
+        Public Property items As Item()
+    End Class
 
     Public Class Board
         Public Property groups As Group()
@@ -108,7 +108,7 @@ End Class
                 If msgResult = DialogResult.Yes Then
 
                     'MessageBox.Show("Ok", "Nice", MessageBoxButtons.OK)
-                    createNewItem()
+                    'createNewItem()
                     Me.Hide()
                     ManualClockIn.Show()
                 End If
@@ -135,25 +135,26 @@ End Class
         End Try
     End Sub
 
-    Public Async Sub createNewItem()
-        Dim createItemQuery As String
-        createItemQuery =
-        "mutation{
-          create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
-            id
-            name
-          }
-        }"
-        Await Form1.SendMondayRequest(createItemQuery)
-        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-        getItemID(newItemObj)
-    End Sub
+    ''Add new item to TiTO timeline
+    'Public Async Sub createNewItem()
+    '    Dim createItemQuery As String
+    '    createItemQuery =
+    '    "mutation{
+    '      create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
+    '        id
+    '        name
+    '      }
+    '    }"
+    '    Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+    '    newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+    '    getItemID(newItemObj)
+    'End Sub
 
-    Public Function getItemID(createdItem As Root)
-        newItemID = createdItem.data.create_item.id
-        ManualClockIn.ToolLabel1.Text = newItemID
-    End Function
+    ''Retrieve Item ID from created Manual Clock In Record (currently blank)
+    'Public Function getItemID(createdItem As Root)
+    '    newItemID = createdItem.data.create_item.id
+    '    ManualClockIn.ToolLabel1.Text = newItemID
+    'End Function
 
     Private Sub resetDashboardForm(ByVal form_name As Form)
         Dim newInstanceOfDashboard1 As New Dashboard1

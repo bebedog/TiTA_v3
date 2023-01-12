@@ -32,35 +32,23 @@ Public Class Dashboard1
         Public Property items As Item()
     End Class
 
+
     Public Class Board
         Public Property groups As Group()
     End Class
-
     Public Class CreateItem
         Public Property id As String
         Public Property name As String
     End Class
-
     Public Class Data
         Public Property items_by_column_values As ItemsByColumnValue()
         Public Property change_multiple_column_values As ChangeMultipleColumnValues
         Public Property create_item As CreateItem
     End Class
-
-
     Public Class Root
         Public Property data As Data
         Public Property account_id As Integer
     End Class
-
-    Private Sub DuplicateEntriesFound(ByVal numberOfLogs As Integer)
-        For i = 0 To numberOfLogs
-            Dim label As New System.Windows.Forms.Label
-            Me.Controls.Add(label)
-        Next
-
-
-    End Sub
 
     Private Sub Dashboard1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.CenterToParent()
@@ -81,10 +69,9 @@ Public Class Dashboard1
 
         'DataGridView1.DataSource = table
     End Sub
-
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        Await Task.Delay(3000)
+        Await Task.Delay(1000)
         Dim fetchStatus As String =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
@@ -135,6 +122,7 @@ Public Class Dashboard1
         End Try
     End Sub
 
+
     ''Add new item to TiTO timeline
     'Public Async Sub createNewItem()
     '    Dim createItemQuery As String
@@ -155,6 +143,25 @@ Public Class Dashboard1
     '    newItemID = createdItem.data.create_item.id
     '    ManualClockIn.ToolLabel1.Text = newItemID
     'End Function
+
+    Public Async Sub createNewItem()
+        Dim createItemQuery As String
+        createItemQuery =
+        "mutation{
+          create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
+            id
+            name
+          }
+        }"
+        Await Form1.SendMondayRequest(createItemQuery)
+        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+        getItemID(newItemObj)
+    End Sub
+    Public Function getItemID(createdItem As Root)
+        newItemID = createdItem.data.create_item.id
+        ManualClockIn.ToolLabel1.Text = newItemID
+    End Function
 
     Private Sub resetDashboardForm(ByVal form_name As Form)
         Dim newInstanceOfDashboard1 As New Dashboard1

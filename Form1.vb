@@ -171,7 +171,7 @@ Public Class Form1
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
-            MessageBox.Show("Success!")
+            MessageBox.Show("Welcome! " + fFirstName, "Log In Successful", MessageBoxButtons.OK)
             Me.Hide()
             Dashboard1.Show()
         Else
@@ -182,5 +182,8 @@ Public Class Form1
         My.Settings.Save()
     End Sub
 
-
+    'Initiated after Manual Time In.
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        Dashboard1.elapsedTime = Dashboard1.elapsedTime - 1000
+    End Sub
 End Class

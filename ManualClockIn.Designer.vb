@@ -40,7 +40,7 @@ Partial Class ManualClockIn
         'labelTimeIn
         '
         Me.labelTimeIn.AutoSize = True
-        Me.labelTimeIn.Location = New System.Drawing.Point(63, 84)
+        Me.labelTimeIn.Location = New System.Drawing.Point(57, 84)
         Me.labelTimeIn.Name = "labelTimeIn"
         Me.labelTimeIn.Size = New System.Drawing.Size(45, 13)
         Me.labelTimeIn.TabIndex = 0
@@ -48,7 +48,7 @@ Partial Class ManualClockIn
         '
         'btnTimeIn
         '
-        Me.btnTimeIn.Location = New System.Drawing.Point(174, 166)
+        Me.btnTimeIn.Location = New System.Drawing.Point(168, 166)
         Me.btnTimeIn.Name = "btnTimeIn"
         Me.btnTimeIn.Size = New System.Drawing.Size(75, 23)
         Me.btnTimeIn.TabIndex = 2
@@ -58,7 +58,7 @@ Partial Class ManualClockIn
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(74, 114)
+        Me.Label1.Location = New System.Drawing.Point(68, 114)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(34, 13)
         Me.Label1.TabIndex = 3
@@ -67,7 +67,7 @@ Partial Class ManualClockIn
         'cbProjectsList
         '
         Me.cbProjectsList.FormattingEnabled = True
-        Me.cbProjectsList.Location = New System.Drawing.Point(114, 110)
+        Me.cbProjectsList.Location = New System.Drawing.Point(108, 110)
         Me.cbProjectsList.Name = "cbProjectsList"
         Me.cbProjectsList.Size = New System.Drawing.Size(301, 21)
         Me.cbProjectsList.TabIndex = 4
@@ -75,7 +75,7 @@ Partial Class ManualClockIn
         'DateTimePicker1
         '
         Me.DateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Time
-        Me.DateTimePicker1.Location = New System.Drawing.Point(114, 81)
+        Me.DateTimePicker1.Location = New System.Drawing.Point(108, 81)
         Me.DateTimePicker1.Name = "DateTimePicker1"
         Me.DateTimePicker1.Size = New System.Drawing.Size(301, 20)
         Me.DateTimePicker1.TabIndex = 5
@@ -98,7 +98,7 @@ Partial Class ManualClockIn
         'cbSubtasks
         '
         Me.cbSubtasks.FormattingEnabled = True
-        Me.cbSubtasks.Location = New System.Drawing.Point(114, 139)
+        Me.cbSubtasks.Location = New System.Drawing.Point(108, 139)
         Me.cbSubtasks.Name = "cbSubtasks"
         Me.cbSubtasks.Size = New System.Drawing.Size(301, 21)
         Me.cbSubtasks.TabIndex = 7
@@ -106,7 +106,7 @@ Partial Class ManualClockIn
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(59, 143)
+        Me.Label2.Location = New System.Drawing.Point(53, 143)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(49, 13)
         Me.Label2.TabIndex = 8
@@ -115,7 +115,7 @@ Partial Class ManualClockIn
         '
         'btnBack
         '
-        Me.btnBack.Location = New System.Drawing.Point(255, 166)
+        Me.btnBack.Location = New System.Drawing.Point(249, 166)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.Size = New System.Drawing.Size(75, 23)
         Me.btnBack.TabIndex = 9
@@ -124,7 +124,7 @@ Partial Class ManualClockIn
         '
         'PictureBox1
         '
-        Me.PictureBox1.Location = New System.Drawing.Point(114, 12)
+        Me.PictureBox1.Location = New System.Drawing.Point(108, 12)
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(301, 62)
         Me.PictureBox1.TabIndex = 10

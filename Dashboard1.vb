@@ -3,11 +3,12 @@ Imports Newtonsoft.Json
 
 Public Class Dashboard1
 
-
+    Public elapsedTime As Integer
     Dim previousLog As Root
     Dim duplicateIDstoDelete As New List(Of String)
     Public newItemID
     Public newItemObj
+    Public fetchStatus As String
 
     Public Class ChangeMultipleColumnValues
         Public Property id As String
@@ -84,8 +85,8 @@ Public Class Dashboard1
 
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        Await Task.Delay(3000)
-        Dim fetchStatus As String =
+        Await Task.Delay(elapsedTime)
+        fetchStatus =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
                     id
@@ -106,11 +107,10 @@ Public Class Dashboard1
                 Label1.Text = "No previous log found. Clock In Manually?"
                 Dim msgResult = MessageBox.Show("No previous log found. Clock In Manually?", "No Record Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
                 If msgResult = DialogResult.Yes Then
-
-                    'MessageBox.Show("Ok", "Nice", MessageBoxButtons.OK)
-                    'createNewItem()
-                    Me.Hide()
                     ManualClockIn.Show()
+                    Me.Close()
+                Else
+                    Application.Restart()
                 End If
             ElseIf count > 1 Then
                 Me.Label1.Text = "Duplicate Entries Found. Please select your most recent record."
@@ -134,27 +134,6 @@ Public Class Dashboard1
         Finally
         End Try
     End Sub
-
-    ''Add new item to TiTO timeline
-    'Public Async Sub createNewItem()
-    '    Dim createItemQuery As String
-    '    createItemQuery =
-    '    "mutation{
-    '      create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
-    '        id
-    '        name
-    '      }
-    '    }"
-    '    Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-    '    newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-    '    getItemID(newItemObj)
-    'End Sub
-
-    ''Retrieve Item ID from created Manual Clock In Record (currently blank)
-    'Public Function getItemID(createdItem As Root)
-    '    newItemID = createdItem.data.create_item.id
-    '    ManualClockIn.ToolLabel1.Text = newItemID
-    'End Function
 
     Private Sub resetDashboardForm(ByVal form_name As Form)
         Dim newInstanceOfDashboard1 As New Dashboard1

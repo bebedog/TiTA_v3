@@ -22,6 +22,7 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.btnSignin = New System.Windows.Forms.Button()
@@ -30,6 +31,7 @@ Partial Class Form1
         Me.Label1 = New System.Windows.Forms.Label()
         Me.tbPassword = New System.Windows.Forms.TextBox()
         Me.cbUsername = New System.Windows.Forms.ComboBox()
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -106,6 +108,10 @@ Partial Class Form1
         Me.cbUsername.Size = New System.Drawing.Size(205, 28)
         Me.cbUsername.TabIndex = 5
         '
+        'Timer1
+        '
+        Me.Timer1.Interval = 45000
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -139,4 +145,5 @@ Partial Class Form1
     Friend WithEvents Label1 As Label
     Friend WithEvents tbPassword As TextBox
     Friend WithEvents cbUsername As ComboBox
+    Friend WithEvents Timer1 As Timer
 End Class

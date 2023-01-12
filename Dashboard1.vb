@@ -3,6 +3,7 @@ Imports Newtonsoft.Json
 
 Public Class Dashboard1
 
+
     Dim previousLog As Root
     Dim duplicateIDstoDelete As New List(Of String)
     Public newItemID
@@ -11,59 +12,39 @@ Public Class Dashboard1
     Public Class ChangeMultipleColumnValues
         Public Property id As String
     End Class
-
     Public Class ItemsByColumnValue
         Public Property id As String
         Public Property name As String
         Public Property column_values As ColumnValue()
     End Class
-
     Public Class ColumnValue
         Public Property text As String
         Public Property title As String
         Public Property value As String
     End Class
-
     Public Class Item
         Public Property name As String
         Public Property column_values As ColumnValue()
     End Class
-
     Public Class Group
         Public Property items As Item()
     End Class
-
     Public Class Board
         Public Property groups As Group()
+    End Class
     Public Class CreateItem
         Public Property id As String
         Public Property name As String
     End Class
-
     Public Class Data
         Public Property items_by_column_values As ItemsByColumnValue()
         Public Property change_multiple_column_values As ChangeMultipleColumnValues
         Public Property create_item As CreateItem
     End Class
-
-    Public Class Data
-            Public Property boards As Board()
-            Public Property items_by_column_values As ItemsByColumnValue()
-        End Class
-
     Public Class Root
         Public Property data As Data
         Public Property account_id As Integer
     End Class
-
-    Private Sub DuplicateEntriesFound(ByVal numberOfLogs As Integer)
-            For i = 0 To numberOfLogs
-                Dim label As New System.Windows.Forms.Label
-                Me.Controls.Add(label)
-            Next
-
-
-        End Sub
 
     Private Sub Dashboard1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.CenterToParent()
@@ -86,31 +67,7 @@ Public Class Dashboard1
     End Sub
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        Await Task.Delay(3000)
-    Public Async Sub createNewItem()
-        Dim createItemQuery As String
-        createItemQuery =
-        "mutation{
-          create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
-            id
-            name
-          }
-        }"
-        Await Form1.SendMondayRequest(createItemQuery)
-        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-        getItemID(newItemObj)
-    End Sub
-
-    Public Function getItemID(createdItem As Root)
-        newItemID = createdItem.data.create_item.id
-        ManualClockIn.ToolLabel1.Text = newItemID
-    End Function
-
-    Private Async Sub Dashboard1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.CenterToParent()
-        Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
-        'Await beLazy()
+        Await Task.Delay(1000)
         Dim fetchStatus As String =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
@@ -160,6 +117,24 @@ Public Class Dashboard1
         Finally
         End Try
     End Sub
+    Public Async Sub createNewItem()
+        Dim createItemQuery As String
+        createItemQuery =
+        "mutation{
+          create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
+            id
+            name
+          }
+        }"
+        Await Form1.SendMondayRequest(createItemQuery)
+        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+        getItemID(newItemObj)
+    End Sub
+    Public Function getItemID(createdItem As Root)
+        newItemID = createdItem.data.create_item.id
+        ManualClockIn.ToolLabel1.Text = newItemID
+    End Function
     Private Sub resetDashboardForm(ByVal form_name As Form)
         Dim newInstanceOfDashboard1 As New Dashboard1
         form_name.Dispose()

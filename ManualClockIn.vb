@@ -7,7 +7,14 @@ Public Class ManualClockIn
     Dim projectsList
     Public newItemID
     Public newItemObj
+    Dim projectCode
 
+    Public Class Labels
+        Public Property labels As String()
+    End Class
+    Public Class Subitem
+        Public Property name As String
+    End Class
     Public Class PersonsAndTeam
         Public Property id As Integer
         Public Property kind As String
@@ -23,11 +30,18 @@ Public Class ManualClockIn
         Public Property text As String 'Time-in 24hr format (HH:mm:ss)
         Public Property text_1 As String 'ClockSharkStart
         Public Property text64 As String 'TiTA version
+        Public Property text4 As String 'Subtask
+        Public Property dropdown As Labels  'Project Code
     End Class
 
+    Public Class ColumnValue
+        Public Property text As String
+    End Class
     Public Class Item
         Public Property id As String
         Public Property name As String
+        Public Property subitems As Subitem()
+        Public Property column_values As ColumnValue()
     End Class
 
     Public Class Group
@@ -55,11 +69,28 @@ Public Class ManualClockIn
         Public Property account_id As Integer
     End Class
 
-    Public Function populateJobsList(ByVal projects As Root)
-        For Each x In projects.data.boards(0).groups(0).items
-            cbProjectsList.Items.Add(x.name)
+    Private Sub populateJobsList()
+        For Each groups In Form1.allTasks.data.boards(0).groups
+            For Each tasks In groups.items
+                cbProjectsList.Items.Add(tasks.name)
+            Next
         Next
-    End Function
+        cbProjectsList.SelectedIndex = 0
+    End Sub
+
+    Private Sub populateSubtasks()
+        cbSubtasks.Items.Clear()
+        For Each groups In Form1.allTasks.data.boards(0).groups
+            For Each items In groups.items
+                If items.name = cbProjectsList.SelectedItem Then
+                    projectCode = items.column_values(0).text.ToString
+                    For Each subtasks In items.subitems
+                        cbSubtasks.Items.Add(subtasks.name)
+                    Next
+                End If
+            Next
+        Next
+    End Sub
 
     'Add new item to TiTO timeline
     Public Async Function createNewItem() As Task
@@ -82,25 +113,43 @@ Public Class ManualClockIn
         ToolLabel1.Text = newItemID
         Dim currentJob = cbProjectsList.SelectedItem
         Dim logInTime = DateTimePicker1.Value.ToString("HH:mm:ss")
-        Await buildQuery(newItemID, currentJob, logInTime)
+        Dim subtask = cbSubtasks.SelectedItem.ToString
+        Await buildQuery(newItemID, currentJob, logInTime, subtask, projectCode)
+
     End Function
 
-    Public Async Function buildQuery(ByVal personID As String, ByVal currentJob As String, ByVal logInTime As String) As Task
+    'Create query for updating column values to manual log in item
+    Public Async Function buildQuery(ByVal personID As String, ByVal currentJob As String, ByVal logInTime As String, ByVal subtask As String, ByVal projectcode As String) As Task
 
         Dim mutatePOST = New Example()
         mutatePOST.job = currentJob
         mutatePOST.text = logInTime
         mutatePOST.text_1 = "START_" + Form1.fSurname
         mutatePOST.text64 = "3.0"
-        Dim person As New Person()
+        mutatePOST.text4 = subtask
+
+
+        Dim currentProjectCode As New Labels()
+        Dim projectCodeLabels As New List(Of String)
+        projectCodeLabels.Add(projectcode)
+        currentProjectCode.labels = projectCodeLabels.ToArray
+
+        mutatePOST.dropdown = currentProjectCode
+
+
+
+        Dim Person As New Person()
         Dim personIDandKind As New PersonsAndTeam()
         Dim personValueList As New List(Of PersonsAndTeam)
         personIDandKind.id = Form1.mondayID
         personIDandKind.kind = "person"
         personValueList.Add(personIDandKind)
-        person.personsAndTeams = personValueList.ToArray
-        mutatePOST.person = person
+        Person.personsAndTeams = personValueList.ToArray
+        mutatePOST.person = Person
         Dim newJSON = JsonConvert.SerializeObject(mutatePOST).ToString
+
+        'Replace (") with (\") to be compatible with Monday API
+
         Dim formattedJSON = newJSON.Replace("""", "\""")
         Dim changeColumnQuery As String
         changeColumnQuery =
@@ -127,78 +176,7 @@ Public Class ManualClockIn
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.CustomFormat = "HH:mm:ss"
-        Dim projectsListQuery As String =
-            "query{
-                  boards(ids:[2718204773]){
-                    groups(ids:""topics""){
-                      items {
-                        id
-                        name
-                      }
-                    }
-                  }
-                }"
-
-        Try
-            Dim result As String = Await Form1.SendMondayRequest(projectsListQuery)
-            projectsList = JsonConvert.DeserializeObject(Of Root)(result)
-        Catch ex As Exception
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
-                Me.Close()
-            End If
-            Exit Sub
-        End Try
-
-        populateJobsList(projectsList)
-
-        'Dim updateColumns As String =
-        '    "query{
-        '      items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """) {
-        '        id
-        '        name
-        '      }
-        '    }"
-
-
-
-        'Try
-
-        '    Dim result As String = Await Form1.SendMondayRequest(updateColumns)
-        '    previousLog = JsonConvert.DeserializeObject(Of Root)(result)
-        '    Dim count As Integer = previousLog.data.items_by_column_values.Length
-        '    Dim itemID As String = previousLog.data.items_by.column_values.id
-
-        '    If count = 0 Then
-        '        Label1.Text = "No previous log found. Clock In Manually?"
-        '        Dim msgResult = MessageBox.Show("No previous log found. Clock In Manually?", "No Record Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-        '        If msgResult = DialogResult.Yes Then
-
-        '            MessageBox.Show("Ok", "Nice", MessageBoxButtons.OK)
-        '            Me.Hide()
-        '            ManualClockIn.Show()
-
-        '        End If
-        '    ElseIf count > 1 Then
-        '        Label1.Text = "Duplicate Entries found. Would you like to update manually?"
-        '    Else
-        '        Label1.Text = "Success"
-        '    End If
-
-
-        'Catch ex As Exception
-
-        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-        '    If result = DialogResult.Retry Then
-        '        Application.Restart()
-        '    Else
-        '        Me.Close()
-        '    End If
-        '    Exit Sub
-
-        'End Try
+        populateJobsList()
 
 
     End Sub
@@ -207,5 +185,14 @@ Public Class ManualClockIn
 
         Await createNewItem()
 
+    End Sub
+
+    Private Sub cbProjectsList_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbProjectsList.SelectedIndexChanged
+        populateSubtasks()
+    End Sub
+
+    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        Me.Hide()
+        Dashboard1.Show()
     End Sub
 End Class

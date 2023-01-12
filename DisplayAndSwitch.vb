@@ -38,4 +38,5 @@
         Dim markPreviousLogAsDone As String =
             ""
     End Sub
+
 End Class

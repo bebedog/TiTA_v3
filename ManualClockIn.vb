@@ -131,7 +131,6 @@ Public Class ManualClockIn
 
     'Create query for updating column values to manual log in item
     Public Async Function buildQuery(ByVal personID As String, ByVal currentJob As String, ByVal logInTime As String, ByVal subtask As String, ByVal projectcode As String) As Task
-
         Dim mutatePOST = New Example()
         mutatePOST.job = currentJob
         mutatePOST.text = logInTime
@@ -163,9 +162,7 @@ Public Class ManualClockIn
         Dim changeColumnQuery As String
         changeColumnQuery =
             "mutation {change_multiple_column_values(item_id:" + personID + ", board_id:2628729848, column_values: """ + formattedJSON + """) {id}}"
-
         Try
-            Await Form1.SendMondayRequest(changeColumnQuery)
             Dim result As String = Await Form1.SendMondayRequest(changeColumnQuery)
             Console.WriteLine(changeColumnQuery)
             'checkAddedItem()
@@ -186,7 +183,6 @@ Public Class ManualClockIn
             End If
             Exit Function
         End Try
-
     End Function
 
     'Private Async Sub checkAddedItem()

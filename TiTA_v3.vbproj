@@ -131,6 +131,12 @@
     <Compile Include="Dashboard1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Display.Designer.vb">
+      <DependentUpon>Display.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Display.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DisplayAndSwitch.Designer.vb">
       <DependentUpon>DisplayAndSwitch.vb</DependentUpon>
     </Compile>
@@ -178,6 +184,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dashboard1.resx">
       <DependentUpon>Dashboard1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Display.resx">
+      <DependentUpon>Display.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DisplayAndSwitch.resx">
       <DependentUpon>DisplayAndSwitch.vb</DependentUpon>

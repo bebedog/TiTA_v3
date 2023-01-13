@@ -6,13 +6,29 @@ Public Class Form1
     Public allTasks As Root
     Public accounts
     Dim namesList
+
+    'Variable for the ID of the current log
     Public currentID As String
+
     Public fSurname As String
     Public fFirstName As String
     Public mondayID As String
     Public department As String
     Public manualLogInID As String
     Public accountItemID As String
+
+    'variables for Switch forms
+    Public currentTask As String
+    Public currentSubTask As String
+    Public currentTimeIn As String
+    Public currentProjectNumber As String
+    'Class Declaration for Serialization (Changing ColumnValues for Previous Log)
+    Public Class ColumnValuesToChange
+        Public Property text_1 As String ' START_Surname
+        Public Property dup__of_time_in As String 'Timeout
+        Public Property text64 As String 'TiTA Version
+    End Class
+    'End of Class Declaration for Serialization (Changing ColumnValues for Previous Log)
 
     'Classes Declaration
     Public Class Subitem
@@ -42,6 +58,7 @@ Public Class Form1
         Public Property data As Data
         Public Property account_id As Integer
     End Class
+
 
     Public Async Function SendMondayRequest(ByVal myQuery As String) As Task(Of String)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
@@ -178,6 +195,7 @@ Public Class Form1
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
             MessageBox.Show("Welcome! " + fFirstName, "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
             Me.Hide()
             Dashboard1.Show()
         Else
@@ -187,7 +205,6 @@ Public Class Form1
         TiTA_v3.My.Settings.recentUser = cbUsername.Text
         My.Settings.Save()
     End Sub
-
     'Initiated after Manual Time In.
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dashboard1.elapsedTime = Dashboard1.elapsedTime - 1000

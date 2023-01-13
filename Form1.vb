@@ -4,7 +4,7 @@ Public Class Form1
 
     Public titaVersion As String = "3.0"
     Public allTasks As Root
-    Dim accounts
+    Public accounts
     Dim namesList
 
     'Variable for the ID of the current log
@@ -14,6 +14,8 @@ Public Class Form1
     Public fFirstName As String
     Public mondayID As String
     Public department As String
+    Public manualLogInID As String
+    Public accountItemID As String
 
     'variables for Switch forms
     Public currentTask As String
@@ -40,6 +42,7 @@ Public Class Form1
         Public Property name As String
         Public Property subitems As Subitem()
         Public Property column_values As ColumnValue()
+        Public Property id As String
     End Class
     Public Class Group
         Public Property items As Item()
@@ -92,6 +95,7 @@ Public Class Form1
                     fFirstName = x.column_values(0).text
                     mondayID = x.column_values(1).text
                     department = x.column_values(3).text
+                    accountItemID = x.id
                     Return True
                 Else
                     Return False
@@ -108,11 +112,13 @@ Public Class Form1
         tbPassword.Enabled = False
         cbUsername.Enabled = False
         btnSignin.Enabled = False
+        btnChangePW.Enabled = False
     End Sub
     Public Sub EnableAllControls()
         tbPassword.Enabled = True
         cbUsername.Enabled = True
         btnSignin.Enabled = True
+        btnChangePW.Enabled = True
     End Sub
 
 
@@ -140,6 +146,7 @@ Public Class Form1
             "query{
                 boards(ids:3428362986){
                     items{
+                        id    
                         name
                         column_values{
                             title
@@ -187,7 +194,8 @@ Public Class Form1
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
-            MessageBox.Show("Welcome! " + fFirstName, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("Welcome! " + fFirstName, "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
             Me.Hide()
             Dashboard1.Show()
         Else
@@ -197,8 +205,13 @@ Public Class Form1
         TiTA_v3.My.Settings.recentUser = cbUsername.Text
         My.Settings.Save()
     End Sub
+    'Initiated after Manual Time In.
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        Dashboard1.elapsedTime = Dashboard1.elapsedTime - 1000
+    End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-
+    Private Sub btnChangePW_Click(sender As Object, e As EventArgs) Handles btnChangePW.Click
+        ChangePassword.Show()
+        Me.Hide()
     End Sub
 End Class

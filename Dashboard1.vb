@@ -3,11 +3,14 @@ Imports Newtonsoft.Json
 
 Public Class Dashboard1
 
-
+    Public elapsedTime As Integer
     Dim previousLog As Root
     Dim duplicateIDstoDelete As New List(Of String)
     Public newItemID
     Public newItemObj
+
+    Public fetchStatus As String
+
 
     Public Class ChangeMultipleColumnValues
         Public Property id As String
@@ -18,17 +21,22 @@ Public Class Dashboard1
         Public Property column_values As ColumnValue()
     End Class
     Public Class ColumnValue
-        Public Property text As String
-        Public Property title As String
-        Public Property value As String
+
+    Public Property text As String
+    Public Property title As String
+    Public Property value As String
     End Class
+
     Public Class Item
         Public Property name As String
         Public Property column_values As ColumnValue()
     End Class
+
     Public Class Group
         Public Property items As Item()
     End Class
+
+
     Public Class Board
         Public Property groups As Group()
     End Class
@@ -67,8 +75,8 @@ Public Class Dashboard1
     End Sub
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        Await Task.Delay(1000)
-        Dim fetchStatus As String =
+        Await Task.Delay(elapsedTime)
+        fetchStatus =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
                     id
@@ -89,11 +97,10 @@ Public Class Dashboard1
                 Label1.Text = "No previous log found. Clock In Manually?"
                 Dim msgResult = MessageBox.Show("No previous log found. Clock In Manually?", "No Record Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
                 If msgResult = DialogResult.Yes Then
-
-                    'MessageBox.Show("Ok", "Nice", MessageBoxButtons.OK)
-                    createNewItem()
-                    Me.Hide()
                     ManualClockIn.Show()
+                    Me.Close()
+                Else
+                    Application.Restart()
                 End If
             ElseIf count > 1 Then
                 Me.Label1.Text = "Duplicate Entries Found. Please select your most recent record."

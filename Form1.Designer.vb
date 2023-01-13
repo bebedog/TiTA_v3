@@ -32,6 +32,7 @@ Partial Class Form1
         Me.tbPassword = New System.Windows.Forms.TextBox()
         Me.cbUsername = New System.Windows.Forms.ComboBox()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.btnChangePW = New System.Windows.Forms.Button()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -53,7 +54,7 @@ Partial Class Form1
         'btnSignin
         '
         Me.btnSignin.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.btnSignin.Location = New System.Drawing.Point(208, 188)
+        Me.btnSignin.Location = New System.Drawing.Point(96, 192)
         Me.btnSignin.Name = "btnSignin"
         Me.btnSignin.Size = New System.Drawing.Size(97, 37)
         Me.btnSignin.TabIndex = 10
@@ -112,11 +113,22 @@ Partial Class Form1
         '
         Me.Timer1.Interval = 1000
         '
+        'btnChangePW
+        '
+        Me.btnChangePW.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnChangePW.Location = New System.Drawing.Point(208, 192)
+        Me.btnChangePW.Name = "btnChangePW"
+        Me.btnChangePW.Size = New System.Drawing.Size(97, 37)
+        Me.btnChangePW.TabIndex = 11
+        Me.btnChangePW.Text = "Change Password"
+        Me.btnChangePW.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(317, 258)
+        Me.Controls.Add(Me.btnChangePW)
         Me.Controls.Add(Me.btnSignin)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Label2)
@@ -146,4 +158,5 @@ Partial Class Form1
     Friend WithEvents tbPassword As TextBox
     Friend WithEvents cbUsername As ComboBox
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents btnChangePW As Button
 End Class

@@ -45,15 +45,15 @@ Public Class DisplayAndSwitch
         Public Property account_id As Integer
     End Class
     'END of Class Object Declaration
-    Private Sub populateTasksComboBox()
+    Private Function populateTasksComboBox()
         'populate comboboxes first
         For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tasks In groups.items
-                cbTasks.Items.Add(tasks.name)
+            For Each tasks1 In groups.items
+                cbTasks.Items.Add(tasks1.name)
             Next
         Next
         cbTasks.SelectedIndex = 0
-    End Sub
+    End Function
     Private Sub updateSubTasksComboBox()
         cbSubTasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
@@ -69,17 +69,26 @@ Public Class DisplayAndSwitch
         cbSubTasks.SelectedIndex = 0
 
     End Sub
-    Private Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        'upon load, disable all controls
+        disableAllControls()
+
         'Populate tasks combobox
         populateTasksComboBox()
+
         'set combo box to autocomplete
         cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
 
-
         'Fetch Previous task on TiTA Timeline board on monday.com
-        FetchPreviousTaskAndSubTask(Form1.currentID)
+        Await FetchPreviousTaskAndSubTask(Form1.currentID)
+
+        'when fetchprevious task is finished, enable all controls
+        enableAllControls()
+
+
     End Sub
-    Public Async Sub FetchPreviousTaskAndSubTask(ByVal itemID As String)
+    Public Async Function FetchPreviousTaskAndSubTask(ByVal itemID As String) As Task
         Dim queryFetchPreviousTask =
                 "query{
                 boards(ids: 2628729848){
@@ -105,9 +114,9 @@ Public Class DisplayAndSwitch
             Else
                 Me.Close()
             End If
-            Exit Sub
+            Exit Function
         End Try
-    End Sub
+    End Function
     Private Sub cbTasks_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbTasks.SelectedIndexChanged
         updateSubTasksComboBox()
     End Sub
@@ -180,7 +189,6 @@ Public Class DisplayAndSwitch
             'do nothing.
         End If
     End Sub
-
     Public Async Function createNewItem() As Task(Of String)
         Dim createItemQuery As String
         createItemQuery =
@@ -240,5 +248,15 @@ Public Class DisplayAndSwitch
             Exit Function
         End Try
     End Function
+    Public Sub disableAllControls()
+        For Each c As Control In Me.Controls
+            c.Enabled = False
+        Next
+    End Sub
+    Public Sub enableAllControls()
+        For Each c As Control In Me.Controls
+            c.Enabled = True
+        Next
+    End Sub
 
 End Class

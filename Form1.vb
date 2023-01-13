@@ -187,7 +187,7 @@ Public Class Form1
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
-            MessageBox.Show("Success!")
+            MessageBox.Show("Welcome! " + fFirstName, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Me.Hide()
             Dashboard1.Show()
         Else
@@ -198,5 +198,7 @@ Public Class Form1
         My.Settings.Save()
     End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
+    End Sub
 End Class

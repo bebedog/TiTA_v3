@@ -89,15 +89,74 @@ Public Class ManualClockIn
         cbProjectsList.SelectedIndex = 0
     End Sub
 
+    Private Function filterJobs(ByVal category As String)
+        For Each groups In Form1.allTasks.data.boards(0).groups
+            For Each tasks In groups.items
+                Select Case category
+                    Case "Show All"
+                        populateJobsList()
+                    Case "R&D"
+                        If tasks.group.id = "topics" Then
+                            cbProjectsList.Items.Add(tasks.name)
+                        End If
+                    Case "Jobs"
+                        If tasks.group.id = "group_title" Then
+                            cbProjectsList.Items.Add(tasks.name)
+                        End If
+                    Case "Admin"
+                        If tasks.group.id = "new_group1823" Then
+                            cbProjectsList.Items.Add(tasks.name)
+                        End If
+                    Case "Electronics R&D"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "ERD Tag" And cvals.text = "x" Then
+                                cbProjectsList.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Mechanical R&D"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "MRD Tag" And cvals.text = "x" Then
+                                cbProjectsList.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Enclosure"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "EN Tag" And cvals.text = "x" Then
+                                cbProjectsList.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Systems Designs"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "SD Tag" And cvals.text = "x" Then
+                                cbProjectsList.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Small Batch Manufacturing"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "SMB Tag" And cvals.text = "x" Then
+                                cbProjectsList.Items.Add(tasks.name)
+                            End If
+                        Next
+                End Select
+            Next
+        Next
+    End Function
+
     Private Sub populateSubtasks()
         cbSubtasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each items In groups.items
                 If items.name = cbProjectsList.SelectedItem Then
                     projectCode = items.column_values(0).text.ToString
-                    For Each subtasks In items.subitems
-                        cbSubtasks.Items.Add(subtasks.name)
-                    Next
+                    If items?.subitems IsNot Nothing Then
+                        For Each subtasks In items.subitems
+                            cbSubtasks.Items.Add(subtasks.name)
+                            cbSubtasks.SelectedIndex = 0
+                        Next
+                    Else cbSubtasks.Items.Add("N/A")
+                        cbSubtasks.SelectedIndex = 0
+                    End If
+
                 End If
             Next
         Next
@@ -105,6 +164,7 @@ Public Class ManualClockIn
 
     'Add new item to TiTO timeline
     Public Async Function createNewItem() As Task
+        disableAllControls()
         Dim createItemQuery As String
         createItemQuery =
         "mutation{
@@ -171,7 +231,7 @@ Public Class ManualClockIn
                 Me.Close()
                 Dashboard1.Show()
                 'Change delay time for Dashboard1 from 0 to 1 minute.
-                Dashboard1.elapsedTime = 60000
+                Form1.Timer1.Start()
             End If
 
         Catch ex As Exception
@@ -220,18 +280,37 @@ Public Class ManualClockIn
     '    End Try
     'End Sub
 
+
+
     Private Async Sub ManualClockIn_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Form1.positionLoginScreen()
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.CustomFormat = "HH:mm:ss"
+        cbFilter.Items.AddRange(Form1.taskCategories)
+        cbFilter.SelectedIndex = 0
         populateJobsList()
+    End Sub
 
+    Private Sub disableAllControls()
+        For Each c As Control In Me.Controls
+            c.Enabled = False
+        Next
+    End Sub
+
+    Private Sub enableAllControls()
+        For Each c As Control In Me.Controls
+            c.Enabled = True
+        Next
     End Sub
 
     'Assign Create Item > Update column events to Time In button
     Private Async Sub btnTimeIn_Click(sender As Object, e As EventArgs) Handles btnTimeIn.Click
         Await createNewItem()
+        Form1.loadDelay = 60000 - Form1.elapsedTime
+        Form1.Timer1.Start()
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
         Form1.watch.Start()
     End Sub
 
@@ -244,4 +323,11 @@ Public Class ManualClockIn
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Application.Restart()
     End Sub
+
+    Private Sub cbFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbFilter.SelectedIndexChanged
+        cbProjectsList.Items.Clear()
+        filterJobs(cbFilter.Text.ToString)
+        cbProjectsList.SelectedIndex = 0
+    End Sub
+
 End Class

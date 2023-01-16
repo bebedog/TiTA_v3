@@ -7,11 +7,18 @@ Public Class Form1
     Public titaVersion As String = "3.0"
     Public allTasks As Root
     Public accounts
+    Public elapsedTime As Integer
+    Public loadDelay As Integer
     Dim namesList
+
+    'Stores no. of minutes since last update sent to Monday.com
+    Public howLong
+
+    'Task categories
+    Public taskCategories() As String = {"Show All", "R&D", "Jobs", "Admin", "Electronics R&D", "Mechanical R&D", "Enclosure", "Systems Designs", "Small Batch Manufacturing"}
 
     'Variable for the ID of the current log
     Public currentID As String
-
     Public fSurname As String
     Public fFirstName As String
     Public mondayID As String
@@ -33,6 +40,11 @@ Public Class Form1
     'End of Class Declaration for Serialization (Changing ColumnValues for Previous Log)
 
     'Classes Declaration
+
+    Public Class Group
+        Public Property id As String
+        Public Property items As Item()
+    End Class
     Public Class Subitem
         Public Property name As String
     End Class
@@ -45,9 +57,7 @@ Public Class Form1
         Public Property subitems As Subitem()
         Public Property column_values As ColumnValue()
         Public Property id As String
-    End Class
-    Public Class Group
-        Public Property items As Item()
+        Public Property group As Group
     End Class
     Public Class Board
         Public Property items As Item()
@@ -135,10 +145,14 @@ Public Class Form1
                     groups(ids:[""topics"",""group_title"", ""new_group1823""]){
                         items{
                             name
+                            group{
+                            id
+                            }
                             subitems{
                                 name
                             }
-                            column_values(ids:""text""){
+                            column_values(ids:[""text"", ""text6"", ""text64"", ""text79"", ""text0"", ""text_1""]){
+                                title
                                 text
                             }
                         }
@@ -190,9 +204,15 @@ Public Class Form1
         populateCB(namesList)
         If TiTA_v3.My.Settings.recentUser <> "" Then
             cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
+            timesinceLastUpdate()
         End If
+        If TiTA_v3.My.Settings.lastMondayUpdate <> "" Then
+            lblStatus.Text = "It's been " + howLong.ToString + " seconds since your last update to Monday"
+        Else lblStatus.Text = "Accounts Fetched."
+        End If
+
         EnableAllControls()
-        lblStatus.Text = "Accounts Fetched."
+
     End Sub
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
@@ -209,12 +229,22 @@ Public Class Form1
     End Sub
     'Initiated after Manual Time In.
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        Dashboard1.elapsedTime = Dashboard1.elapsedTime - 1000
+        elapsedTime = elapsedTime + 1000
+        Console.WriteLine(elapsedTime)
     End Sub
     Private Sub btnChangePW_Click(sender As Object, e As EventArgs) Handles btnChangePW.Click
         ChangePassword.Show()
         Me.Hide()
     End Sub
+
+
+    Private Sub timesinceLastUpdate()
+        Dim lastUpdateTime As String = TiTA_v3.My.Settings.lastMondayUpdate
+        Dim lastUpdateTime_parsed = DateTime.Parse(lastUpdateTime)
+        Dim minuteSinceLastUpdate = DateTime.Now - lastUpdateTime_parsed
+        howLong = Math.Round(minuteSinceLastUpdate.TotalSeconds, 0)
+        Console.WriteLine(howLong.ToString + " seconds since last update")
+
     Public Sub positionLoginScreen()
         Me.Visible = True
         Dim x As Integer

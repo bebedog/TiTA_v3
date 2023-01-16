@@ -125,7 +125,6 @@ Public Class ChangePassword
 
         End Try
 
-
     End Function
 
     Private Sub btnChangePass_Click(sender As Object, e As EventArgs) Handles btnChangePass.Click
@@ -134,7 +133,12 @@ Public Class ChangePassword
             If Form1.checkAccountDetails(cbUsername2.Text, tbOldPassword.Text, Form1.accounts) = True Then
                 'Account detail matches
                 getAccountItemID(accounts, cbUsername2.Text)
-                MessageBox.Show($"Password Changed for {Form1.fFirstName} {Form1.fSurname}", "Password Update Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Dim updateMsg As DialogResult = MessageBox.Show($"Password Changed for {Form1.fFirstName} {Form1.fSurname}", "Password Update Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                If updateMsg.OK Then
+                    Application.Restart()
+                End If
+
             Else
                 MessageBox.Show("Incorrect Password.")
                 'Account Detail don't match.

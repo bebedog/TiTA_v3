@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class DisplayAndSwitch
+Partial Class Switch
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -67,6 +67,7 @@ Partial Class DisplayAndSwitch
         '
         'cbSubTasks
         '
+        Me.cbSubTasks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbSubTasks.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbSubTasks.FormattingEnabled = True
         Me.cbSubTasks.Location = New System.Drawing.Point(102, 46)
@@ -118,7 +119,7 @@ Partial Class DisplayAndSwitch
         Me.lblStatus.Name = "lblStatus"
         Me.lblStatus.Size = New System.Drawing.Size(0, 17)
         '
-        'DisplayAndSwitch
+        'Switch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -131,7 +132,7 @@ Partial Class DisplayAndSwitch
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.cbTasks)
         Me.Controls.Add(Me.Label1)
-        Me.Name = "DisplayAndSwitch"
+        Me.Name = "Switch"
         Me.Text = "DisplayAndSwitch"
         Me.StatusStrip1.ResumeLayout(False)
         Me.StatusStrip1.PerformLayout()

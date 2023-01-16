@@ -115,7 +115,7 @@ Public Class Dashboard1
             Else
                 Me.Label1.Text = "Success"
                 Form1.currentID = previousLog.data.items_by_column_values(0).id
-                DisplayAndSwitch.Show()
+                Switch.Show()
                 Me.Close()
             End If
         Catch ex As Exception

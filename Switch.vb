@@ -1,5 +1,5 @@
 ﻿Imports Newtonsoft.Json
-Public Class DisplayAndSwitch
+Public Class Switch
     Dim idOfNewItem As String
     Dim selectedTaskProjectCode As String
     'Class Object for Serialization

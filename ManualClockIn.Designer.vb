@@ -33,6 +33,8 @@ Partial Class ManualClockIn
         Me.Label2 = New System.Windows.Forms.Label()
         Me.btnBack = New System.Windows.Forms.Button()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.cbFilter = New System.Windows.Forms.ComboBox()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -40,17 +42,22 @@ Partial Class ManualClockIn
         'labelTimeIn
         '
         Me.labelTimeIn.AutoSize = True
-        Me.labelTimeIn.Location = New System.Drawing.Point(57, 84)
+        Me.labelTimeIn.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.labelTimeIn.Location = New System.Drawing.Point(44, 143)
+        Me.labelTimeIn.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.labelTimeIn.Name = "labelTimeIn"
-        Me.labelTimeIn.Size = New System.Drawing.Size(45, 13)
+        Me.labelTimeIn.Size = New System.Drawing.Size(73, 20)
         Me.labelTimeIn.TabIndex = 0
         Me.labelTimeIn.Text = "Time In:"
+        Me.labelTimeIn.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'btnTimeIn
         '
-        Me.btnTimeIn.Location = New System.Drawing.Point(168, 166)
+        Me.btnTimeIn.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnTimeIn.Location = New System.Drawing.Point(168, 294)
+        Me.btnTimeIn.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnTimeIn.Name = "btnTimeIn"
-        Me.btnTimeIn.Size = New System.Drawing.Size(75, 23)
+        Me.btnTimeIn.Size = New System.Drawing.Size(132, 35)
         Me.btnTimeIn.TabIndex = 2
         Me.btnTimeIn.Text = "Submit Time In"
         Me.btnTimeIn.UseVisualStyleBackColor = True
@@ -58,83 +65,124 @@ Partial Class ManualClockIn
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(68, 114)
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(61, 219)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(34, 13)
+        Me.Label1.Size = New System.Drawing.Size(52, 20)
         Me.Label1.TabIndex = 3
         Me.Label1.Text = "Task:"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'cbProjectsList
         '
+        Me.cbProjectsList.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbProjectsList.FormattingEnabled = True
-        Me.cbProjectsList.Location = New System.Drawing.Point(108, 110)
+        Me.cbProjectsList.Location = New System.Drawing.Point(128, 213)
+        Me.cbProjectsList.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbProjectsList.Name = "cbProjectsList"
-        Me.cbProjectsList.Size = New System.Drawing.Size(301, 21)
+        Me.cbProjectsList.Size = New System.Drawing.Size(368, 28)
         Me.cbProjectsList.TabIndex = 4
         '
         'DateTimePicker1
         '
+        Me.DateTimePicker1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Time
-        Me.DateTimePicker1.Location = New System.Drawing.Point(108, 81)
+        Me.DateTimePicker1.Location = New System.Drawing.Point(128, 139)
+        Me.DateTimePicker1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DateTimePicker1.Name = "DateTimePicker1"
-        Me.DateTimePicker1.Size = New System.Drawing.Size(301, 20)
+        Me.DateTimePicker1.Size = New System.Drawing.Size(368, 26)
         Me.DateTimePicker1.TabIndex = 5
         '
         'StatusStrip1
         '
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolLabel1})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 202)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 361)
         Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(481, 22)
+        Me.StatusStrip1.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
+        Me.StatusStrip1.Size = New System.Drawing.Size(545, 25)
         Me.StatusStrip1.TabIndex = 6
         Me.StatusStrip1.Text = "StatusStrip1"
         '
         'ToolLabel1
         '
+        Me.ToolLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ToolLabel1.Name = "ToolLabel1"
-        Me.ToolLabel1.Size = New System.Drawing.Size(39, 17)
+        Me.ToolLabel1.Size = New System.Drawing.Size(56, 20)
         Me.ToolLabel1.Text = "Status"
         '
         'cbSubtasks
         '
+        Me.cbSubtasks.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbSubtasks.FormattingEnabled = True
-        Me.cbSubtasks.Location = New System.Drawing.Point(108, 139)
+        Me.cbSubtasks.Location = New System.Drawing.Point(129, 253)
+        Me.cbSubtasks.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbSubtasks.Name = "cbSubtasks"
-        Me.cbSubtasks.Size = New System.Drawing.Size(301, 21)
+        Me.cbSubtasks.Size = New System.Drawing.Size(368, 28)
         Me.cbSubtasks.TabIndex = 7
         '
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(53, 143)
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(37, 259)
+        Me.Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(49, 13)
+        Me.Label2.Size = New System.Drawing.Size(80, 20)
         Me.Label2.TabIndex = 8
         Me.Label2.Text = "Subtask:"
-        Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'btnBack
         '
-        Me.btnBack.Location = New System.Drawing.Point(249, 166)
+        Me.btnBack.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnBack.Location = New System.Drawing.Point(310, 294)
+        Me.btnBack.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnBack.Name = "btnBack"
-        Me.btnBack.Size = New System.Drawing.Size(75, 23)
+        Me.btnBack.Size = New System.Drawing.Size(132, 35)
         Me.btnBack.TabIndex = 9
         Me.btnBack.Text = "Go Back"
         Me.btnBack.UseVisualStyleBackColor = True
         '
         'PictureBox1
         '
-        Me.PictureBox1.Location = New System.Drawing.Point(108, 12)
+        Me.PictureBox1.Location = New System.Drawing.Point(88, 18)
+        Me.PictureBox1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(301, 62)
+        Me.PictureBox1.Size = New System.Drawing.Size(370, 95)
         Me.PictureBox1.TabIndex = 10
         Me.PictureBox1.TabStop = False
         '
+        'cbFilter
+        '
+        Me.cbFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbFilter.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cbFilter.FormattingEnabled = True
+        Me.cbFilter.Location = New System.Drawing.Point(128, 175)
+        Me.cbFilter.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.cbFilter.Name = "cbFilter"
+        Me.cbFilter.Size = New System.Drawing.Size(368, 28)
+        Me.cbFilter.TabIndex = 12
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(61, 181)
+        Me.Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(60, 20)
+        Me.Label3.TabIndex = 11
+        Me.Label3.Text = "Filter: "
+        Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
         'ManualClockIn
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(481, 224)
+        Me.ClientSize = New System.Drawing.Size(545, 386)
+        Me.Controls.Add(Me.cbFilter)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.Label2)
@@ -145,6 +193,8 @@ Partial Class ManualClockIn
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnTimeIn)
         Me.Controls.Add(Me.labelTimeIn)
+        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "ManualClockIn"
         Me.Text = "ManualClockIn"
         Me.StatusStrip1.ResumeLayout(False)
@@ -166,4 +216,6 @@ Partial Class ManualClockIn
     Friend WithEvents Label2 As Label
     Friend WithEvents btnBack As Button
     Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents cbFilter As ComboBox
+    Friend WithEvents Label3 As Label
 End Class

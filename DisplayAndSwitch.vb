@@ -54,22 +54,87 @@ Public Class DisplayAndSwitch
         Next
         cbTasks.SelectedIndex = 0
     End Function
+
+    Private Function filterJobs(ByVal category As String)
+        For Each groups In Form1.allTasks.data.boards(0).groups
+            For Each tasks In groups.items
+                Select Case category
+                    Case "Show All"
+                        populateTasksComboBox()
+                    Case "R&D"
+                        If tasks.group.id = "topics" Then
+                            cbTasks.Items.Add(tasks.name)
+                        End If
+                    Case "Jobs"
+                        If tasks.group.id = "group_title" Then
+                            cbTasks.Items.Add(tasks.name)
+                        End If
+                    Case "Admin"
+                        If tasks.group.id = "new_group1823" Then
+                            cbTasks.Items.Add(tasks.name)
+                        End If
+                    Case "Electronics R&D"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "ERD Tag" And cvals.text = "x" Then
+                                cbTasks.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Mechanical R&D"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "MRD Tag" And cvals.text = "x" Then
+                                cbTasks.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Enclosure"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "EN Tag" And cvals.text = "x" Then
+                                cbTasks.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Systems Designs"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "SD Tag" And cvals.text = "x" Then
+                                cbTasks.Items.Add(tasks.name)
+                            End If
+                        Next
+                    Case "Small Batch Manufacturing"
+                        For Each cvals In tasks.column_values
+                            If cvals.title = "SMB Tag" And cvals.text = "x" Then
+                                cbTasks.Items.Add(tasks.name)
+                            End If
+                        Next
+                End Select
+            Next
+        Next
+    End Function
+
     Private Sub updateSubTasksComboBox()
         cbSubTasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tasks In groups.items
                 If tasks.name = cbTasks.SelectedItem Then
                     selectedTaskProjectCode = tasks.column_values(0).text
-                    For Each subtasks In tasks.subitems
-                        cbSubTasks.Items.Add(subtasks.name)
-                    Next
+                    If tasks?.subitems IsNot Nothing Then
+                        For Each subtasks In tasks.subitems
+                            cbSubTasks.Items.Add(subtasks.name)
+                        Next
+                        cbSubTasks.SelectedIndex = 0
+                    Else cbSubTasks.Items.Add("N/A")
+                        cbSubTasks.SelectedIndex = 0
+                    End If
                 End If
             Next
         Next
-        cbSubTasks.SelectedIndex = 0
+
 
     End Sub
     Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        'stop Timer
+        Form1.Timer1.Stop()
+
+        cbFilter.Items.AddRange(Form1.taskCategories)
+        cbFilter.SelectedIndex = 0
 
         'upon load, disable all controls
         disableAllControls()
@@ -121,9 +186,16 @@ Public Class DisplayAndSwitch
         updateSubTasksComboBox()
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
+        If Form1.elapsedTime >= 0 Then
+            Form1.elapsedTime = 0
+            Form1.Timer1.Start()
+        End If
         'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
+            disableAllControls()
             'Switch confirmed
             lblStatus.Text = "Marking X the previous log.."
             'Build Object to Change Column Value
@@ -157,10 +229,6 @@ Public Class DisplayAndSwitch
             payloadLabel.labels = labelList.ToArray
 
             payload2.dropdown = payloadLabel
-
-
-
-
             Form1.currentProjectNumber = selectedTaskProjectCode
 
             'create the payload for persons (a nested loop, so we need to construct a new payload for it)
@@ -209,7 +277,7 @@ Public Class DisplayAndSwitch
         Dim formattedJSON = jsonToLoad.Replace("""", "\""")
         Dim MarkAsDonePreviousLogQuery As String =
             "mutation{
-                change_multiple_column_values(item_id: " + Form1.currentID + ", board_id:2628729848, column_values:""" + formattedJSON + """){
+                change_multiple_column_values(item_id: " + Form1.currentID + ", board_id:2628729848, column_values:""" + formattedJSON + """, create_labels_if_missing: true){
                     id
                 }
             }"
@@ -231,7 +299,7 @@ Public Class DisplayAndSwitch
         Dim formattedJSON = jsonToLoad.Replace("""", "\""")
         Dim ChangeMultipleColumnValuesQuery As String =
             "mutation{
-                change_multiple_column_values(board_id: 2628729848, item_id:" + itemID + ", column_values: """ + formattedJSON + """){
+                change_multiple_column_values(board_id: 2628729848, item_id:" + itemID + ", column_values: """ + formattedJSON + """, create_labels_if_missing: true){
                     id
                 }
             }"
@@ -259,4 +327,162 @@ Public Class DisplayAndSwitch
         Next
     End Sub
 
+    Private Async Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
+        If Form1.elapsedTime >= 0 Then
+            Form1.elapsedTime = 0
+            Form1.Timer1.Start()
+        End If
+        'Mark the previous log as done, and put in timeout column and tita 
+        Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to start your lunch break?", "Go to Lunch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If dialogResult = DialogResult.Yes Then
+            disableAllControls()
+            'Switch confirmed
+            lblStatus.Text = "Marking X the previous log.."
+            'Build Object to Change Column Value
+            Dim payload = New ColumnValuesToChange()
+            'Assign values to each property of the object.
+            payload.text_1 = "X"
+            payload.dup__of_time_in = DateTime.Now.ToString("HH:mm:ss")
+            payload.text64 = Form1.titaVersion.ToString
+
+            'Mark previous log as done
+            Await MarkAsDonePreviousLog(payload)
+            lblStatus.Text = "Creating new log..."
+
+            'Create new item on monday.com board
+            'and save its id on idOfNewItem
+            idOfNewItem = Await createNewItem()
+
+
+            'Change the value of the createdItem
+            'But create first the values of the column.
+            Dim payload2 = New ColumnValuesToChange()
+            cbTasks.SelectedIndex = cbTasks.FindStringExact("Lunch")
+            payload2.job = cbTasks.SelectedItem
+            payload2.text_1 = $"START_{Form1.fSurname}"
+            payload2.text = DateTime.Now.ToString("HH:mm:ss")
+            payload2.text64 = Form1.titaVersion.ToString
+            payload2.text4 = cbSubTasks.SelectedItem
+
+            Dim payloadLabel As New Labels()
+            Dim labelList As New List(Of String)
+            labelList.Add(selectedTaskProjectCode)
+            payloadLabel.labels = labelList.ToArray
+
+            payload2.dropdown = payloadLabel
+            selectedTaskProjectCode = Form1.currentProjectNumber
+
+            'create the payload for persons (a nested loop, so we need to construct a new payload for it)
+            Dim person As New Person()
+            Dim personIDandKind As New PersonsAndTeams()
+            Dim personValueList As New List(Of PersonsAndTeams)
+            personIDandKind.id = Form1.mondayID
+            personIDandKind.kind = "person"
+            personValueList.Add(personIDandKind)
+            person.personsAndTeams = personValueList.ToArray
+            payload2.person = person
+
+            'Send multiple column value change request to monday
+            Await ChangeMultipleColumnValues(idOfNewItem, payload2)
+
+            'save all details to form1
+            Form1.currentTask = cbTasks.SelectedItem
+            Form1.currentSubTask = cbSubTasks.SelectedItem
+            Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
+
+            'show display
+            Display.Show()
+            Me.Close()
+        Else
+            'user pressed no.
+            'do nothing
+        End If
+
+    End Sub
+
+    Private Async Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
+        If Form1.elapsedTime > 0 Then
+            Form1.elapsedTime = 0
+            Form1.loadDelay = 60000 - Form1.elapsedTime
+            Form1.Timer1.Start()
+        End If
+        'Mark the previous log as done, and put in timeout column and tita 
+        Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to start your break?", "Start Break", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If dialogResult = DialogResult.Yes Then
+            disableAllControls()
+            'Switch confirmed
+            lblStatus.Text = "Marking X the previous log.."
+            'Build Object to Change Column Value
+            Dim payload = New ColumnValuesToChange()
+            'Assign values to each property of the object.
+            payload.text_1 = "X"
+            payload.dup__of_time_in = DateTime.Now.ToString("HH:mm:ss")
+            payload.text64 = Form1.titaVersion.ToString
+
+            'Mark previous log as done
+            Await MarkAsDonePreviousLog(payload)
+            lblStatus.Text = "Creating new log..."
+
+            'Create new item on monday.com board
+            'and save its id on idOfNewItem
+            idOfNewItem = Await createNewItem()
+
+
+            'Change the value of the createdItem
+            'But create first the values of the column.
+            Dim payload2 = New ColumnValuesToChange()
+            cbTasks.SelectedIndex = cbTasks.FindStringExact("Break")
+            payload2.job = cbTasks.SelectedItem
+            payload2.text_1 = $"START_{Form1.fSurname}"
+            payload2.text = DateTime.Now.ToString("HH:mm:ss")
+            payload2.text64 = Form1.titaVersion.ToString
+            payload2.text4 = cbSubTasks.SelectedItem
+
+            Dim payloadLabel As New Labels()
+            Dim labelList As New List(Of String)
+            labelList.Add(selectedTaskProjectCode)
+            payloadLabel.labels = labelList.ToArray
+
+            payload2.dropdown = payloadLabel
+            selectedTaskProjectCode = Form1.currentProjectNumber
+
+            'create the payload for persons (a nested loop, so we need to construct a new payload for it)
+            Dim person As New Person()
+            Dim personIDandKind As New PersonsAndTeams()
+            Dim personValueList As New List(Of PersonsAndTeams)
+            personIDandKind.id = Form1.mondayID
+            personIDandKind.kind = "person"
+            personValueList.Add(personIDandKind)
+            person.personsAndTeams = personValueList.ToArray
+            payload2.person = person
+
+            'Send multiple column value change request to monday
+            Await ChangeMultipleColumnValues(idOfNewItem, payload2)
+
+            'save all details to form1
+            Form1.currentTask = cbTasks.SelectedItem
+            Form1.currentSubTask = cbSubTasks.SelectedItem
+            Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
+
+            'show display
+            Display.Show()
+            Me.Close()
+        Else
+            'user pressed no.
+            'do nothing.
+        End If
+
+    End Sub
+
+    Private Sub cbFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbFilter.SelectedIndexChanged
+        cbTasks.Items.Clear()
+        filterJobs(cbFilter.SelectedItem.ToString)
+        cbTasks.SelectedIndex = 0
+    End Sub
 End Class

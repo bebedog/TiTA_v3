@@ -3,12 +3,11 @@ Imports Newtonsoft.Json
 
 Public Class Dashboard1
 
-    Public elapsedTime As Integer
+
     Dim previousLog As Root
     Dim duplicateIDstoDelete As New List(Of String)
     Public newItemID
     Public newItemObj
-
     Public fetchStatus As String
 
 
@@ -75,7 +74,14 @@ Public Class Dashboard1
     End Sub
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        Await Task.Delay(elapsedTime)
+        If Form1.Timer1.Enabled = False And Form1.howLong < 60 Then
+            Await Task.Delay(60000 - Form1.howLong * 1000)
+        ElseIf Form1.loadDelay > 0 And Form1.Timer1.Enabled = True Then
+            Await Task.Delay(Form1.loadDelay)
+        ElseIf Form1.loadDelay > 60 Then
+            Form1.Timer1.Stop()
+            Form1.elapsedTime = 0
+        End If
         fetchStatus =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
@@ -164,6 +170,13 @@ Public Class Dashboard1
         targetDataGridView.DataSource = duplicateLogs
     End Sub
     Private Async Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
+        Form1.Timer1.Start()
+        If Form1.Timer1.Enabled = True Then
+            Form1.elapsedTime = 0
+            Form1.loadDelay = 60000 - Form1.elapsedTime
+        End If
         Dim senderGrid = DirectCast(sender, DataGridView)
         If TypeOf senderGrid.Columns(e.ColumnIndex) Is DataGridViewButtonColumn AndAlso e.RowIndex >= 0 Then
             Form1.currentID = senderGrid.CurrentRow.Cells(3).Value.ToString

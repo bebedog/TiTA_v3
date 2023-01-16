@@ -1,7 +1,9 @@
 ﻿Imports RestSharp
 Imports Newtonsoft.Json
 Public Class Form1
+    Public watch As Stopwatch
 
+    Public queryTimeOut As Integer = 15000
     Public titaVersion As String = "3.0"
     Public allTasks As Root
     Public accounts
@@ -63,10 +65,10 @@ Public Class Form1
     Public Async Function SendMondayRequest(ByVal myQuery As String) As Task(Of String)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
         options.ThrowOnAnyError = True
-        options.MaxTimeout = 6000
+        options.MaxTimeout = queryTimeOut
         Dim client = New RestClient(options)
         Dim request = New RestRequest()
-        request.Timeout = 5000
+        request.Timeout = queryTimeOut
         request.Method = Method.Post
         request.AddHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjE1MjU2NzQ3OCwidWlkIjoxNTA5MzQwNywiaWFkIjoiMjAyMi0wMy0yNVQwMTo0Njo1My4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.F1TqwLS-QsuM8Ss3UcgskbNFUIer1dfwfoLyPMq1pbc")
         request.AddQueryParameter("query", myQuery)
@@ -120,10 +122,11 @@ Public Class Form1
         btnSignin.Enabled = True
         btnChangePW.Enabled = True
     End Sub
-
-
     Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.CenterToParent()
+        Me.TopMost = True
+        Me.positionLoginScreen()
+        watch = Stopwatch.StartNew()
+        watch.Stop()
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
         Dim fetchTasksQuery As String =
@@ -194,8 +197,7 @@ Public Class Form1
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
-            MessageBox.Show("Welcome! " + fFirstName, "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+            MessageBox.Show($"Welcome back, {fFirstName}!", "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Me.Hide()
             Dashboard1.Show()
         Else
@@ -209,9 +211,19 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dashboard1.elapsedTime = Dashboard1.elapsedTime - 1000
     End Sub
-
     Private Sub btnChangePW_Click(sender As Object, e As EventArgs) Handles btnChangePW.Click
         ChangePassword.Show()
         Me.Hide()
+    End Sub
+    Public Sub positionLoginScreen()
+        Me.Visible = True
+        Dim x As Integer
+        Dim y As Integer
+        x = Screen.PrimaryScreen.WorkingArea.Width
+        y = Screen.PrimaryScreen.WorkingArea.Height - Me.Height
+        Do Until x = Screen.PrimaryScreen.WorkingArea.Width - Me.Width
+            x = x - 1
+            Me.Location = New Point(x, y)
+        Loop
     End Sub
 End Class

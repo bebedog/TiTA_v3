@@ -72,6 +72,9 @@
     <Reference Include="Newtonsoft.Json.Schema, Version=3.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.Schema.3.0.14\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
     </Reference>
+    <Reference Include="QuoteBank, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\QuoteBank.2.1.0\lib\net472\QuoteBank.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp, Version=108.0.3.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>packages\RestSharp.108.0.3\lib\netstandard2.0\RestSharp.dll</HintPath>
     </Reference>
@@ -137,10 +140,10 @@
     <Compile Include="Display.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DisplayAndSwitch.Designer.vb">
-      <DependentUpon>DisplayAndSwitch.vb</DependentUpon>
+    <Compile Include="Switch.Designer.vb">
+      <DependentUpon>Switch.vb</DependentUpon>
     </Compile>
-    <Compile Include="DisplayAndSwitch.vb">
+    <Compile Include="Switch.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.vb">
@@ -188,8 +191,8 @@
     <EmbeddedResource Include="Display.resx">
       <DependentUpon>Display.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DisplayAndSwitch.resx">
-      <DependentUpon>DisplayAndSwitch.vb</DependentUpon>
+    <EmbeddedResource Include="Switch.resx">
+      <DependentUpon>Switch.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.vb</DependentUpon>

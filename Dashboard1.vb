@@ -1,5 +1,6 @@
 ﻿Imports System.Threading
 Imports Newtonsoft.Json
+Imports QuoteBank
 
 Public Class Dashboard1
 
@@ -12,6 +13,12 @@ Public Class Dashboard1
     Public fetchStatus As String
 
 
+
+    'Timer and StopWatch
+    Dim elapsedTimeInSeconds As Integer
+    Dim timeToWaitInSeconds As Integer
+
+
     Public Class ChangeMultipleColumnValues
         Public Property id As String
     End Class
@@ -22,21 +29,17 @@ Public Class Dashboard1
     End Class
     Public Class ColumnValue
 
-    Public Property text As String
-    Public Property title As String
-    Public Property value As String
+        Public Property text As String
+        Public Property title As String
+        Public Property value As String
     End Class
-
     Public Class Item
         Public Property name As String
         Public Property column_values As ColumnValue()
     End Class
-
     Public Class Group
         Public Property items As Item()
     End Class
-
-
     Public Class Board
         Public Property groups As Group()
     End Class
@@ -54,8 +57,9 @@ Public Class Dashboard1
         Public Property account_id As Integer
     End Class
 
-    Private Sub Dashboard1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.CenterToParent()
+    Private Async Sub Dashboard1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        positionLoginScreen()
+        lblQuotes.Text = Await getRandomQuotes()
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         Me.TopMost = True
         DataGridView1.Visible = False
@@ -73,9 +77,26 @@ Public Class Dashboard1
 
         'DataGridView1.DataSource = table
     End Sub
-    Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        Label1.Text = "Please wait..."
-        Await Task.Delay(elapsedTime)
+    Public Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        'Check the stopwatch if it is running.
+        If Form1.watch.IsRunning Then
+            If Int(Form1.watch.Elapsed.ToString("ss")) > 60 Then
+                'the stopwatch is running, but it has been 60 seconds already
+                'that means, the program doesn't have to introduce a delay anymore.
+                timeToWaitInSeconds = 0
+            Else
+                'if it's running, take the elapsed time and minus it by
+                '60 seconds. That is the duration of the delay before querying again.
+                elapsedTimeInSeconds = Int(Form1.watch.Elapsed.ToString("ss"))
+                timeToWaitInSeconds = 60 - elapsedTimeInSeconds
+                Timer1.Start()
+            End If
+        Else
+            'if it is not running, that means that this is the first time querying.
+            'This means that the duration of delay is 0 seconds!
+            timeToWaitInSeconds = 0
+        End If
+        Await Task.Delay(timeToWaitInSeconds * 1000) 'The delay method takes time in milliseconds. Thus the x1000.
         fetchStatus =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
@@ -109,7 +130,7 @@ Public Class Dashboard1
             Else
                 Me.Label1.Text = "Success"
                 Form1.currentID = previousLog.data.items_by_column_values(0).id
-                DisplayAndSwitch.Show()
+                My.Forms.Switch.Show()
                 Me.Close()
             End If
         Catch ex As Exception
@@ -122,6 +143,7 @@ Public Class Dashboard1
             End If
             Exit Sub
         Finally
+            Form1.watch.Reset()
         End Try
     End Sub
     Public Async Sub createNewItem()
@@ -164,6 +186,7 @@ Public Class Dashboard1
         targetDataGridView.DataSource = duplicateLogs
     End Sub
     Private Async Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+        Form1.watch.Start()
         Dim senderGrid = DirectCast(sender, DataGridView)
         If TypeOf senderGrid.Columns(e.ColumnIndex) Is DataGridViewButtonColumn AndAlso e.RowIndex >= 0 Then
             Form1.currentID = senderGrid.CurrentRow.Cells(3).Value.ToString
@@ -215,4 +238,27 @@ Public Class Dashboard1
 
         End If
     End Sub
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        If (60 - Int(Form1.watch.Elapsed.TotalSeconds)) Then
+            Label1.Text = $"The program is sleeping for {60 - Int(Form1.watch.Elapsed.TotalSeconds)} seconds to avoid overloading the monday.com servers."
+        Else
+            Timer1.Stop()
+            Label1.Text = "Countdown Done!"
+        End If
+    End Sub
+    Public Sub positionLoginScreen()
+        Me.Visible = True
+        Dim x As Integer
+        Dim y As Integer
+        x = Screen.PrimaryScreen.WorkingArea.Width
+        y = Screen.PrimaryScreen.WorkingArea.Height - Me.Height
+        Do Until x = Screen.PrimaryScreen.WorkingArea.Width - Me.Width
+            x = x - 1
+            Me.Location = New Point(x, y)
+        Loop
+    End Sub
+    Public Async Function getRandomQuotes() As Task(Of String)
+        Dim englishQuotes As Quotes.English = New Quotes.English()
+        Return englishQuotes.Motivation
+    End Function
 End Class

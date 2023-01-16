@@ -21,9 +21,12 @@ Partial Class Dashboard1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.Label1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.lblQuotes = New System.Windows.Forms.Label()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -31,9 +34,9 @@ Partial Class Dashboard1
         'StatusStrip1
         '
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Label1})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 353)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 281)
         Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(379, 22)
+        Me.StatusStrip1.Size = New System.Drawing.Size(758, 22)
         Me.StatusStrip1.TabIndex = 1
         Me.StatusStrip1.Text = "StatusStrip1"
         '
@@ -46,23 +49,42 @@ Partial Class Dashboard1
         '
         Me.DataGridView1.AllowUserToAddRows = False
         Me.DataGridView1.AllowUserToDeleteRows = False
+        Me.DataGridView1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView1.Location = New System.Drawing.Point(12, 12)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.ReadOnly = True
         Me.DataGridView1.RowHeadersVisible = False
         Me.DataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect
-        Me.DataGridView1.Size = New System.Drawing.Size(355, 338)
+        Me.DataGridView1.Size = New System.Drawing.Size(734, 266)
         Me.DataGridView1.TabIndex = 2
+        Me.DataGridView1.Visible = False
         '
-
+        'Timer1
+        '
+        '
+        'lblQuotes
+        '
+        Me.lblQuotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblQuotes.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblQuotes.Location = New System.Drawing.Point(12, 9)
+        Me.lblQuotes.Name = "lblQuotes"
+        Me.lblQuotes.Size = New System.Drawing.Size(734, 269)
+        Me.lblQuotes.TabIndex = 3
+        Me.lblQuotes.Text = """Time is gold."""
+        Me.lblQuotes.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
         'Dashboard1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(379, 375)
+        Me.ClientSize = New System.Drawing.Size(758, 303)
+        Me.Controls.Add(Me.lblQuotes)
         Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.StatusStrip1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "Dashboard1"
         Me.Text = "Dashboard1"
         Me.StatusStrip1.ResumeLayout(False)
@@ -76,4 +98,6 @@ Partial Class Dashboard1
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents Label1 As ToolStripStatusLabel
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Timer1 As Timer
+    Friend WithEvents lblQuotes As Label
 End Class

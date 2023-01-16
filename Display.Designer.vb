@@ -22,6 +22,8 @@ Partial Class Display
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Display))
         Me.lblSubtasks = New System.Windows.Forms.Label()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.lblProjectNumber = New System.Windows.Forms.Label()
@@ -35,6 +37,8 @@ Partial Class Display
         Me.Label2 = New System.Windows.Forms.Label()
         Me.lblUserWelcome = New System.Windows.Forms.Label()
         Me.lblDepartment1 = New System.Windows.Forms.Label()
+        Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.SuspendLayout()
         '
         'lblSubtasks
@@ -174,6 +178,15 @@ Partial Class Display
         Me.lblDepartment1.TabIndex = 25
         Me.lblDepartment1.Text = "DEPARTMENT"
         '
+        'NotifyIcon1
+        '
+        Me.NotifyIcon1.Icon = CType(resources.GetObject("NotifyIcon1.Icon"), System.Drawing.Icon)
+        Me.NotifyIcon1.Text = "NotifyIcon1"
+        Me.NotifyIcon1.Visible = True
+        '
+        'Timer1
+        '
+        '
         'Display
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -192,6 +205,7 @@ Partial Class Display
         Me.Controls.Add(Me.lblTask)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.lblUserWelcome)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "Display"
         Me.Text = "Display"
         Me.ResumeLayout(False)
@@ -212,4 +226,6 @@ Partial Class Display
     Friend WithEvents Label2 As Label
     Friend WithEvents lblUserWelcome As Label
     Friend WithEvents lblDepartment1 As Label
+    Friend WithEvents NotifyIcon1 As NotifyIcon
+    Friend WithEvents Timer1 As Timer
 End Class

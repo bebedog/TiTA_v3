@@ -33,6 +33,7 @@ Partial Class Switch
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
+
         Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -72,6 +73,10 @@ Partial Class Switch
         Me.cbSubTasks.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbSubTasks.FormattingEnabled = True
         Me.cbSubTasks.Location = New System.Drawing.Point(102, 110)
+
+        Me.cbSubTasks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+
+
         Me.cbSubTasks.Name = "cbSubTasks"
         Me.cbSubTasks.Size = New System.Drawing.Size(311, 28)
         Me.cbSubTasks.TabIndex = 1
@@ -148,6 +153,11 @@ Partial Class Switch
         Me.ClientSize = New System.Drawing.Size(425, 268)
         Me.Controls.Add(Me.cbFilter)
         Me.Controls.Add(Me.Label3)
+        'Switch
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.ClientSize = New System.Drawing.Size(425, 196)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.Button2)
@@ -156,7 +166,7 @@ Partial Class Switch
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.cbTasks)
         Me.Controls.Add(Me.Label1)
-        Me.Name = "DisplayAndSwitch"
+        Me.Name = "Switch"
         Me.Text = "DisplayAndSwitch"
         Me.StatusStrip1.ResumeLayout(False)
         Me.StatusStrip1.PerformLayout()

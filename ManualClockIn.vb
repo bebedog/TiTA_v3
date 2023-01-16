@@ -283,7 +283,7 @@ Public Class ManualClockIn
 
 
     Private Async Sub ManualClockIn_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.CenterToParent()
+        Form1.positionLoginScreen()
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.CustomFormat = "HH:mm:ss"
@@ -311,6 +311,7 @@ Public Class ManualClockIn
         Form1.Timer1.Start()
         TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         My.Settings.Save()
+        Form1.watch.Start()
     End Sub
 
     'Populate subtasks list based on selected task

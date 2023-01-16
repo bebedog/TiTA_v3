@@ -55,6 +55,7 @@ Public Class Switch
         cbTasks.SelectedIndex = 0
     End Function
 
+
     Private Function filterJobs(ByVal category As String)
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tasks In groups.items
@@ -112,7 +113,7 @@ Public Class Switch
         cbSubTasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tasks In groups.items
-                If tasks.name = cbTasks.SelectedItem Then
+                If tasks.name = cbTasks.Text Then
                     selectedTaskProjectCode = tasks.column_values(0).text
                     If tasks?.subitems IsNot Nothing Then
                         For Each subtasks In tasks.subitems
@@ -127,24 +128,21 @@ Public Class Switch
         Next
 
 
+
     End Sub
     Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         'stop Timer
         Form1.Timer1.Stop()
-
         cbFilter.Items.AddRange(Form1.taskCategories)
         cbFilter.SelectedIndex = 0
-
+        positionLoginScreen()
         'upon load, disable all controls
         disableAllControls()
-
         'Populate tasks combobox
         populateTasksComboBox()
-
         'set combo box to autocomplete
+        cbTasks.AutoCompleteMode = AutoCompleteMode.SuggestAppend
         cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
-
         'Fetch Previous task on TiTA Timeline board on monday.com
         Await FetchPreviousTaskAndSubTask(Form1.currentID)
 
@@ -184,74 +182,79 @@ Public Class Switch
     End Function
     Private Sub cbTasks_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbTasks.SelectedIndexChanged
         updateSubTasksComboBox()
+        cbSubTasks.Enabled = True
+        btnSwitch.Enabled = True
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
-        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-        My.Settings.Save()
-        If Form1.elapsedTime >= 0 Then
-            Form1.elapsedTime = 0
-            Form1.Timer1.Start()
-        End If
         'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
-            disableAllControls()
-            'Switch confirmed
-            lblStatus.Text = "Marking X the previous log.."
-            'Build Object to Change Column Value
-            Dim payload = New ColumnValuesToChange()
-            'Assign values to each property of the object.
-            payload.text_1 = "X"
-            payload.dup__of_time_in = DateTime.Now.ToString("HH:mm:ss")
-            payload.text64 = Form1.titaVersion.ToString
+            Try
+                'Switch confirmed
+                lblStatus.Text = "Marking X the previous log.."
+                'Build Object to Change Column Value
+                Dim payload = New ColumnValuesToChange()
+                'Assign values to each property of the object.
+                payload.text_1 = "X"
+                payload.dup__of_time_in = DateTime.Now.ToString("HH:mm:ss")
+                payload.text64 = Form1.titaVersion.ToString
 
-            'Mark previous log as done
-            Await MarkAsDonePreviousLog(payload)
-            lblStatus.Text = "Creating new log..."
+                'Mark previous log as done
+                disableAllControls()
+                Await MarkAsDonePreviousLog(payload)
+                lblStatus.Text = "Creating new log..."
 
-            'Create new item on monday.com board
-            'and save its id on idOfNewItem
-            idOfNewItem = Await createNewItem()
+                'Create new item on monday.com board
+                'and save its id on idOfNewItem
+                idOfNewItem = Await createNewItem()
 
 
-            'Change the value of the createdItem
-            'But create first the values of the column.
-            Dim payload2 = New ColumnValuesToChange()
-            payload2.job = cbTasks.SelectedItem
-            payload2.text_1 = $"START_{Form1.fSurname}"
-            payload2.text = DateTime.Now.ToString("HH:mm:ss")
-            payload2.text64 = "3.0"
-            payload2.text4 = cbSubTasks.SelectedItem
+                'Change the value of the createdItem
+                'But create first the values of the column.
+                Dim payload2 = New ColumnValuesToChange()
+                payload2.job = cbTasks.SelectedItem
+                payload2.text_1 = $"START_{Form1.fSurname}"
+                payload2.text = DateTime.Now.ToString("HH:mm:ss")
+                payload2.text64 = "3.0"
+                payload2.text4 = cbSubTasks.SelectedItem
 
-            Dim payloadLabel As New Labels()
-            Dim labelList As New List(Of String)
-            labelList.Add(selectedTaskProjectCode)
-            payloadLabel.labels = labelList.ToArray
+                Dim payloadLabel As New Labels()
+                Dim labelList As New List(Of String)
+                labelList.Add(selectedTaskProjectCode)
+                payloadLabel.labels = labelList.ToArray
 
-            payload2.dropdown = payloadLabel
-            Form1.currentProjectNumber = selectedTaskProjectCode
+                payload2.dropdown = payloadLabel
 
-            'create the payload for persons (a nested loop, so we need to construct a new payload for it)
-            Dim person As New Person()
-            Dim personIDandKind As New PersonsAndTeams()
-            Dim personValueList As New List(Of PersonsAndTeams)
-            personIDandKind.id = Form1.mondayID
-            personIDandKind.kind = "person"
-            personValueList.Add(personIDandKind)
-            person.personsAndTeams = personValueList.ToArray
-            payload2.person = person
 
-            'Send multiple column value change request to monday
-            Await ChangeMultipleColumnValues(idOfNewItem, payload2)
 
-            'save all details to form1
-            Form1.currentTask = cbTasks.SelectedItem
-            Form1.currentSubTask = cbSubTasks.SelectedItem
-            Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
 
-            'show display
-            Display.Show()
-            Me.Close()
+                Form1.currentProjectNumber = selectedTaskProjectCode
+
+                'create the payload for persons (a nested loop, so we need to construct a new payload for it)
+                Dim person As New Person()
+                Dim personIDandKind As New PersonsAndTeams()
+                Dim personValueList As New List(Of PersonsAndTeams)
+                personIDandKind.id = Form1.mondayID
+                personIDandKind.kind = "person"
+                personValueList.Add(personIDandKind)
+                person.personsAndTeams = personValueList.ToArray
+                payload2.person = person
+
+                'Send multiple column value change request to monday
+                Await ChangeMultipleColumnValues(idOfNewItem, payload2)
+                'Start Cooldown
+                Form1.watch.Start()
+                'save all details to form1
+                Form1.currentTask = cbTasks.SelectedItem
+                Form1.currentSubTask = cbSubTasks.SelectedItem
+                Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
+                'show display
+                Display.Show()
+                Me.Close()
+            Catch ex As Exception
+                MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Application.Restart()
+            End Try
         Else
             'user pressed no.
             'do nothing.
@@ -484,5 +487,28 @@ Public Class Switch
         cbTasks.Items.Clear()
         filterJobs(cbFilter.SelectedItem.ToString)
         cbTasks.SelectedIndex = 0
+    Public Sub positionLoginScreen()
+        Me.Visible = True
+        Dim x As Integer
+        Dim y As Integer
+        x = Screen.PrimaryScreen.WorkingArea.Width
+        y = Screen.PrimaryScreen.WorkingArea.Height - Me.Height
+        Do Until x = Screen.PrimaryScreen.WorkingArea.Width - Me.Width
+            x = x - 1
+            Me.Location = New Point(x, y)
+        Loop
+    End Sub
+    Private Sub cbTasks_TextUpdate(sender As Object, e As EventArgs) Handles cbTasks.TextUpdate
+        cbSubTasks.Items.Clear()
+        cbSubTasks.Text = ""
+        If cbTasks.Items.Contains(cbTasks.Text) Then
+            btnSwitch.Enabled = True
+            cbSubTasks.Enabled = True
+            cbTasks.SelectedItem = cbSubTasks.Text
+            updateSubTasksComboBox()
+        Else
+            btnSwitch.Enabled = False
+            cbSubTasks.Enabled = False
+        End If
     End Sub
 End Class

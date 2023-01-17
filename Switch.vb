@@ -188,17 +188,12 @@ Public Class Switch
         btnSwitch.Enabled = True
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
-
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
         'NOTE to future programmers:
         'WRITING/DELETING API calls to monday.com is very important.
         'Thus, whenever an error is encountered by the program, instead of restarting the application,
         'It should keep on looping until it gets a success result.
-
-
-
-
-
-
         'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
@@ -502,7 +497,6 @@ Public Class Switch
         filterJobs(cbFilter.SelectedItem.ToString)
         cbTasks.SelectedIndex = 0
     End Sub
-
     Public Sub positionLoginScreen()
         Me.Visible = True
         Dim x As Integer

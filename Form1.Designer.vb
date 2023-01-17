@@ -42,7 +42,7 @@ Partial Class Form1
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblStatus})
         Me.StatusStrip1.Location = New System.Drawing.Point(0, 236)
         Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(317, 22)
+        Me.StatusStrip1.Size = New System.Drawing.Size(315, 22)
         Me.StatusStrip1.TabIndex = 0
         Me.StatusStrip1.Text = "StatusStrip1"
         '
@@ -127,7 +127,7 @@ Partial Class Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(317, 258)
+        Me.ClientSize = New System.Drawing.Size(315, 258)
         Me.Controls.Add(Me.btnChangePW)
         Me.Controls.Add(Me.btnSignin)
         Me.Controls.Add(Me.PictureBox1)
@@ -136,9 +136,9 @@ Partial Class Form1
         Me.Controls.Add(Me.tbPassword)
         Me.Controls.Add(Me.cbUsername)
         Me.Controls.Add(Me.StatusStrip1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
-        Me.MaximumSize = New System.Drawing.Size(333, 297)
-        Me.MinimumSize = New System.Drawing.Size(333, 297)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.MaximumSize = New System.Drawing.Size(315, 258)
+        Me.MinimumSize = New System.Drawing.Size(315, 258)
         Me.Name = "Form1"
         Me.Text = "TiTA v3.0"
         Me.StatusStrip1.ResumeLayout(False)

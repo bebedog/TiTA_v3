@@ -204,7 +204,7 @@ Public Class Form1
         populateCB(namesList)
         If TiTA_v3.My.Settings.recentUser <> "" Then
             cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
-            timesinceLastUpdate()
+            'timesinceLastUpdate()
         End If
         If TiTA_v3.My.Settings.lastMondayUpdate <> "" Then
             lblStatus.Text = "It's been " + howLong.ToString + " seconds since your last update to Monday"
@@ -244,7 +244,7 @@ Public Class Form1
         Dim minuteSinceLastUpdate = DateTime.Now - lastUpdateTime_parsed
         howLong = Math.Round(minuteSinceLastUpdate.TotalSeconds, 0)
         Console.WriteLine(howLong.ToString + " seconds since last update")
-
+    End Sub
     Public Sub positionLoginScreen()
         Me.Visible = True
         Dim x As Integer

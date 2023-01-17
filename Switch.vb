@@ -36,7 +36,12 @@ Public Class Switch
     Public Class CreateItem
         Public Property id As String
     End Class
+    Public Class ChangeMultipleColumnValues
+        Public Property id As String
+    End Class
+
     Public Class Data
+        Public Property change_multiple_column_values As ChangeMultipleColumnValues
         Public Property create_item As CreateItem
         Public Property boards As Board()
     End Class
@@ -54,8 +59,6 @@ Public Class Switch
         Next
         cbTasks.SelectedIndex = 0
     End Function
-
-
     Private Function filterJobs(ByVal category As String)
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tasks In groups.items
@@ -108,7 +111,6 @@ Public Class Switch
             Next
         Next
     End Function
-
     Private Sub updateSubTasksComboBox()
         cbSubTasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
@@ -186,6 +188,17 @@ Public Class Switch
         btnSwitch.Enabled = True
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
+
+        'NOTE to future programmers:
+        'WRITING/DELETING API calls to monday.com is very important.
+        'Thus, whenever an error is encountered by the program, instead of restarting the application,
+        'It should keep on looping until it gets a success result.
+
+
+
+
+
+
         'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
@@ -241,7 +254,7 @@ Public Class Switch
                 payload2.person = person
 
                 'Send multiple column value change request to monday
-                Await ChangeMultipleColumnValues(idOfNewItem, payload2)
+                Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
                 'Start Cooldown
                 Form1.watch.Start()
                 'save all details to form1
@@ -286,6 +299,7 @@ Public Class Switch
             }"
         Try
             Dim resultString As String = Await Form1.SendMondayRequest(MarkAsDonePreviousLogQuery)
+
             Console.WriteLine(resultString)
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
@@ -297,7 +311,7 @@ Public Class Switch
             Exit Function
         End Try
     End Function
-    Public Async Function ChangeMultipleColumnValues(ByVal itemID As String, ByVal columnValues As ColumnValuesToChange) As Task(Of String)
+    Public Async Function ChangeMultipleColumnValues1(ByVal itemID As String, ByVal columnValues As ColumnValuesToChange) As Task(Of String)
         Dim jsonToLoad As String = JsonConvert.SerializeObject(columnValues)
         Dim formattedJSON = jsonToLoad.Replace("""", "\""")
         Dim ChangeMultipleColumnValuesQuery As String =
@@ -389,7 +403,7 @@ Public Class Switch
             payload2.person = person
 
             'Send multiple column value change request to monday
-            Await ChangeMultipleColumnValues(idOfNewItem, payload2)
+            Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
 
             'save all details to form1
             Form1.currentTask = cbTasks.SelectedItem
@@ -466,7 +480,7 @@ Public Class Switch
             payload2.person = person
 
             'Send multiple column value change request to monday
-            Await ChangeMultipleColumnValues(idOfNewItem, payload2)
+            Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
 
             'save all details to form1
             Form1.currentTask = cbTasks.SelectedItem
@@ -487,6 +501,8 @@ Public Class Switch
         cbTasks.Items.Clear()
         filterJobs(cbFilter.SelectedItem.ToString)
         cbTasks.SelectedIndex = 0
+    End Sub
+
     Public Sub positionLoginScreen()
         Me.Visible = True
         Dim x As Integer

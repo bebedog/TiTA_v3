@@ -99,18 +99,18 @@ Partial Class ManualClockIn
         '
         Me.StatusStrip1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolLabel1})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 361)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 364)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
-        Me.StatusStrip1.Size = New System.Drawing.Size(545, 25)
+        Me.StatusStrip1.Size = New System.Drawing.Size(545, 22)
         Me.StatusStrip1.TabIndex = 6
         Me.StatusStrip1.Text = "StatusStrip1"
         '
         'ToolLabel1
         '
-        Me.ToolLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ToolLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ToolLabel1.Name = "ToolLabel1"
-        Me.ToolLabel1.Size = New System.Drawing.Size(56, 20)
+        Me.ToolLabel1.Size = New System.Drawing.Size(37, 17)
         Me.ToolLabel1.Text = "Status"
         '
         'cbSubtasks

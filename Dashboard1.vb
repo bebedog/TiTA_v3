@@ -78,20 +78,23 @@ Public Class Dashboard1
     End Sub
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        If Form1.Timer1.Enabled = False And Form1.howLong < 60 Then
-            Await Task.Delay(60000 - Form1.howLong * 1000)
-        ElseIf Form1.loadDelay > 0 And Form1.Timer1.Enabled = True Then
-            Await Task.Delay(Form1.loadDelay)
-        ElseIf Form1.loadDelay > 60 Then
-            Form1.Timer1.Stop()
-            Form1.elapsedTime = 0
-        End If
+        'If Form1.Timer1.Enabled = False And Form1.howLong < 60 Then
+        '    Await Task.Delay(60000 - Form1.howLong * 1000)
+        'ElseIf Form1.loadDelay > 0 And Form1.Timer1.Enabled = True Then
+        '    Await Task.Delay(Form1.loadDelay)
+        'ElseIf Form1.loadDelay > 60 Then
+        '    Form1.Timer1.Stop()
+        '    Form1.elapsedTime = 0
+        'End If
         'Check the stopwatch if it is running.
+
+
         If Form1.watch.IsRunning Then
             If Int(Form1.watch.Elapsed.ToString("ss")) > 60 Then
                 'the stopwatch is running, but it has been 60 seconds already
                 'that means, the program doesn't have to introduce a delay anymore.
                 timeToWaitInSeconds = 0
+                elapsedTimeInSeconds = 0
             Else
                 'if it's running, take the elapsed time and minus it by
                 '60 seconds. That is the duration of the delay before querying again.
@@ -100,10 +103,14 @@ Public Class Dashboard1
                 Timer1.Start()
             End If
         Else
+
             'if it is not running, that means that this is the first time querying.
             'This means that the duration of delay is 0 seconds!
             timeToWaitInSeconds = 0
         End If
+        Console.WriteLine($"Stopwatch Elapsed Time: {elapsedTimeInSeconds} seconds.")
+        Console.WriteLine($"Time to wait: {timeToWaitInSeconds} seconds")
+
         Await Task.Delay(timeToWaitInSeconds * 1000) 'The delay method takes time in milliseconds. Thus the x1000.
         fetchStatus =
             "query{
@@ -139,7 +146,7 @@ Public Class Dashboard1
             Else
                 Me.Label1.Text = "Success"
                 Form1.currentID = previousLog.data.items_by_column_values(0).id
-                My.Forms.Switch.Show()
+                Switch.Show()
                 Me.Close()
             End If
         Catch ex As Exception
@@ -256,11 +263,11 @@ Public Class Dashboard1
         End If
     End Sub
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        If (60 - Int(Form1.watch.Elapsed.TotalSeconds)) Then
+        If (60 - Int(Form1.watch.Elapsed.TotalSeconds)) > 0 Then
             Label1.Text = $"The program is sleeping for {60 - Int(Form1.watch.Elapsed.TotalSeconds)} seconds to avoid overloading the monday.com servers."
         Else
             Timer1.Stop()
-            Label1.Text = "Countdown Done!"
+            Label1.Text = "Sending!"
         End If
     End Sub
     Public Sub positionLoginScreen()

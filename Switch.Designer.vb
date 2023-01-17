@@ -40,7 +40,7 @@ Partial Class Switch
         '
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(15, 80)
+        Me.Label1.Location = New System.Drawing.Point(14, 52)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(81, 20)
         Me.Label1.TabIndex = 0
@@ -51,7 +51,7 @@ Partial Class Switch
         '
         Me.cbTasks.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbTasks.FormattingEnabled = True
-        Me.cbTasks.Location = New System.Drawing.Point(102, 76)
+        Me.cbTasks.Location = New System.Drawing.Point(101, 48)
         Me.cbTasks.Name = "cbTasks"
         Me.cbTasks.Size = New System.Drawing.Size(311, 28)
         Me.cbTasks.TabIndex = 1
@@ -60,7 +60,7 @@ Partial Class Switch
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(20, 114)
+        Me.Label2.Location = New System.Drawing.Point(19, 86)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(76, 20)
         Me.Label2.TabIndex = 0
@@ -72,7 +72,7 @@ Partial Class Switch
         Me.cbSubTasks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbSubTasks.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbSubTasks.FormattingEnabled = True
-        Me.cbSubTasks.Location = New System.Drawing.Point(102, 110)
+        Me.cbSubTasks.Location = New System.Drawing.Point(101, 82)
         Me.cbSubTasks.Name = "cbSubTasks"
         Me.cbSubTasks.Size = New System.Drawing.Size(311, 28)
         Me.cbSubTasks.TabIndex = 1
@@ -80,7 +80,7 @@ Partial Class Switch
         'btnSwitch
         '
         Me.btnSwitch.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSwitch.Location = New System.Drawing.Point(12, 154)
+        Me.btnSwitch.Location = New System.Drawing.Point(12, 116)
         Me.btnSwitch.Name = "btnSwitch"
         Me.btnSwitch.Size = New System.Drawing.Size(129, 80)
         Me.btnSwitch.TabIndex = 2
@@ -90,7 +90,7 @@ Partial Class Switch
         'Button2
         '
         Me.Button2.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button2.Location = New System.Drawing.Point(147, 154)
+        Me.Button2.Location = New System.Drawing.Point(147, 116)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(129, 80)
         Me.Button2.TabIndex = 2
@@ -100,7 +100,7 @@ Partial Class Switch
         'Button3
         '
         Me.Button3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button3.Location = New System.Drawing.Point(284, 154)
+        Me.Button3.Location = New System.Drawing.Point(284, 116)
         Me.Button3.Name = "Button3"
         Me.Button3.Size = New System.Drawing.Size(129, 80)
         Me.Button3.TabIndex = 2
@@ -110,7 +110,7 @@ Partial Class Switch
         'StatusStrip1
         '
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblStatus})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 247)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 204)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Size = New System.Drawing.Size(425, 22)
         Me.StatusStrip1.TabIndex = 3
@@ -126,7 +126,7 @@ Partial Class Switch
         Me.cbFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbFilter.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbFilter.FormattingEnabled = True
-        Me.cbFilter.Location = New System.Drawing.Point(103, 40)
+        Me.cbFilter.Location = New System.Drawing.Point(102, 12)
         Me.cbFilter.Name = "cbFilter"
         Me.cbFilter.Size = New System.Drawing.Size(311, 28)
         Me.cbFilter.TabIndex = 5
@@ -135,7 +135,7 @@ Partial Class Switch
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(43, 44)
+        Me.Label3.Location = New System.Drawing.Point(42, 16)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(48, 20)
         Me.Label3.TabIndex = 4
@@ -146,7 +146,7 @@ Partial Class Switch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(425, 269)
+        Me.ClientSize = New System.Drawing.Size(425, 226)
         Me.Controls.Add(Me.cbFilter)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.StatusStrip1)
@@ -157,6 +157,7 @@ Partial Class Switch
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.cbTasks)
         Me.Controls.Add(Me.Label1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "Switch"
         Me.Text = "DisplayAndSwitch"
         Me.StatusStrip1.ResumeLayout(False)

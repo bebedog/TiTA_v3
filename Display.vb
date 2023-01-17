@@ -41,9 +41,8 @@
         Next
     End Sub
     Private Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
-        Form1.loadDelay = 60000 - Form1.elapsedTime
+        'Form1.loadDelay = 60000 - Form1.elapsedTime
         Dim result = MessageBox.Show("Are you sure you want to switch to other tasks?", "Switch Tasks", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-
         If result = DialogResult.Yes Then
             Dashboard1.Show()
             Me.Close()
@@ -51,8 +50,8 @@
 
     End Sub
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        NotifyIcon1.Text = $"{Form1.fFirstName} | {Form1.currentTask}"
         Me.Hide()
+        NotifyIcon1.Text = $"{Form1.fFirstName} | {Form1.currentTask}"
         NotifyIcon1.BalloonTipText = "TiTA is now working in the background and will remind you in an hour about your current task."
         NotifyIcon1.BalloonTipIcon = ToolTipIcon.Info
         NotifyIcon1.ShowBalloonTip(30000)

@@ -33,7 +33,6 @@ Partial Class Switch
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
-
         Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -70,13 +69,10 @@ Partial Class Switch
         '
         'cbSubTasks
         '
+        Me.cbSubTasks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cbSubTasks.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbSubTasks.FormattingEnabled = True
         Me.cbSubTasks.Location = New System.Drawing.Point(102, 110)
-
-        Me.cbSubTasks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-
-
         Me.cbSubTasks.Name = "cbSubTasks"
         Me.cbSubTasks.Size = New System.Drawing.Size(311, 28)
         Me.cbSubTasks.TabIndex = 1
@@ -114,7 +110,7 @@ Partial Class Switch
         'StatusStrip1
         '
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblStatus})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 246)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 247)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Size = New System.Drawing.Size(425, 22)
         Me.StatusStrip1.TabIndex = 3
@@ -146,18 +142,13 @@ Partial Class Switch
         Me.Label3.Text = "Filter:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'DisplayAndSwitch
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(425, 268)
-        Me.Controls.Add(Me.cbFilter)
-        Me.Controls.Add(Me.Label3)
         'Switch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(425, 196)
+        Me.ClientSize = New System.Drawing.Size(425, 269)
+        Me.Controls.Add(Me.cbFilter)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.Button2)

@@ -85,9 +85,13 @@ Public Class Form1
         Dim response = New RestResponse
         response = Await client.PostAsync(request)
         If response.IsSuccessStatusCode = True Then
-            Return response.Content
+            If response.Content.Contains("error_message") Or response.Content.Contains("error_code") Or response.Content.Contains("errors") Then
+                Console.WriteLine("Error caught: " + response.Content)
+            Else
+                Return response.Content
+            End If
         Else
-            Return False
+                Return False
         End If
 
     End Function
@@ -139,6 +143,7 @@ Public Class Form1
         watch.Stop()
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
+        timesinceLastUpdate()
         Dim fetchTasksQuery As String =
             "query{
                 boards(ids: 2718204773){
@@ -204,7 +209,6 @@ Public Class Form1
         populateCB(namesList)
         If TiTA_v3.My.Settings.recentUser <> "" Then
             cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
-            timesinceLastUpdate()
         End If
         If TiTA_v3.My.Settings.lastMondayUpdate <> "" Then
             lblStatus.Text = "It's been " + howLong.ToString + " seconds since your last update to Monday"
@@ -218,7 +222,7 @@ Public Class Form1
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
             MessageBox.Show($"Welcome back, {fFirstName}!", "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Me.Hide()
+            Me.Visible = False
             Dashboard1.Show()
         Else
             MessageBox.Show("Incorrect Password.")
@@ -245,6 +249,9 @@ Public Class Form1
         howLong = Math.Round(minuteSinceLastUpdate.TotalSeconds, 0)
         Console.WriteLine(howLong.ToString + " seconds since last update")
 
+    End Sub
+
+
     Public Sub positionLoginScreen()
         Me.Visible = True
         Dim x As Integer
@@ -255,5 +262,25 @@ Public Class Form1
             x = x - 1
             Me.Location = New Point(x, y)
         Loop
+    End Sub
+
+    Private Async Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        Dim testQuery = "query{
+                boards(ids:3428362986){
+                    items{
+                        id    
+                        ??
+                        column_values{
+                            title
+                            text
+                        }
+                    }
+                }
+            }"
+
+        Dim testQueryResult = Await SendMondayRequest(testQuery)
+        Console.WriteLine(testQueryResult)
+
     End Sub
 End Class

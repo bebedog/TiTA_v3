@@ -127,6 +127,7 @@ Public Class Dashboard1
                 Dim msgResult = MessageBox.Show("No previous log found. Clock In Manually?", "No Record Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
                 If msgResult = DialogResult.Yes Then
                     ManualClockIn.Show()
+                    Form1.Visible = False
                     Me.Close()
                 Else
                     Application.Restart()

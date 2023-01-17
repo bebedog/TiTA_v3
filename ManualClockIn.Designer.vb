@@ -35,6 +35,7 @@ Partial Class ManualClockIn
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.btnCurrentTime = New System.Windows.Forms.Button()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -91,11 +92,12 @@ Partial Class ManualClockIn
         Me.DateTimePicker1.Location = New System.Drawing.Point(128, 139)
         Me.DateTimePicker1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DateTimePicker1.Name = "DateTimePicker1"
-        Me.DateTimePicker1.Size = New System.Drawing.Size(368, 26)
+        Me.DateTimePicker1.Size = New System.Drawing.Size(184, 26)
         Me.DateTimePicker1.TabIndex = 5
         '
         'StatusStrip1
         '
+        Me.StatusStrip1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolLabel1})
         Me.StatusStrip1.Location = New System.Drawing.Point(0, 361)
         Me.StatusStrip1.Name = "StatusStrip1"
@@ -176,11 +178,23 @@ Partial Class ManualClockIn
         Me.Label3.Text = "Filter: "
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'btnCurrentTime
+        '
+        Me.btnCurrentTime.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnCurrentTime.Location = New System.Drawing.Point(320, 136)
+        Me.btnCurrentTime.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.btnCurrentTime.Name = "btnCurrentTime"
+        Me.btnCurrentTime.Size = New System.Drawing.Size(176, 32)
+        Me.btnCurrentTime.TabIndex = 13
+        Me.btnCurrentTime.Text = "Use Current Time"
+        Me.btnCurrentTime.UseVisualStyleBackColor = True
+        '
         'ManualClockIn
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(545, 386)
+        Me.Controls.Add(Me.btnCurrentTime)
         Me.Controls.Add(Me.cbFilter)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.PictureBox1)
@@ -218,4 +232,5 @@ Partial Class ManualClockIn
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents cbFilter As ComboBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents btnCurrentTime As Button
 End Class

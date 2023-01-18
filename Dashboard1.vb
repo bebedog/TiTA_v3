@@ -87,14 +87,14 @@ Public Class Dashboard1
         '    Form1.elapsedTime = 0
         'End If
         'Check the stopwatch if it is running.
-
-
         If Form1.watch.IsRunning Then
             If Int(Form1.watch.Elapsed.ToString("ss")) > 60 Then
                 'the stopwatch is running, but it has been 60 seconds already
                 'that means, the program doesn't have to introduce a delay anymore.
                 timeToWaitInSeconds = 0
                 elapsedTimeInSeconds = 0
+                Form1.watch.Restart()
+                Form1.watch.Stop()
             Else
                 'if it's running, take the elapsed time and minus it by
                 '60 seconds. That is the duration of the delay before querying again.
@@ -268,6 +268,8 @@ Public Class Dashboard1
         Else
             Timer1.Stop()
             Label1.Text = "Sending!"
+            Form1.watch.Restart()
+            Form1.watch.Stop()
         End If
     End Sub
     Public Sub positionLoginScreen()

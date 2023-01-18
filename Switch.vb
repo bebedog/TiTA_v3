@@ -188,6 +188,8 @@ Public Class Switch
         btnSwitch.Enabled = True
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
+        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        My.Settings.Save()
         'NOTE to future programmers:
         'WRITING/DELETING API calls to monday.com is very important.
         'Thus, whenever an error is encountered by the program, instead of restarting the application,
@@ -501,7 +503,6 @@ Public Class Switch
         filterJobs(cbFilter.SelectedItem.ToString)
         cbTasks.SelectedIndex = 0
     End Sub
-
     Public Sub positionLoginScreen()
         Me.Visible = True
         Dim x As Integer

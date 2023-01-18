@@ -140,6 +140,7 @@
     <Compile Include="Display.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Settings.vb" />
     <Compile Include="Switch.Designer.vb">
       <DependentUpon>Switch.vb</DependentUpon>
     </Compile>

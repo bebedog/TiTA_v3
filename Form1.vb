@@ -109,9 +109,13 @@ Public Class Form1
         Dim response = New RestResponse
         response = Await client.PostAsync(request)
         If response.IsSuccessStatusCode = True Then
-            Return response.Content
+            If response.Content.Contains("error_message") Or response.Content.Contains("error_code") Or response.Content.Contains("errors") Then
+                Console.WriteLine("Error caught: " + response.Content)
+            Else
+                Return response.Content
+            End If
         Else
-            Return False
+                Return False
         End If
 
         'If response.IsSuccessStatusCode Then
@@ -174,6 +178,7 @@ Public Class Form1
         watch.Stop()
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
+        timesinceLastUpdate()
         Dim fetchTasksQuery As String =
             "query{
                 boards(ids: 2718204773){
@@ -316,7 +321,7 @@ Public Class Form1
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
             MessageBox.Show($"Welcome back, {fFirstName}!", "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Me.Hide()
+            Me.Visible = False
             Dashboard1.Show()
         Else
             MessageBox.Show("Incorrect Password.")
@@ -362,7 +367,7 @@ Public Class Form1
                         name
                         column_values{
                             title
-                            tex
+                                                          text
                         }
                     }
                 }
@@ -372,7 +377,6 @@ Public Class Form1
         Catch ex As Exception
             MessageBox.Show($"Error Code 1{Environment.NewLine}{ex.Message}")
         End Try
-
     End Sub
     Public Async Function SendMondayRequestVersion2(ByVal myQuery As String) As Task(Of Object)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
@@ -405,5 +409,4 @@ Public Class Form1
             Throw New System.Exception("An error has occured at function: SendMondayRequestVersion2")
         End If
     End Function
-
 End Class

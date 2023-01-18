@@ -173,9 +173,21 @@ Public Class ManualClockIn
             name
           }
         }"
-        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-        Await getItemID(newItemObj)
+
+        Try
+            Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+            newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+            Await getItemID(newItemObj)
+        Catch ex As Exception
+            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            If result = DialogResult.Retry Then
+                Application.Restart()
+            Else
+                Me.Close()
+            End If
+            Exit Function
+        End Try
+
     End Function
 
     'Retrieve Item ID from created Manual Clock In Record (currently blank)
@@ -287,6 +299,8 @@ Public Class ManualClockIn
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.CustomFormat = "HH:mm:ss"
+        DateTimePicker1.MinDate = DateAdd(DateInterval.Day, -1, DateTime.Today)
+        DateTimePicker1.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Today)
         cbFilter.Items.AddRange(Form1.taskCategories)
         cbFilter.SelectedIndex = 0
         populateJobsList()
@@ -304,13 +318,26 @@ Public Class ManualClockIn
         Next
     End Sub
 
+    Private Function validateTime(ByVal timeIn As String) As Boolean
+        Dim timeInParsed = DateTime.Parse(timeIn)
+        Dim timeDiff = timeInParsed - DateTime.Now
+        If timeDiff.TotalMinutes <= -30 Or timeDiff.TotalMinutes >= 5 Then
+            Dim invalidTime = MessageBox.Show("Please make sure the time you enter is less than 30 minutes earlier than current time", "Invalid time entered", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            If invalidTime.OK Then
+                enableAllControls()
+            End If
+        Else Return True
+        End If
+
+    End Function
+
     'Assign Create Item > Update column events to Time In button
     Private Async Sub btnTimeIn_Click(sender As Object, e As EventArgs) Handles btnTimeIn.Click
-        Await createNewItem()
-        Form1.loadDelay = 60000 - Form1.elapsedTime
-        Form1.Timer1.Start()
-        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-        My.Settings.Save()
+        If validateTime(DateTimePicker1.Text) = True Then
+            Await createNewItem()
+            TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            My.Settings.Save()
+        End If
         Form1.watch.Start()
     End Sub
 
@@ -330,4 +357,7 @@ Public Class ManualClockIn
         cbProjectsList.SelectedIndex = 0
     End Sub
 
+    Private Sub btnCurrentTime_Click(sender As Object, e As EventArgs) Handles btnCurrentTime.Click
+        DateTimePicker1.Value = Now()
+    End Sub
 End Class

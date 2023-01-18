@@ -188,18 +188,12 @@ Public Class Switch
         btnSwitch.Enabled = True
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
-
         'NOTE to future programmers:
         'WRITING/DELETING API calls to monday.com is very important.
         'Thus, whenever an error is encountered by the program, instead of restarting the application,
         'It should keep on looping until it gets a success result.
+        'Mark the previous log as done, and put in timeout column and tita
 
-
-
-
-
-
-        'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
             Try
@@ -345,13 +339,12 @@ Public Class Switch
     End Sub
 
     Private Async Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-
         TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         My.Settings.Save()
-        If Form1.elapsedTime >= 0 Then
-            Form1.elapsedTime = 0
-            Form1.Timer1.Start()
-        End If
+        'If Form1.elapsedTime >= 0 Then
+        '    Form1.elapsedTime = 0
+        '    Form1.Timer1.Start()
+        'End If
         'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to start your lunch break?", "Go to Lunch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
@@ -405,6 +398,9 @@ Public Class Switch
             'Send multiple column value change request to monday
             Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
 
+            'Start stopwatch
+            Form1.watch.Start()
+
             'save all details to form1
             Form1.currentTask = cbTasks.SelectedItem
             Form1.currentSubTask = cbSubTasks.SelectedItem
@@ -421,14 +417,13 @@ Public Class Switch
     End Sub
 
     Private Async Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-
         TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         My.Settings.Save()
-        If Form1.elapsedTime > 0 Then
-            Form1.elapsedTime = 0
-            Form1.loadDelay = 60000 - Form1.elapsedTime
-            Form1.Timer1.Start()
-        End If
+        'If Form1.elapsedTime > 0 Then
+        '    Form1.elapsedTime = 0
+        '    Form1.loadDelay = 60000 - Form1.elapsedTime
+        '    Form1.Timer1.Start()
+        'End If
         'Mark the previous log as done, and put in timeout column and tita 
         Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to start your break?", "Start Break", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If dialogResult = DialogResult.Yes Then
@@ -481,6 +476,10 @@ Public Class Switch
 
             'Send multiple column value change request to monday
             Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
+
+
+            'Start stopwatch
+            Form1.watch.Start()
 
             'save all details to form1
             Form1.currentTask = cbTasks.SelectedItem

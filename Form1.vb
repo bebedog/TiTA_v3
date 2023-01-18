@@ -1,7 +1,9 @@
 ﻿Imports RestSharp
 Imports Newtonsoft.Json
 Public Class Form1
+    Dim resultsList As List(Of Object)
     Public watch As Stopwatch
+    Public maxErrorCount As Integer = 5
 
     Public queryTimeOut As Integer = 15000
     Public titaVersion As String = "3.0"
@@ -31,6 +33,28 @@ Public Class Form1
     Public currentSubTask As String
     Public currentTimeIn As String
     Public currentProjectNumber As String
+
+    'Class Declaration for Deserialization (Errors)
+    Public Class Location1
+        Public Property line As Integer
+        Public Property column As Integer
+    End Class
+
+    Public Class Error1
+        Public Property message As String
+        Public Property locations As Location1()
+        Public Property fields As String()
+    End Class
+
+    Public Class ErrorRoot
+        Public Property errors As Error1()
+        Public Property account_id As Integer
+        Public Property error_code As String
+        Public Property status_code As Integer
+        Public Property error_message As String
+        Public Property error_data As String
+    End Class
+
     'Class Declaration for Serialization (Changing ColumnValues for Previous Log)
     Public Class ColumnValuesToChange
         Public Property text_1 As String ' START_Surname
@@ -89,6 +113,17 @@ Public Class Form1
         Else
             Return False
         End If
+
+        'If response.IsSuccessStatusCode Then
+        '    'response has a statuscode of 200
+        '    'but it might have a parse error, which still is status 200.
+        '    If response.Content.Contains("error") Or response.Content.Contains("error_message") Or response.Content.Contains("errors") Then
+        '        'response has a status code 200, but has a monday.com error.
+        '        Return
+        '    Else
+
+        '    End If
+        'End If
 
     End Function
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
@@ -177,7 +212,7 @@ Public Class Form1
                 boards(ids:[3428362986]) 
                 {
                   items{
-                    name
+                    name?
                     id
                 }
                 }}"
@@ -185,13 +220,57 @@ Public Class Form1
         lblStatus.Text = "Fetching Accounts..."
         DisableAllControls()
 
+        Dim queries As New List(Of String)
+        'add all queries in this list
+        queries.Add(fetchAccountQuery)
+        queries.Add(fetchNames)
+        queries.Add(fetchTasksQuery)
+
         Try
-            Dim result As String = Await SendMondayRequest(fetchAccountQuery)
-            Dim result2 As String = Await SendMondayRequest(fetchNames)
-            Dim result3 As String = Await SendMondayRequest(fetchTasksQuery)
-            accounts = JsonConvert.DeserializeObject(Of Root)(result)
-            namesList = JsonConvert.DeserializeObject(Of Root)(result2)
-            allTasks = JsonConvert.DeserializeObject(Of Root)(result3)
+            Dim deserializedResults As New List(Of Object)
+            Dim isError As New Boolean
+            Dim badQuery As New List(Of String)
+            Console.WriteLine("Trying to fetch....")
+            For retries = 1 To maxErrorCount
+                ToolStripProgressBar1.Maximum = maxErrorCount - 1
+                ToolStripProgressBar1.Increment(1)
+                Dim goodQueryCounter As Integer = 0
+                If retries <> maxErrorCount Then
+                    For Each query In queries
+                        Dim result = (Await SendMondayRequestVersion2(query))
+                        If result(0) = "error" Then
+                            'the result is an error.
+                            'deserialize into ErrorRoot
+                            deserializedResults.Add(JsonConvert.DeserializeObject(Of ErrorRoot)(result(1)))
+                            'badQuery.Add(query)
+                            Console.WriteLine($"Something went wrong. Retrying... {retries + 1}/{maxErrorCount}")
+                            Exit For
+                        Else
+                            'the result is success.
+                            'deserialize into Root
+                            deserializedResults.Add(JsonConvert.DeserializeObject(Of Root)(result(1)))
+                            goodQueryCounter += 1
+                        End If
+                    Next
+                Else
+                    'max retries are all used.
+                    Throw New Exception("Could not fetch accounts.")
+                    Exit Sub
+                End If
+
+                If goodQueryCounter = queries.Count Then
+                    Exit For
+                End If
+            Next
+
+
+
+            accounts = deserializedResults(0)
+            namesList = deserializedResults(1)
+            allTasks = deserializedResults(2)
+
+            populateCB(namesList)
+
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
@@ -201,15 +280,34 @@ Public Class Form1
             End If
             Exit Sub
         End Try
-        populateCB(namesList)
+
+        'Try
+        '    Dim result As String = Await SendMondayRequest(fetchAccountQuery)
+        '    Dim result2 As String = Await SendMondayRequest(fetchNames)
+        '    Dim result3 As String = Await SendMondayRequest(fetchTasksQuery)
+        '    accounts = JsonConvert.DeserializeObject(Of Root)(result)
+        '    namesList = JsonConvert.DeserializeObject(Of Root)(result2)
+        '    allTasks = JsonConvert.DeserializeObject(Of Root)(result3)
+        'Catch ex As Exception
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Sub
+        'End Try
+
+        'populateCB(namesList)
         If TiTA_v3.My.Settings.recentUser <> "" Then
             cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
             'timesinceLastUpdate()
         End If
-        If TiTA_v3.My.Settings.lastMondayUpdate <> "" Then
-            lblStatus.Text = "It's been " + howLong.ToString + " seconds since your last update to Monday"
-        Else lblStatus.Text = "Accounts Fetched."
-        End If
+        'If TiTA_v3.My.Settings.lastMondayUpdate <> "" Then
+        '    lblStatus.Text = "It's been " + howLong.ToString + " seconds since your last update to Monday"
+        'Else lblStatus.Text = "Accounts Fetched."
+        'End If
+        lblStatus.Text = "Accounts fetched."
 
         EnableAllControls()
 
@@ -236,8 +334,6 @@ Public Class Form1
         ChangePassword.Show()
         Me.Hide()
     End Sub
-
-
     Private Sub timesinceLastUpdate()
         Dim lastUpdateTime As String = TiTA_v3.My.Settings.lastMondayUpdate
         Dim lastUpdateTime_parsed = DateTime.Parse(lastUpdateTime)
@@ -256,4 +352,58 @@ Public Class Form1
             Me.Location = New Point(x, y)
         Loop
     End Sub
+
+    Private Async Sub btnTestAmodia_Click(sender As Object, e As EventArgs) Handles btnTestAmodia.Click
+        Dim fetchAccountQuery As String =
+            "query{
+                boards(ids:3428362986){
+                    items{
+                        id    
+                        name
+                        column_values{
+                            title
+                            tex
+                        }
+                    }
+                }
+            }"
+        Try
+            Dim response As Object = Await SendMondayRequestVersion2(fetchAccountQuery)
+        Catch ex As Exception
+            MessageBox.Show($"Error Code 1{Environment.NewLine}{ex.Message}")
+        End Try
+
+    End Sub
+    Public Async Function SendMondayRequestVersion2(ByVal myQuery As String) As Task(Of Object)
+        Dim options = New RestClientOptions("https://api.monday.com/v2")
+        options.ThrowOnAnyError = True
+        options.MaxTimeout = queryTimeOut
+        Dim client = New RestClient(options)
+        Dim request = New RestRequest()
+        request.Timeout = queryTimeOut
+        request.Method = Method.Post
+        request.AddHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjE1MjU2NzQ3OCwidWlkIjoxNTA5MzQwNywiaWFkIjoiMjAyMi0wMy0yNVQwMTo0Njo1My4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.F1TqwLS-QsuM8Ss3UcgskbNFUIer1dfwfoLyPMq1pbc")
+        request.AddQueryParameter("query", myQuery)
+        Dim response = New RestResponse
+        response = Await client.PostAsync(request)
+        'If response.IsSuccessStatusCode = True Then
+        '    Return response.Content
+        'Else
+        '    Return False
+        'End If
+        If response.IsSuccessStatusCode Then
+            'response has a statuscode of 200
+            'but it might have a parse error, which still is status 200.
+            If response.Content.Contains("error") Or response.Content.Contains("error_message") Or response.Content.Contains("errors") Then
+                'response has a status code 200, but has a monday.com error.
+                Return {"error", response.Content}
+            Else
+                'response has a status code 200, with readable results.
+                Return {"success", response.Content}
+            End If
+        Else
+            Throw New System.Exception("An error has occured at function: SendMondayRequestVersion2")
+        End If
+    End Function
+
 End Class

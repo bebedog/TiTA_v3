@@ -9,7 +9,6 @@ Public Class Dashboard1
     Dim duplicateIDstoDelete As New List(Of String)
     Public newItemID
     Public newItemObj
-    Public fetchStatus As String
 
 
 
@@ -63,30 +62,10 @@ Public Class Dashboard1
         Me.TopMost = True
         DataGridView1.Visible = False
         DataGridView1.Enabled = True
-        ''Create datatable instance
-        'Dim table As New DataTable
-        ''create 3 typed columns in the datatable.
-        'table.Columns.Add("Dosage", GetType(Integer))
-        'table.Columns.Add("Drug", GetType(String))
-        'table.Columns.Add("PatientID", GetType(String))
-
-        ''add rows with those columns filled in the datatable.
-        'table.Rows.Add(25, "Drug A", "10")
-
-
-        'DataGridView1.DataSource = table
     End Sub
     Private Async Sub Dashboard1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Label1.Text = "Please wait..."
-        'If Form1.Timer1.Enabled = False And Form1.howLong < 60 Then
-        '    Await Task.Delay(60000 - Form1.howLong * 1000)
-        'ElseIf Form1.loadDelay > 0 And Form1.Timer1.Enabled = True Then
-        '    Await Task.Delay(Form1.loadDelay)
-        'ElseIf Form1.loadDelay > 60 Then
-        '    Form1.Timer1.Stop()
-        '    Form1.elapsedTime = 0
-        'End If
-        'Check the stopwatch if it is running.
+        'START Check the stopwatch if it is running and apply delay
         If Form1.watch.IsRunning Then
             If Int(Form1.watch.Elapsed.ToString("ss")) > 60 Then
                 'the stopwatch is running, but it has been 60 seconds already
@@ -103,16 +82,15 @@ Public Class Dashboard1
                 Timer1.Start()
             End If
         Else
-
             'if it is not running, that means that this is the first time querying.
             'This means that the duration of delay is 0 seconds!
             timeToWaitInSeconds = 0
         End If
         Console.WriteLine($"Stopwatch Elapsed Time: {elapsedTimeInSeconds} seconds.")
         Console.WriteLine($"Time to wait: {timeToWaitInSeconds} seconds")
-
         Await Task.Delay(timeToWaitInSeconds * 1000) 'The delay method takes time in milliseconds. Thus the x1000.
-        fetchStatus =
+        'END Check the stopwatch if it is running and apply delay
+        Dim fetchStatus As String =
             "query{
                 items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
                     id
@@ -125,11 +103,25 @@ Public Class Dashboard1
                 }
             }"
         Try
-            Dim result As String = Await Form1.SendMondayRequest(fetchStatus)
-            previousLog = JsonConvert.DeserializeObject(Of Root)(result)
+            For retries = 1 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim result As Object = Await Form1.SendMondayRequestVersion2(fetchStatus)
+                    If result(0) = "error" Then
+                        'error. must repeat.
+                        Label1.Text = $"Error occured when fetching previous log. Retrying ({retries}/{Form1.maxErrorCount})"
+                    Else
+                        'success. must deserialize.
+                        previousLog = JsonConvert.DeserializeObject(Of Root)(result(1))
+                        Exit For
+                    End If
+                Else
+                    Throw New Exception("Could not fetch previous log.")
+                End If
+            Next
             ShowDuplicateLogs(previousLog, DataGridView1)
             Dim count As Integer = previousLog.data.items_by_column_values.Length
             If count = 0 Then
+                'no previous log found | Manual Clock-in form goes here.
                 Label1.Text = "No previous log found. Clock In Manually?"
                 Dim msgResult = MessageBox.Show("No previous log found. Clock In Manually?", "No Record Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
                 If msgResult = DialogResult.Yes Then
@@ -140,10 +132,13 @@ Public Class Dashboard1
                     Application.Restart()
                 End If
             ElseIf count > 1 Then
+                'there are multiple clockins. Datagridview shows here!
                 Me.Label1.Text = "Duplicate Entries Found. Please select your most recent record."
                 DataGridView1.Visible = True
                 DataGridView1.Enabled = True
+                lblQuotes.Visible = False
             Else
+                'only one log found. This is the ideal result.
                 Me.Label1.Text = "Success"
                 Form1.currentID = previousLog.data.items_by_column_values(0).id
                 Switch.Show()
@@ -155,31 +150,100 @@ Public Class Dashboard1
             If result = DialogResult.Retry Then
                 Application.Restart()
             Else
-                Me.Close()
+                Form1.Close()
             End If
-            Exit Sub
+            'Exit Sub
         Finally
             Form1.watch.Reset()
         End Try
+
+        'START of Old Code here. DONT DELETE!
+        'Try
+        '    Dim result As String = Await Form1.SendMondayRequest(fetchStatus)
+        '    previousLog = JsonConvert.DeserializeObject(Of Root)(result)
+        '    ShowDuplicateLogs(previousLog, DataGridView1)
+        '    Dim count As Integer = previousLog.data.items_by_column_values.Length
+        '    If count = 0 Then
+        '        Label1.Text = "No previous log found. Clock In Manually?"
+        '        Dim msgResult = MessageBox.Show("No previous log found. Clock In Manually?", "No Record Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+        '        If msgResult = DialogResult.Yes Then
+        '            ManualClockIn.Show()
+        '            Form1.Visible = False
+        '            Me.Close()
+        '        Else
+        '            Application.Restart()
+        '        End If
+        '    ElseIf count > 1 Then
+        '        Me.Label1.Text = "Duplicate Entries Found. Please select your most recent record."
+        '        DataGridView1.Visible = True
+        '        DataGridView1.Enabled = True
+        '        lblQuotes.Visible = False
+        '    Else
+        '        Me.Label1.Text = "Success"
+        '        Form1.currentID = previousLog.data.items_by_column_values(0).id
+        '        Switch.Show()
+        '        Me.Close()
+        '    End If
+        'Catch ex As Exception
+        '    Console.WriteLine("Error!")
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Sub
+        'Finally
+        '    Form1.watch.Reset()
+        'End Try
+        'END of Old Code here. DONT DELETE!
     End Sub
+
     Public Async Sub createNewItem()
-        Dim createItemQuery As String
-        createItemQuery =
+        Dim createItemQuery As String =
         "mutation{
           create_item(board_id: 2628729848 group_id: ""topics"" item_name:""" + Form1.fSurname + """){ 
             id
             name
           }
         }"
-        Await Form1.SendMondayRequest(createItemQuery)
-        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-        newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-        getItemID(newItemObj)
+        Try
+            For retries = 1 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim result As Object = Await Form1.SendMondayRequestVersion2(createItemQuery)
+                    If result(0) = "error" Then
+                        'error here.
+                        Label1.Text = $"Error occured when creating new item. Retrying({retries}/{Form1.maxErrorCount})"
+                    Else
+                        'no error
+                        newItemObj = JsonConvert.DeserializeObject(Of Root)(result(1))
+                        getItemID(newItemObj)
+                        Exit For
+                    End If
+                Else
+                    Throw New Exception("Error occured when creating new item.")
+                End If
+            Next
+        Catch ex As Exception
+            Console.WriteLine("Error!")
+            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            If result = DialogResult.Retry Then
+                Application.Restart()
+            Else
+                Form1.Close()
+            End If
+        End Try
+        'START OLD CODE DONT DELETE
+        'Await Form1.SendMondayRequest(createItemQuery)
+        'Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+        'newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+        'getItemID(newItemObj)
+        'END OLD CODE DONT DELETE
     End Sub
-    Public Function getItemID(createdItem As Root)
+    Public Sub getItemID(createdItem As Root)
         newItemID = createdItem.data.create_item.id
         ManualClockIn.ToolLabel1.Text = newItemID
-    End Function
+    End Sub
     Private Sub resetDashboardForm(ByVal form_name As Form)
         Dim newInstanceOfDashboard1 As New Dashboard1
         form_name.Dispose()
@@ -202,15 +266,14 @@ Public Class Dashboard1
         targetDataGridView.DataSource = duplicateLogs
     End Sub
     Private Async Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
-
-        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-        My.Settings.Save()
-        Form1.Timer1.Start()
-        If Form1.Timer1.Enabled = True Then
-            Form1.elapsedTime = 0
-            Form1.loadDelay = 60000 - Form1.elapsedTime
-        End If
-        Form1.watch.Start()
+        'TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        'My.Settings.Save()
+        'Form1.Timer1.Start()
+        'If Form1.Timer1.Enabled = True Then
+        '    Form1.elapsedTime = 0
+        '    Form1.loadDelay = 60000 - Form1.elapsedTime
+        'End If
+        'Form1.watch.Start()
         Dim senderGrid = DirectCast(sender, DataGridView)
         If TypeOf senderGrid.Columns(e.ColumnIndex) Is DataGridViewButtonColumn AndAlso e.RowIndex >= 0 Then
             Form1.currentID = senderGrid.CurrentRow.Cells(3).Value.ToString
@@ -237,6 +300,31 @@ Public Class Dashboard1
                                 id
                             }
                         }"
+                    Label1.Text = $"Deleting Item with ID: {deleteItemRequest}"
+                    Try
+                        For retries = 1 To Form1.maxErrorCount
+                            If retries <> Form1.maxErrorCount Then
+                                Dim fResult As Object = Await Form1.SendMondayRequestVersion2(requestString)
+                                If fResult(0) = "error" Then
+                                    Label1.Text = $"Error occured when deleting new item. Retrying({retries}/{Form1.maxErrorCount})"
+                                Else
+                                    MessageBox.Show($"Successfully deleted item with ID: {deleteItemRequest}")
+                                    Exit For
+                                End If
+                            Else
+                                Throw New Exception("Error occured when deleting items.")
+                            End If
+                        Next
+                    Catch ex As Exception
+                        Console.WriteLine("Error!")
+                        Dim xResult As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+                        If xResult = DialogResult.Retry Then
+                            Application.Restart()
+                        Else
+                            Form1.Close()
+                        End If
+                    End Try
+                    'START OLD CODE DONT DELETE
                     Try
                         Label1.Text = $"Deleting Item with ID: {deleteItemRequest}"
                         Await Form1.SendMondayRequest(requestString)
@@ -250,7 +338,9 @@ Public Class Dashboard1
                         End If
                         Exit Sub
                     End Try
+                    'END OLD CODE DONT DELETE
                 Next
+                Form1.watch.Restart()
                 resetDashboardForm(My.Forms.Dashboard1)
             ElseIf result = DialogResult.No Then
                 'Mark the previous logs as done ("X")
@@ -259,7 +349,6 @@ Public Class Dashboard1
                 'returns the user to the selection screen
                 Form1.currentID = ""
             End If
-
         End If
     End Sub
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick

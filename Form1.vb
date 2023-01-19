@@ -3,7 +3,7 @@ Imports Newtonsoft.Json
 Public Class Form1
     Dim resultsList As List(Of Object)
     Public watch As Stopwatch
-    Public maxErrorCount As Integer = 15
+    Public maxErrorCount As Integer = 30
 
     Public queryTimeOut As Integer = 15000
     Public titaVersion As String = "3.0"
@@ -224,8 +224,7 @@ Public Class Form1
             Console.WriteLine("Trying to fetch....")
             For retries = 1 To maxErrorCount
                 deserializedResults.Clear()
-                ToolStripProgressBar1.Maximum = maxErrorCount - 1
-                ToolStripProgressBar1.Increment(1)
+                ToolStripProgressBar1.Maximum = maxErrorCount
                 Dim goodQueryCounter As Integer = 0
                 If retries <> maxErrorCount Then
                     For Each query In queries
@@ -236,12 +235,14 @@ Public Class Form1
                             deserializedResults.Add(JsonConvert.DeserializeObject(Of ErrorRoot)(result(1)))
                             'badQuery.Add(query)
                             Console.WriteLine($"Something went wrong. Retrying... {retries + 1}/{maxErrorCount}")
+                            ToolStripProgressBar1.Increment(-10)
                             Exit For
                         Else
                             'the result is success.
                             'deserialize into Root
                             deserializedResults.Add(JsonConvert.DeserializeObject(Of Root)(result(1)))
                             goodQueryCounter += 1
+                            ToolStripProgressBar1.Increment(10)
                         End If
                     Next
                 Else

@@ -22,6 +22,7 @@ Partial Class ManualClockIn
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ManualClockIn))
         Me.labelTimeIn = New System.Windows.Forms.Label()
         Me.btnTimeIn = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -59,7 +60,7 @@ Partial Class ManualClockIn
         Me.btnTimeIn.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnTimeIn.Name = "btnTimeIn"
         Me.btnTimeIn.Size = New System.Drawing.Size(132, 35)
-        Me.btnTimeIn.TabIndex = 2
+        Me.btnTimeIn.TabIndex = 5
         Me.btnTimeIn.Text = "Submit Time In"
         Me.btnTimeIn.UseVisualStyleBackColor = True
         '
@@ -83,7 +84,7 @@ Partial Class ManualClockIn
         Me.cbProjectsList.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbProjectsList.Name = "cbProjectsList"
         Me.cbProjectsList.Size = New System.Drawing.Size(368, 28)
-        Me.cbProjectsList.TabIndex = 4
+        Me.cbProjectsList.TabIndex = 3
         '
         'DateTimePicker1
         '
@@ -93,7 +94,7 @@ Partial Class ManualClockIn
         Me.DateTimePicker1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DateTimePicker1.Name = "DateTimePicker1"
         Me.DateTimePicker1.Size = New System.Drawing.Size(184, 26)
-        Me.DateTimePicker1.TabIndex = 5
+        Me.DateTimePicker1.TabIndex = 0
         '
         'StatusStrip1
         '
@@ -121,7 +122,7 @@ Partial Class ManualClockIn
         Me.cbSubtasks.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbSubtasks.Name = "cbSubtasks"
         Me.cbSubtasks.Size = New System.Drawing.Size(368, 28)
-        Me.cbSubtasks.TabIndex = 7
+        Me.cbSubtasks.TabIndex = 4
         '
         'Label2
         '
@@ -142,7 +143,7 @@ Partial Class ManualClockIn
         Me.btnBack.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.Size = New System.Drawing.Size(132, 35)
-        Me.btnBack.TabIndex = 9
+        Me.btnBack.TabIndex = 6
         Me.btnBack.Text = "Go Back"
         Me.btnBack.UseVisualStyleBackColor = True
         '
@@ -164,7 +165,7 @@ Partial Class ManualClockIn
         Me.cbFilter.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbFilter.Name = "cbFilter"
         Me.cbFilter.Size = New System.Drawing.Size(368, 28)
-        Me.cbFilter.TabIndex = 12
+        Me.cbFilter.TabIndex = 2
         '
         'Label3
         '
@@ -185,7 +186,7 @@ Partial Class ManualClockIn
         Me.btnCurrentTime.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnCurrentTime.Name = "btnCurrentTime"
         Me.btnCurrentTime.Size = New System.Drawing.Size(176, 32)
-        Me.btnCurrentTime.TabIndex = 13
+        Me.btnCurrentTime.TabIndex = 1
         Me.btnCurrentTime.Text = "Use Current Time"
         Me.btnCurrentTime.UseVisualStyleBackColor = True
         '
@@ -209,6 +210,7 @@ Partial Class ManualClockIn
         Me.Controls.Add(Me.labelTimeIn)
         Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "ManualClockIn"
         Me.Text = "ManualClockIn"

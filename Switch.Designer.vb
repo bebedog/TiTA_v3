@@ -22,6 +22,7 @@ Partial Class Switch
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Switch))
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cbTasks = New System.Windows.Forms.ComboBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -33,6 +34,7 @@ Partial Class Switch
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -109,7 +111,7 @@ Partial Class Switch
         '
         'StatusStrip1
         '
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblStatus})
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblStatus, Me.ToolStripStatusLabel1})
         Me.StatusStrip1.Location = New System.Drawing.Point(0, 204)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Size = New System.Drawing.Size(425, 22)
@@ -142,6 +144,11 @@ Partial Class Switch
         Me.Label3.Text = "Filter:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(0, 17)
+        '
         'Switch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -158,6 +165,7 @@ Partial Class Switch
         Me.Controls.Add(Me.cbTasks)
         Me.Controls.Add(Me.Label1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Switch"
         Me.Text = "DisplayAndSwitch"
         Me.StatusStrip1.ResumeLayout(False)
@@ -178,4 +186,5 @@ Partial Class Switch
     Friend WithEvents lblStatus As ToolStripStatusLabel
     Friend WithEvents cbFilter As ComboBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
 End Class

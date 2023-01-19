@@ -23,6 +23,7 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
@@ -59,11 +60,12 @@ Partial Class Form1
         '
         'btnSignin
         '
+        Me.btnSignin.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.btnSignin.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
         Me.btnSignin.Location = New System.Drawing.Point(96, 192)
         Me.btnSignin.Name = "btnSignin"
         Me.btnSignin.Size = New System.Drawing.Size(97, 37)
-        Me.btnSignin.TabIndex = 10
+        Me.btnSignin.TabIndex = 2
         Me.btnSignin.Text = "Sign in"
         Me.btnSignin.UseVisualStyleBackColor = True
         '
@@ -83,7 +85,7 @@ Partial Class Form1
         Me.Label2.Location = New System.Drawing.Point(12, 156)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(82, 20)
-        Me.Label2.TabIndex = 7
+        Me.Label2.TabIndex = 6
         Me.Label2.Text = "Password:"
         '
         'Label1
@@ -93,7 +95,7 @@ Partial Class Form1
         Me.Label1.Location = New System.Drawing.Point(47, 125)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(47, 20)
-        Me.Label1.TabIndex = 8
+        Me.Label1.TabIndex = 5
         Me.Label1.Text = "User:"
         '
         'tbPassword
@@ -103,7 +105,7 @@ Partial Class Form1
         Me.tbPassword.Name = "tbPassword"
         Me.tbPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.tbPassword.Size = New System.Drawing.Size(205, 26)
-        Me.tbPassword.TabIndex = 6
+        Me.tbPassword.TabIndex = 1
         '
         'cbUsername
         '
@@ -113,7 +115,7 @@ Partial Class Form1
         Me.cbUsername.Location = New System.Drawing.Point(100, 122)
         Me.cbUsername.Name = "cbUsername"
         Me.cbUsername.Size = New System.Drawing.Size(205, 28)
-        Me.cbUsername.TabIndex = 5
+        Me.cbUsername.TabIndex = 0
         '
         'Timer1
         '
@@ -121,18 +123,21 @@ Partial Class Form1
         '
         'btnChangePW
         '
+        Me.btnChangePW.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.btnChangePW.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnChangePW.Location = New System.Drawing.Point(208, 192)
         Me.btnChangePW.Name = "btnChangePW"
         Me.btnChangePW.Size = New System.Drawing.Size(97, 37)
-        Me.btnChangePW.TabIndex = 11
+        Me.btnChangePW.TabIndex = 3
         Me.btnChangePW.Text = "Change Password"
         Me.btnChangePW.UseVisualStyleBackColor = True
         '
         'Form1
         '
+        Me.AcceptButton = Me.btnSignin
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.CancelButton = Me.btnChangePW
         Me.ClientSize = New System.Drawing.Size(315, 258)
         Me.Controls.Add(Me.btnChangePW)
         Me.Controls.Add(Me.btnSignin)
@@ -143,6 +148,7 @@ Partial Class Form1
         Me.Controls.Add(Me.cbUsername)
         Me.Controls.Add(Me.StatusStrip1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximumSize = New System.Drawing.Size(315, 258)
         Me.MinimumSize = New System.Drawing.Size(315, 258)
         Me.Name = "Form1"

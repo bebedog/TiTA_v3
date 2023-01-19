@@ -278,9 +278,37 @@ Public Class Switch
             name
           }
         }"
-        Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-        Dim OidOfNewItem As Root = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-        Return OidOfNewItem.data.create_item.id
+
+        Try
+            For retries = 1 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim response As Object = Await Form1.SendMondayRequestVersion2(createItemQuery)
+                    If response(0) = "error" Then
+                        lblStatus.Text = "Error occured when creating new item."
+                    Else
+                        lblStatus.Text = "Item successfully created."
+                        Dim jsonObject As Root = JsonConvert.DeserializeObject(Of Root)(response(1))
+                        Return jsonObject.data.create_item.id
+                        Exit For
+                    End If
+                Else
+                    Throw New Exception("Error occured when creating new item.")
+                End If
+            Next
+        Catch ex As Exception
+            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            If result = DialogResult.Retry Then
+                Dashboard1.Show()
+                Me.Close()
+            Else
+                Form1.Close()
+            End If
+        End Try
+        'START OLD CODE HERE
+        'Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+        'Dim OidOfNewItem As Root = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+        'Return OidOfNewItem.data.create_item.id
+        'END OLD CODE HERE
     End Function
     Private Async Function MarkAsDonePreviousLog(ByVal columnValues As ColumnValuesToChange) As Task(Of String)
         Dim serializerSettings = New JsonSerializerSettings
@@ -293,19 +321,45 @@ Public Class Switch
                     id
                 }
             }"
-        Try
-            Dim resultString As String = Await Form1.SendMondayRequest(MarkAsDonePreviousLogQuery)
 
-            Console.WriteLine(resultString)
+        Try
+            For retries = 1 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim response As Object = Await Form1.SendMondayRequestVersion2(MarkAsDonePreviousLogQuery)
+                    If response(0) = "error" Then
+                        lblStatus.Text = $"Error occured while marking previous log. Retrying({retries}/{Form1.maxErrorCount})"
+                    Else
+                        lblStatus.Text = "Previous log successfully marked."
+                        Exit For
+                    End If
+                Else
+                    Throw New Exception("Error occured while marking previous log.")
+                End If
+            Next
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
+                Dashboard1.Show()
                 Me.Close()
+            Else
+                Form1.Close()
             End If
             Exit Function
         End Try
+        'START OLD CODE HERE
+        'Try
+        '    Dim resultString As String = Await Form1.SendMondayRequest(MarkAsDonePreviousLogQuery)
+        '    Console.WriteLine(resultString)
+        'Catch ex As Exception
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Function
+        'End Try
+        'END OLD CODE HERE
     End Function
     Public Async Function ChangeMultipleColumnValues1(ByVal itemID As String, ByVal columnValues As ColumnValuesToChange) As Task(Of String)
         Dim jsonToLoad As String = JsonConvert.SerializeObject(columnValues)
@@ -316,9 +370,24 @@ Public Class Switch
                     id
                 }
             }"
+
         Try
-            Dim resultString As String = Await Form1.SendMondayRequest(ChangeMultipleColumnValuesQuery)
-            Console.WriteLine(resultString)
+            For retries = 1 To Form1.maxErrorCount
+                Dim response As Object = Await Form1.SendMondayRequestVersion2(ChangeMultipleColumnValuesQuery)
+                If retries <> Form1.maxErrorCount Then
+                    If response(0) = "error" Then
+                        'retry request.
+                        lblStatus.Text = $"Error occured while changing values. Retrying({retries}/{Form1.maxErrorCount})"
+                    Else
+                        'not error.
+                        lblStatus.Text = "Log values changed successfully."
+                        Exit For
+                    End If
+                Else
+                    'max retry
+                    Throw New Exception("Error occured while changing values.")
+                End If
+            Next
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
@@ -328,6 +397,20 @@ Public Class Switch
             End If
             Exit Function
         End Try
+        'START OLD CODE
+        'Try
+        '    Dim resultString As String = Await Form1.SendMondayRequest(ChangeMultipleColumnValuesQuery)
+        '    Console.WriteLine(resultString)
+        'Catch ex As Exception
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Function
+        'End Try
+        'END OLD CODE
     End Function
     Public Sub disableAllControls()
         For Each c As Control In Me.Controls

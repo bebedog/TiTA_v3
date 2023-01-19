@@ -3,7 +3,7 @@ Imports Newtonsoft.Json
 Public Class Form1
     Dim resultsList As List(Of Object)
     Public watch As Stopwatch
-    Public maxErrorCount As Integer = 5
+    Public maxErrorCount As Integer = 15
 
     Public queryTimeOut As Integer = 15000
     Public titaVersion As String = "3.0"
@@ -63,8 +63,7 @@ Public Class Form1
     End Class
     'End of Class Declaration for Serialization (Changing ColumnValues for Previous Log)
 
-    'Classes Declaration
-
+    'Start Root Classes Declaration
     Public Class Group
         Public Property id As String
         Public Property items As Item()
@@ -94,8 +93,7 @@ Public Class Form1
         Public Property data As Data
         Public Property account_id As Integer
     End Class
-
-
+    'END Root Classes Declaration
     Public Async Function SendMondayRequest(ByVal myQuery As String) As Task(Of String)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
         options.ThrowOnAnyError = True
@@ -115,20 +113,8 @@ Public Class Form1
                 Return response.Content
             End If
         Else
-                Return False
+            Return False
         End If
-
-        'If response.IsSuccessStatusCode Then
-        '    'response has a statuscode of 200
-        '    'but it might have a parse error, which still is status 200.
-        '    If response.Content.Contains("error") Or response.Content.Contains("error_message") Or response.Content.Contains("errors") Then
-        '        'response has a status code 200, but has a monday.com error.
-        '        Return
-        '    Else
-
-        '    End If
-        'End If
-
     End Function
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
         '0 - First Name
@@ -179,6 +165,7 @@ Public Class Form1
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
         timesinceLastUpdate()
+        'QUERIES STARTS HERE
         Dim fetchTasksQuery As String =
             "query{
                 boards(ids: 2718204773){
@@ -217,26 +204,26 @@ Public Class Form1
                 boards(ids:[3428362986]) 
                 {
                   items{
-                    name?
+                    name
                     id
                 }
                 }}"
+        'QUERIES ENDS HERE
 
         lblStatus.Text = "Fetching Accounts..."
         DisableAllControls()
-
         Dim queries As New List(Of String)
         'add all queries in this list
         queries.Add(fetchAccountQuery)
         queries.Add(fetchNames)
         queries.Add(fetchTasksQuery)
-
         Try
             Dim deserializedResults As New List(Of Object)
             Dim isError As New Boolean
             Dim badQuery As New List(Of String)
             Console.WriteLine("Trying to fetch....")
             For retries = 1 To maxErrorCount
+                deserializedResults.Clear()
                 ToolStripProgressBar1.Maximum = maxErrorCount - 1
                 ToolStripProgressBar1.Increment(1)
                 Dim goodQueryCounter As Integer = 0
@@ -267,15 +254,10 @@ Public Class Form1
                     Exit For
                 End If
             Next
-
-
-
             accounts = deserializedResults(0)
             namesList = deserializedResults(1)
             allTasks = deserializedResults(2)
-
             populateCB(namesList)
-
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
@@ -286,24 +268,6 @@ Public Class Form1
             Exit Sub
         End Try
 
-        'Try
-        '    Dim result As String = Await SendMondayRequest(fetchAccountQuery)
-        '    Dim result2 As String = Await SendMondayRequest(fetchNames)
-        '    Dim result3 As String = Await SendMondayRequest(fetchTasksQuery)
-        '    accounts = JsonConvert.DeserializeObject(Of Root)(result)
-        '    namesList = JsonConvert.DeserializeObject(Of Root)(result2)
-        '    allTasks = JsonConvert.DeserializeObject(Of Root)(result3)
-        'Catch ex As Exception
-        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-        '    If result = DialogResult.Retry Then
-        '        Application.Restart()
-        '    Else
-        '        Me.Close()
-        '    End If
-        '    Exit Sub
-        'End Try
-
-        'populateCB(namesList)
         If TiTA_v3.My.Settings.recentUser <> "" Then
             cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
             'timesinceLastUpdate()
@@ -356,27 +320,6 @@ Public Class Form1
             x = x - 1
             Me.Location = New Point(x, y)
         Loop
-    End Sub
-
-    Private Async Sub btnTestAmodia_Click(sender As Object, e As EventArgs) Handles btnTestAmodia.Click
-        Dim fetchAccountQuery As String =
-            "query{
-                boards(ids:3428362986){
-                    items{
-                        id    
-                        name
-                        column_values{
-                            title
-                                                          text
-                        }
-                    }
-                }
-            }"
-        Try
-            Dim response As Object = Await SendMondayRequestVersion2(fetchAccountQuery)
-        Catch ex As Exception
-            MessageBox.Show($"Error Code 1{Environment.NewLine}{ex.Message}")
-        End Try
     End Sub
     Public Async Function SendMondayRequestVersion2(ByVal myQuery As String) As Task(Of Object)
         Dim options = New RestClientOptions("https://api.monday.com/v2")

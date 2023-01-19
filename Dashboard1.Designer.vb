@@ -84,7 +84,7 @@ Partial Class Dashboard1
         Me.Controls.Add(Me.lblQuotes)
         Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.StatusStrip1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "Dashboard1"
         Me.Text = "Dashboard1"
         Me.StatusStrip1.ResumeLayout(False)

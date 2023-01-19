@@ -157,7 +157,7 @@ Partial Class Switch
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.cbTasks)
         Me.Controls.Add(Me.Label1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "Switch"
         Me.Text = "DisplayAndSwitch"
         Me.StatusStrip1.ResumeLayout(False)

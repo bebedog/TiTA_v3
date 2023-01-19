@@ -25,6 +25,7 @@ Partial Class Form1
         Me.components = New System.ComponentModel.Container()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.btnSignin = New System.Windows.Forms.Button()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -33,8 +34,6 @@ Partial Class Form1
         Me.cbUsername = New System.Windows.Forms.ComboBox()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.btnChangePW = New System.Windows.Forms.Button()
-        Me.btnTestAmodia = New System.Windows.Forms.Button()
-        Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -52,6 +51,11 @@ Partial Class Form1
         '
         Me.lblStatus.Name = "lblStatus"
         Me.lblStatus.Size = New System.Drawing.Size(0, 17)
+        '
+        'ToolStripProgressBar1
+        '
+        Me.ToolStripProgressBar1.Name = "ToolStripProgressBar1"
+        Me.ToolStripProgressBar1.Size = New System.Drawing.Size(100, 16)
         '
         'btnSignin
         '
@@ -125,26 +129,11 @@ Partial Class Form1
         Me.btnChangePW.Text = "Change Password"
         Me.btnChangePW.UseVisualStyleBackColor = True
         '
-        'btnTestAmodia
-        '
-        Me.btnTestAmodia.Location = New System.Drawing.Point(12, 199)
-        Me.btnTestAmodia.Name = "btnTestAmodia"
-        Me.btnTestAmodia.Size = New System.Drawing.Size(75, 23)
-        Me.btnTestAmodia.TabIndex = 12
-        Me.btnTestAmodia.Text = "Test"
-        Me.btnTestAmodia.UseVisualStyleBackColor = True
-        '
-        'ToolStripProgressBar1
-        '
-        Me.ToolStripProgressBar1.Name = "ToolStripProgressBar1"
-        Me.ToolStripProgressBar1.Size = New System.Drawing.Size(100, 16)
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(315, 258)
-        Me.Controls.Add(Me.btnTestAmodia)
         Me.Controls.Add(Me.btnChangePW)
         Me.Controls.Add(Me.btnSignin)
         Me.Controls.Add(Me.PictureBox1)
@@ -176,6 +165,5 @@ Partial Class Form1
     Friend WithEvents cbUsername As ComboBox
     Friend WithEvents Timer1 As Timer
     Friend WithEvents btnChangePW As Button
-    Friend WithEvents btnTestAmodia As Button
     Friend WithEvents ToolStripProgressBar1 As ToolStripProgressBar
 End Class

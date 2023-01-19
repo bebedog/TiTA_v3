@@ -308,7 +308,7 @@ Public Class Dashboard1
                                 If fResult(0) = "error" Then
                                     Label1.Text = $"Error occured when deleting new item. Retrying({retries}/{Form1.maxErrorCount})"
                                 Else
-                                    MessageBox.Show($"Successfully deleted item with ID: {deleteItemRequest}")
+                                    Label1.Text = $"Successfully deleted item with ID: {deleteItemRequest}..."
                                     Exit For
                                 End If
                             Else
@@ -344,7 +344,7 @@ Public Class Dashboard1
                 resetDashboardForm(My.Forms.Dashboard1)
             ElseIf result = DialogResult.No Then
                 'Mark the previous logs as done ("X")
-                MsgBox("marking logs")
+                MsgBox("Marking logs...")
             Else
                 'returns the user to the selection screen
                 Form1.currentID = ""
@@ -357,8 +357,7 @@ Public Class Dashboard1
         Else
             Timer1.Stop()
             Label1.Text = "Sending!"
-            Form1.watch.Restart()
-            Form1.watch.Stop()
+            Form1.watch.Reset()
         End If
     End Sub
     Public Sub positionLoginScreen()

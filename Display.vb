@@ -12,6 +12,7 @@
     End Sub
     Private Async Sub Display_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         positionLoginScreen()
+        Me.TopMost = True
         Dim elapsedTimeInSeconds As Integer
         If Form1.watch.IsRunning <> True Then
             elapsedTimeInSeconds = 0

@@ -3,7 +3,7 @@ Imports Newtonsoft.Json
 Public Class Form1
     Dim resultsList As List(Of Object)
     Public watch As Stopwatch
-    Public maxErrorCount As Integer = 30
+    Public maxErrorCount As Integer = 15
 
     Public queryTimeOut As Integer = 15000
     Public titaVersion As String = "3.0"

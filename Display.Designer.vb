@@ -205,7 +205,7 @@ Partial Class Display
         Me.Controls.Add(Me.lblTask)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.lblUserWelcome)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "Display"
         Me.Text = "Display"
         Me.ResumeLayout(False)

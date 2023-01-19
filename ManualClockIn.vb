@@ -88,7 +88,6 @@ Public Class ManualClockIn
         Next
         cbProjectsList.SelectedIndex = 0
     End Sub
-
     Private Function filterJobs(ByVal category As String)
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tasks In groups.items
@@ -141,7 +140,6 @@ Public Class ManualClockIn
             Next
         Next
     End Function
-
     Private Sub populateSubtasks()
         cbSubtasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
@@ -161,7 +159,6 @@ Public Class ManualClockIn
             Next
         Next
     End Sub
-
     'Add new item to TiTO timeline
     Public Async Function createNewItem() As Task
         disableAllControls()
@@ -175,9 +172,25 @@ Public Class ManualClockIn
         }"
 
         Try
-            Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
-            newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
-            Await getItemID(newItemObj)
+            For retries = 1 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim response As Object = Await Form1.SendMondayRequestVersion2(createItemQuery)
+                    If response(0) = "error" Then
+                        'response is an error. must send the request again.
+                        ToolLabel1.Text = $"Error occured when creating new item. Retrying ({retries}/{Form1.maxErrorCount})"
+                    Else
+                        'successful response.
+                        ToolLabel1.Text = "item successfully created!"
+                        'deserialize
+                        newItemObj = JsonConvert.DeserializeObject(Of Root)(response(1))
+                        Await getItemID(newItemObj)
+                        Exit For
+                    End If
+                Else
+                    'max retries reached.
+                    Throw New Exception("Error occured when creating new item.")
+                End If
+            Next
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
@@ -185,8 +198,23 @@ Public Class ManualClockIn
             Else
                 Me.Close()
             End If
-            Exit Function
         End Try
+
+        'START OLD CODE HERE
+        'Try
+        '    Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
+        '    newItemObj = JsonConvert.DeserializeObject(Of Root)(createItemResult)
+        '    Await getItemID(newItemObj)
+        'Catch ex As Exception
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Function
+        'End Try
+        'END OLD CODE HERE
 
     End Function
 
@@ -234,27 +262,62 @@ Public Class ManualClockIn
         Dim changeColumnQuery As String
         changeColumnQuery =
             "mutation {change_multiple_column_values(item_id:" + personID + ", board_id:2628729848, column_values: """ + formattedJSON + """) {id}}"
-        Try
-            Dim result As String = Await Form1.SendMondayRequest(changeColumnQuery)
-            Console.WriteLine(changeColumnQuery)
-            'checkAddedItem()
-            Dim msgSuccess = MessageBox.Show("Nice", "Success", MessageBoxButtons.OK)
-            If msgSuccess = DialogResult.OK Then
-                Me.Close()
-                Dashboard1.Show()
-                'Change delay time for Dashboard1 from 0 to 1 minute.
-                Form1.Timer1.Start()
-            End If
 
+        Try
+            For retries = 1 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim response As Object = Await Form1.SendMondayRequestVersion2(changeColumnQuery)
+                    If response(0) = "error" Then
+                        'monday request encountered an error.
+                        'repeat request!
+                        ToolLabel1.Text = $"Error occured when changing column values. Retrying ({retries}/{Form1.maxErrorCount})."
+                    Else
+                        'result success.
+                        MessageBox.Show("Manual login successfully created.", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        'start stopwatch
+                        Form1.watch.Restart()
+                        Dashboard1.Show()
+                        Me.Close()
+                        Exit For
+                    End If
+                Else
+                    'max retries spent.
+                    Throw New Exception("Error occured when changing column values.")
+                End If
+            Next
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
+                Dashboard1.Show()
                 Me.Close()
+            Else
+                Application.Restart()
             End If
             Exit Function
         End Try
+        'START OLD CODE HERE
+        'Try
+        '    Dim result As String = Await Form1.SendMondayRequest(changeColumnQuery)
+        '    Console.WriteLine(changeColumnQuery)
+        '    'checkAddedItem()
+        '    Dim msgSuccess = MessageBox.Show("Nice", "Success", MessageBoxButtons.OK)
+        '    If msgSuccess = DialogResult.OK Then
+        '        Me.Close()
+        '        Dashboard1.Show()
+        '        'Change delay time for Dashboard1 from 0 to 1 minute.
+        '        Form1.Timer1.Start()
+        '    End If
+
+        'Catch ex As Exception
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Function
+        'End Try
+        'END OLD CODE HERE
     End Function
 
     'Private Async Sub checkAddedItem()
@@ -293,9 +356,20 @@ Public Class ManualClockIn
     'End Sub
 
 
-
+    Public Sub positionLoginScreen()
+        Me.Visible = True
+        Dim x As Integer
+        Dim y As Integer
+        x = Screen.PrimaryScreen.WorkingArea.Width
+        y = Screen.PrimaryScreen.WorkingArea.Height - Me.Height
+        Do Until x = Screen.PrimaryScreen.WorkingArea.Width - Me.Width
+            x = x - 1
+            Me.Location = New Point(x, y)
+        Loop
+    End Sub
     Private Async Sub ManualClockIn_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Form1.positionLoginScreen()
+        positionLoginScreen()
+        Me.TopMost = True
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.CustomFormat = "HH:mm:ss"

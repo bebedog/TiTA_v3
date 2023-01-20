@@ -325,19 +325,19 @@ Public Class Dashboard1
                         End If
                     End Try
                     'START OLD CODE DONT DELETE
-                    Try
-                        Label1.Text = $"Deleting Item with ID: {deleteItemRequest}"
-                        Await Form1.SendMondayRequest(requestString)
-                        MessageBox.Show($"Successfully deleted item with ID:{deleteItemRequest}")
-                    Catch ex As Exception
-                        Dim result1 As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-                        If result1 = DialogResult.Retry Then
-                            resetDashboardForm(My.Forms.Dashboard1)
-                        Else
-                            Me.Close()
-                        End If
-                        Exit Sub
-                    End Try
+                    'Try
+                    '    Label1.Text = $"Deleting Item with ID: {deleteItemRequest}"
+                    '    Await Form1.SendMondayRequest(requestString)
+                    '    MessageBox.Show($"Successfully deleted item with ID:{deleteItemRequest}")
+                    'Catch ex As Exception
+                    '    Dim result1 As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+                    '    If result1 = DialogResult.Retry Then
+                    '        resetDashboardForm(My.Forms.Dashboard1)
+                    '    Else
+                    '        Me.Close()
+                    '    End If
+                    '    Exit Sub
+                    'End Try
                     'END OLD CODE DONT DELETE
                 Next
                 Form1.watch.Restart()

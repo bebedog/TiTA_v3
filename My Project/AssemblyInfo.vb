@@ -8,14 +8,14 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("TiTA_v3")>
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("HP Inc.")>
-<Assembly: AssemblyProduct("TiTA_v3")>
-<Assembly: AssemblyCopyright("Copyright © HP Inc. 2023")>
+<Assembly: AssemblyTitle("Lasermet TiTA")>
+<Assembly: AssemblyDescription("Your nosey project manager.")>
+<Assembly: AssemblyCompany("Lasermet Philippines, Ltd.")>
+<Assembly: AssemblyProduct("TiTA")>
+<Assembly: AssemblyCopyright("Copyright © Lasermet Ltd., 2023")>
 <Assembly: AssemblyTrademark("")>
 
-<Assembly: ComVisible(False)>
+<Assembly: ComVisible(True)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
 <Assembly: Guid("b6884142-821e-4234-9e2e-91de82e35615")>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("1.0.0.0")>
-<Assembly: AssemblyFileVersion("1.0.0.0")>
+<Assembly: AssemblyVersion("3.0.0")>
+<Assembly: AssemblyFileVersion("3.0.0")>

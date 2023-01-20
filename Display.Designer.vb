@@ -39,6 +39,8 @@ Partial Class Display
         Me.lblDepartment1 = New System.Windows.Forms.Label()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblSubtasks
@@ -187,6 +189,16 @@ Partial Class Display
         'Timer1
         '
         '
+        'PictureBox1
+        '
+        Me.PictureBox1.Image = Global.TiTA_v3.My.Resources.Resources.LaserTiTA_128x128
+        Me.PictureBox1.Location = New System.Drawing.Point(122, -14)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(294, 264)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.PictureBox1.TabIndex = 26
+        Me.PictureBox1.TabStop = False
+        '
         'Display
         '
         Me.AcceptButton = Me.btnSwitch
@@ -207,10 +219,12 @@ Partial Class Display
         Me.Controls.Add(Me.lblTask)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.lblUserWelcome)
+        Me.Controls.Add(Me.PictureBox1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Display"
         Me.Text = "Display"
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -231,4 +245,5 @@ Partial Class Display
     Friend WithEvents lblDepartment1 As Label
     Friend WithEvents NotifyIcon1 As NotifyIcon
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents PictureBox1 As PictureBox
 End Class

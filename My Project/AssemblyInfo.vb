@@ -11,7 +11,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTitle("Lasermet TiTA")>
 <Assembly: AssemblyDescription("Your nosey project manager.")>
 <Assembly: AssemblyCompany("Lasermet Philippines, Ltd.")>
-<Assembly: AssemblyProduct("TiTA")>
+<Assembly: AssemblyProduct("Lasermet TiTA")>
 <Assembly: AssemblyCopyright("Copyright © Lasermet Ltd., 2023")>
 <Assembly: AssemblyTrademark("")>
 

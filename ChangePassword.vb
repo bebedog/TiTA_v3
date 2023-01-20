@@ -37,7 +37,6 @@ Public Class ChangePassword
     End Class
 
     Private Sub populateCB2(ByVal usernames As Root)
-
         For Each x In usernames.data.boards(0).items
             cbUsername2.Items.Add(x.name)
         Next
@@ -47,6 +46,7 @@ Public Class ChangePassword
         Me.positionScreen()
         Me.Text = $"Lasermet TiTA v{Form1.titaVersion}"
         cbUsername2.AutoCompleteSource = AutoCompleteSource.ListItems
+        'START OF QUERIES HERE
         Dim fetchAccountQuery As String =
             "query{
                 boards(ids:3428362986){
@@ -69,22 +69,58 @@ Public Class ChangePassword
                     id
                 }
                 }}"
-
-
+        'END OF QUERIES HERE
+        Dim listOfQueries As New List(Of String)
+        listOfQueries.Add(fetchAccountQuery)
+        listOfQueries.Add(fetchNames)
+        Dim listOfResponse As New List(Of Root)
         Try
-            Dim result As String = Await Form1.SendMondayRequest(fetchNames)
-            Dim result2 As String = Await Form1.SendMondayRequest(fetchAccountQuery)
-            namesList = JsonConvert.DeserializeObject(Of Root)(result)
-            accounts = JsonConvert.DeserializeObject(Of Root)(result2)
+            For Each queries In listOfQueries
+                For retries = 0 To Form1.maxErrorCount
+                    If retries <> Form1.maxErrorCount Then
+                        Dim response As Object = Await Form1.SendMondayRequestVersion2(queries)
+                        If response(0) = "error" Then
+                            'response is error.
+                        Else
+                            'response is a success.
+                            listOfResponse.Add(JsonConvert.DeserializeObject(Of Root)(response(1)))
+                            Exit For
+                        End If
+                    Else
+                        'max retries reached.
+                        Throw New Exception("Error occured when fetching accounts and names.")
+                    End If
+                Next
+            Next
+            accounts = listOfResponse(0)
+            namesList = listOfResponse(1)
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
                 Application.Restart()
             Else
-                Me.Close()
+                Form1.Close()
             End If
             Exit Sub
         End Try
+
+        'START OLD CODE HERE
+        'Try
+        '    Dim result As String = Await Form1.SendMondayRequest(fetchNames)
+        '    Dim result2 As String = Await Form1.SendMondayRequest(fetchAccountQuery)
+        '    namesList = JsonConvert.DeserializeObject(Of Root)(result)
+        '    accounts = JsonConvert.DeserializeObject(Of Root)(result2)
+        'Catch ex As Exception
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Sub
+        'End Try
+        'END OLD CODE HERE
+
         populateCB2(namesList)
     End Sub
 
@@ -110,7 +146,6 @@ Public Class ChangePassword
     End Function
 
     Private Async Function updatePassword(ByVal userName As String, ByVal oldPassword As String, ByVal newPassword As String, ByVal accountID As String) As Task
-
         Dim changePW As String
         changePW =
                 "mutation {
@@ -118,15 +153,23 @@ Public Class ChangePassword
                 id
               }
             }"
-
         Try
-            Await Form1.SendMondayRequest(changePW)
-            Dim changePWResult As String = Await Form1.SendMondayRequest(changePW)
-            'Console.WriteLine($"Username: {userName}, Old Password: {oldPassword}, New PW: {newPassword}, Item ID: {accountID}")
-            Console.WriteLine(changePW)
-
+            For retries = 0 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim response As Object = Await Form1.SendMondayRequestVersion2(changePW)
+                    If response(0) = "error" Then
+                        'error
+                        lblStatus.Text = $"Error occured when changing password. Retrying ({retries}/{Form1.maxErrorCount})"
+                    Else
+                        'success
+                        Exit For
+                    End If
+                Else
+                    'max retries reached.
+                    Throw New Exception("Error when changing password.")
+                End If
+            Next
         Catch ex As Exception
-
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
                 Application.Restart()
@@ -134,33 +177,53 @@ Public Class ChangePassword
                 Me.Close()
             End If
             Exit Function
-
         End Try
+        'START OF OLD CODE HERE
+        'Try
+        '    Dim changePWResult As String = Await Form1.SendMondayRequest(changePW)
+        '    'Console.WriteLine($"Username: {userName}, Old Password: {oldPassword}, New PW: {newPassword}, Item ID: {accountID}")
+        '    Console.WriteLine(changePW)
+        'Catch ex As Exception
 
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Function
+
+        'End Try
+        'END OF OLD CODE HERE
     End Function
 
     Private Sub btnChangePass_Click(sender As Object, e As EventArgs) Handles btnChangePass.Click
         If String.IsNullOrEmpty(tbNewPassword.Text) = False And String.IsNullOrWhiteSpace(tbNewPassword.Text) = False Then
-
             If Form1.checkAccountDetails(cbUsername2.Text, tbOldPassword.Text, Form1.accounts) = True Then
                 'Account detail matches
                 getAccountItemID(accounts, cbUsername2.Text)
                 Dim updateMsg As DialogResult = MessageBox.Show($"Password Changed for {Form1.fFirstName} {Form1.fSurname}", "Password Update Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-                If updateMsg.OK Then
+                If updateMsg = DialogResult.OK Then
                     Application.Restart()
                 End If
-
             Else
                 MessageBox.Show("Incorrect Password.")
                 'Account Detail don't match.
             End If
-
         Else MessageBox.Show("No New Password Entered", "Please enter your new password", MessageBoxButtons.OK, MessageBoxIcon.Question)
-
         End If
-
     End Sub
+
+    Private Function validateInputs() As Boolean
+        For Each c As Control In Me.Controls
+            If c.Text = "" Then
+                'user forgot to input something!
+                c.Select()
+                Return False
+            End If
+        Next
+        Return True
+    End Function
 
     Private Sub btnGoBack_Click(sender As Object, e As EventArgs) Handles btnGoBack.Click
         Me.Close()

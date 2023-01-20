@@ -81,11 +81,32 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to .
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Public ReadOnly Property lastMondayUpdate() As String
+        Public ReadOnly Property LaserTiTA_128x128() As System.Drawing.Bitmap
             Get
-                Return ResourceManager.GetString("lastMondayUpdate", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("LaserTiTA-128x128", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        '''</summary>
+        Public ReadOnly Property TiTA() As System.Drawing.Icon
+            Get
+                Dim obj As Object = ResourceManager.GetObject("TiTA", resourceCulture)
+                Return CType(obj,System.Drawing.Icon)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        '''</summary>
+        Public ReadOnly Property TiTAv3() As System.Drawing.Icon
+            Get
+                Dim obj As Object = ResourceManager.GetObject("TiTAv3", resourceCulture)
+                Return CType(obj,System.Drawing.Icon)
             End Get
         End Property
     End Module

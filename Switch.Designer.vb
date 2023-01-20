@@ -35,7 +35,9 @@ Partial Class Switch
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.StatusStrip1.SuspendLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Label1
@@ -149,6 +151,16 @@ Partial Class Switch
         Me.Label3.Text = "Filter:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'PictureBox1
+        '
+        Me.PictureBox1.Image = Global.TiTA_v3.My.Resources.Resources.LaserTiTA_128x128
+        Me.PictureBox1.Location = New System.Drawing.Point(131, -21)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(294, 264)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.PictureBox1.TabIndex = 27
+        Me.PictureBox1.TabStop = False
+        '
         'Switch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -164,12 +176,14 @@ Partial Class Switch
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.cbTasks)
         Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.PictureBox1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Switch"
         Me.Text = "DisplayAndSwitch"
         Me.StatusStrip1.ResumeLayout(False)
         Me.StatusStrip1.PerformLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -187,4 +201,5 @@ Partial Class Switch
     Friend WithEvents cbFilter As ComboBox
     Friend WithEvents Label3 As Label
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
+    Friend WithEvents PictureBox1 As PictureBox
 End Class

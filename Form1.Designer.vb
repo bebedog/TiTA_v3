@@ -43,9 +43,9 @@ Partial Class Form1
         'StatusStrip1
         '
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblStatus, Me.ToolStripProgressBar1, Me.lblVersion})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 236)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 240)
         Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(349, 22)
+        Me.StatusStrip1.Size = New System.Drawing.Size(355, 22)
         Me.StatusStrip1.TabIndex = 0
         Me.StatusStrip1.Text = "StatusStrip1"
         '
@@ -70,10 +70,8 @@ Partial Class Form1
         'btnSignin
         '
         Me.btnSignin.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.btnSignin.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnSignin.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.btnSignin.Location = New System.Drawing.Point(130, 192)
+        Me.btnSignin.Location = New System.Drawing.Point(143, 192)
         Me.btnSignin.Name = "btnSignin"
         Me.btnSignin.Size = New System.Drawing.Size(97, 37)
         Me.btnSignin.TabIndex = 2
@@ -82,14 +80,11 @@ Partial Class Form1
         '
         'PictureBox1
         '
-        Me.PictureBox1.BackgroundImage = CType(resources.GetObject("PictureBox1.BackgroundImage"), System.Drawing.Image)
         Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
-        Me.PictureBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.PictureBox1.Image = Global.TiTA_v3.My.Resources.Resources.LasermetPH_logo
         Me.PictureBox1.Location = New System.Drawing.Point(12, 12)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(327, 104)
+        Me.PictureBox1.Size = New System.Drawing.Size(331, 104)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox1.TabIndex = 9
         Me.PictureBox1.TabStop = False
@@ -122,28 +117,22 @@ Partial Class Form1
         '
         'tbPassword
         '
-        Me.tbPassword.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.tbPassword.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
         Me.tbPassword.Location = New System.Drawing.Point(100, 156)
         Me.tbPassword.Name = "tbPassword"
         Me.tbPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
+        Me.tbPassword.Size = New System.Drawing.Size(243, 26)
         Me.tbPassword.TabIndex = 1
-        Me.tbPassword.Size = New System.Drawing.Size(239, 26)
         '
         'cbUsername
         '
-        Me.cbUsername.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.cbUsername.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
         Me.cbUsername.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cbUsername.FormattingEnabled = True
         Me.cbUsername.Location = New System.Drawing.Point(100, 122)
         Me.cbUsername.Name = "cbUsername"
+        Me.cbUsername.Size = New System.Drawing.Size(243, 28)
         Me.cbUsername.TabIndex = 0
-        Me.cbUsername.Size = New System.Drawing.Size(239, 28)
         '
         'Timer1
         '
@@ -152,10 +141,8 @@ Partial Class Form1
         'btnChangePW
         '
         Me.btnChangePW.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.btnChangePW.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnChangePW.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnChangePW.Location = New System.Drawing.Point(242, 192)
+        Me.btnChangePW.Location = New System.Drawing.Point(246, 192)
         Me.btnChangePW.Name = "btnChangePW"
         Me.btnChangePW.Size = New System.Drawing.Size(97, 37)
         Me.btnChangePW.TabIndex = 3
@@ -167,8 +154,9 @@ Partial Class Form1
         Me.AcceptButton = Me.btnSignin
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.BackColor = System.Drawing.Color.White
         Me.CancelButton = Me.btnChangePW
-        Me.ClientSize = New System.Drawing.Size(349, 258)
+        Me.ClientSize = New System.Drawing.Size(355, 262)
         Me.Controls.Add(Me.btnChangePW)
         Me.Controls.Add(Me.btnSignin)
         Me.Controls.Add(Me.PictureBox1)
@@ -179,8 +167,8 @@ Partial Class Form1
         Me.Controls.Add(Me.StatusStrip1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.MaximumSize = New System.Drawing.Size(315, 258)
-        Me.MinimumSize = New System.Drawing.Size(315, 258)
+        Me.MaximumSize = New System.Drawing.Size(355, 262)
+        Me.MinimumSize = New System.Drawing.Size(355, 262)
         Me.Name = "Form1"
         Me.Text = "TiTA v3.0"
         Me.StatusStrip1.ResumeLayout(False)

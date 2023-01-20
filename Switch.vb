@@ -135,6 +135,7 @@ Public Class Switch
     End Sub
     Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'stop Timer
+        Me.Text = "Task Switch"
         Form1.Timer1.Stop()
         cbFilter.Items.AddRange(Form1.taskCategories)
         cbFilter.SelectedIndex = 0
@@ -148,7 +149,6 @@ Public Class Switch
         cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
         'Fetch Previous task on TiTA Timeline board on monday.com
         Await FetchPreviousTaskAndSubTask(Form1.currentID)
-
         'when fetchprevious task is finished, enable all controls
         enableAllControls()
 
@@ -165,23 +165,57 @@ Public Class Switch
                     }
                 }
             }"
+
         Try
-            Dim response As String = Await Form1.SendMondayRequest(queryFetchPreviousTask)
-            Dim jsonObj = JsonConvert.DeserializeObject(Of Root)(response)
-            Dim previousTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
-            Dim previousSubTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
-            cbTasks.SelectedItem = previousTask
-            cbSubTasks.SelectedItem = previousSubTask
+            For retries = 0 To Form1.maxErrorCount
+                If retries <> Form1.maxErrorCount Then
+                    Dim response As Object = Await Form1.SendMondayRequestVersion2(queryFetchPreviousTask)
+                    If response(0) = "error" Then
+                        'error occured
+                        lblStatus.Text = $"Error occured when fetching previous task. Retrying({retries}/{Form1.maxErrorCount})"
+                    Else
+                        'success
+                        Dim jsonObj = JsonConvert.DeserializeObject(Of Root)(response(1))
+                        Dim previousTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
+                        Dim previousSubTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
+                        cbTasks.SelectedItem = previousTask
+                        cbSubTasks.SelectedItem = previousSubTask
+                        Exit For
+                    End If
+                Else
+                    'max retries reached
+                    Throw New Exception("Error occured when fetching previous task.")
+                End If
+            Next
         Catch ex As Exception
-            Console.WriteLine("Error!")
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
+                Dashboard1.Show()
                 Me.Close()
+            Else
+                Form1.Close()
             End If
-            Exit Function
         End Try
+
+        'START OF OLD CODE HERE
+        'Try
+        '    Dim response As String = Await Form1.SendMondayRequest(queryFetchPreviousTask)
+        '    Dim jsonObj = JsonConvert.DeserializeObject(Of Root)(response)
+        '    Dim previousTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
+        '    Dim previousSubTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
+        '    cbTasks.SelectedItem = previousTask
+        '    cbSubTasks.SelectedItem = previousSubTask
+        'Catch ex As Exception
+        '    Console.WriteLine("Error!")
+        '    Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+        '    If result = DialogResult.Retry Then
+        '        Application.Restart()
+        '    Else
+        '        Me.Close()
+        '    End If
+        '    Exit Function
+        'End Try
+        'END OF OLD CODE HERE
     End Function
     Private Sub cbTasks_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbTasks.SelectedIndexChanged
         updateSubTasksComboBox()

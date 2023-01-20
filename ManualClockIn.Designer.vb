@@ -37,7 +37,6 @@ Partial Class ManualClockIn
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.btnCurrentTime = New System.Windows.Forms.Button()
-        Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -99,8 +98,7 @@ Partial Class ManualClockIn
         'StatusStrip1
         '
         Me.StatusStrip1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolLabel1})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 364)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 342)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
         Me.StatusStrip1.Size = New System.Drawing.Size(545, 22)
@@ -149,10 +147,12 @@ Partial Class ManualClockIn
         '
         'PictureBox1
         '
-        Me.PictureBox1.Location = New System.Drawing.Point(88, 18)
+        Me.PictureBox1.BackgroundImage = CType(resources.GetObject("PictureBox1.BackgroundImage"), System.Drawing.Image)
+        Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.PictureBox1.Location = New System.Drawing.Point(56, 18)
         Me.PictureBox1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(370, 95)
+        Me.PictureBox1.Size = New System.Drawing.Size(424, 110)
         Me.PictureBox1.TabIndex = 10
         Me.PictureBox1.TabStop = False
         '
@@ -194,7 +194,7 @@ Partial Class ManualClockIn
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(545, 386)
+        Me.ClientSize = New System.Drawing.Size(545, 364)
         Me.Controls.Add(Me.btnCurrentTime)
         Me.Controls.Add(Me.cbFilter)
         Me.Controls.Add(Me.Label3)
@@ -208,14 +208,12 @@ Partial Class ManualClockIn
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnTimeIn)
         Me.Controls.Add(Me.labelTimeIn)
-        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Font = New System.Drawing.Font("Myriad Pro Light", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "ManualClockIn"
         Me.Text = "ManualClockIn"
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()

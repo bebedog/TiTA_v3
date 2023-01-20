@@ -385,7 +385,7 @@ buildQuery:
         Loop
     End Sub
     Private Async Sub ManualClockIn_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        positionLoginScreen()
+        Me.positionLoginScreen()
         Me.TopMost = True
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom

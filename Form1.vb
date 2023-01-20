@@ -1,17 +1,36 @@
 ﻿Imports RestSharp
 Imports Newtonsoft.Json
+Imports Squirrel
+Imports System.Threading.Tasks
+
 Public Class Form1
     Dim resultsList As List(Of Object)
     Public watch As Stopwatch
     Public maxErrorCount As Integer = 30
 
     Public queryTimeOut As Integer = 15000
-    Public titaVersion As String = "3.0"
+    Public titaVersion As String = TiTA_v3.My.Application.Info.Version.ToString
     Public allTasks As Root
     Public accounts
     Public elapsedTime As Integer
     Public loadDelay As Integer
     Dim namesList
+
+    'Squirrel Objects
+    Public Class UpdateInfo
+        Public CurrentlyInstalledVersion As ReleaseEntry
+        Public FutureReleaseEntry As ReleaseEntry
+        Public ReleasesToApply As List(Of ReleaseEntry)
+    End Class
+
+    Public Class ReleaseEntry
+        Public Property SHA1 As String
+        Public Property Filename As String
+        Public Property Filesize As Long
+        Public Property IsDelta As Boolean
+    End Class
+
+
 
     'Stores no. of minutes since last update sent to Monday.com
     Public howLong
@@ -157,11 +176,34 @@ Public Class Form1
         btnSignin.Enabled = True
         btnChangePW.Enabled = True
     End Sub
+
+    'Private Async Function CheckForUpdates() As Task
+    '    Dim manager As New UpdateManager($"D:\lasermet TiTA Updates")
+
+    '    Dim info As Object = Await manager.CheckForUpdate()
+
+    '    Dim manager As New UpdateManager($"https://github.com/bebedog/TiTA_v3/releases/tag/beta")
+    '    Dim response As Object = Await manager.CheckForUpdate()
+    '    Console.WriteLine(response)
+    '    Await manager.update
+
+    'End Function
+    'Private Async Function CheckForUpdates() As Task
+    '    Try
+    '        Using manager = Await UpdateManager.GitHubUpdateManager($"https://github.com/bebedog/TiTA_v3")
+    '            Await manager.UpdateApp()
+    '        End Using
+    '    Catch ex As Exception
+    '        MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
+    '    End Try
+    'End Function
+
     Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.TopMost = True
         Me.positionLoginScreen()
         watch = Stopwatch.StartNew()
         watch.Stop()
+        lblVersion.Text = $"v{titaVersion}"
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
         timesinceLastUpdate()
@@ -209,7 +251,8 @@ Public Class Form1
                 }
                 }}"
         'QUERIES ENDS HERE
-
+        lblStatus.Text = "Checking for updates..."
+        'Await CheckForUpdates()
         lblStatus.Text = "Fetching Accounts..."
         DisableAllControls()
         Dim queries As New List(Of String)
@@ -305,11 +348,16 @@ Public Class Form1
         Me.Hide()
     End Sub
     Private Sub timesinceLastUpdate()
-        Dim lastUpdateTime As String = TiTA_v3.My.Settings.lastMondayUpdate
-        Dim lastUpdateTime_parsed = DateTime.Parse(lastUpdateTime)
-        Dim minuteSinceLastUpdate = DateTime.Now - lastUpdateTime_parsed
-        howLong = Math.Round(minuteSinceLastUpdate.TotalSeconds, 0)
-        Console.WriteLine(howLong.ToString + " seconds since last update")
+        If TiTA_v3.My.Settings.lastMondayUpdate = "" Then
+            'empty setting
+            howLong = 0
+        Else
+            Dim lastUpdateTime As String = TiTA_v3.My.Settings.lastMondayUpdate
+            Dim lastUpdateTime_parsed = DateTime.Parse(lastUpdateTime)
+            Dim minuteSinceLastUpdate = DateTime.Now - lastUpdateTime_parsed
+            howLong = Math.Round(minuteSinceLastUpdate.TotalSeconds, 0)
+            Console.WriteLine(howLong.ToString + " seconds since last update")
+        End If
     End Sub
     Public Sub positionLoginScreen()
         Me.Visible = True

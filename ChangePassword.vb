@@ -44,7 +44,7 @@ Public Class ChangePassword
     End Sub
 
     Private Async Sub ChangePassword_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.CenterToParent()
+        Me.positionScreen()
         Me.Text = $"Lasermet TiTA v{Form1.titaVersion}"
         cbUsername2.AutoCompleteSource = AutoCompleteSource.ListItems
         Dim fetchAccountQuery As String =
@@ -86,6 +86,18 @@ Public Class ChangePassword
             Exit Sub
         End Try
         populateCB2(namesList)
+    End Sub
+
+    Public Sub positionScreen()
+        Me.Visible = True
+        Dim x As Integer
+        Dim y As Integer
+        x = Screen.PrimaryScreen.WorkingArea.Width
+        y = Screen.PrimaryScreen.WorkingArea.Height - Me.Height
+        Do Until x = Screen.PrimaryScreen.WorkingArea.Width - Me.Width
+            x = x - 1
+            Me.Location = New Point(x, y)
+        Loop
     End Sub
 
     Private Function getAccountItemID(ByVal accountList As Root, ByVal userName As String)
@@ -148,5 +160,10 @@ Public Class ChangePassword
 
         End If
 
+    End Sub
+
+    Private Sub btnGoBack_Click(sender As Object, e As EventArgs) Handles btnGoBack.Click
+        Me.Close()
+        Form1.Show()
     End Sub
 End Class

@@ -81,6 +81,8 @@ Public Class Dashboard1
                 timeToWaitInSeconds = 60 - elapsedTimeInSeconds
                 Timer1.Start()
             End If
+        ElseIf Form1.howLong < 90 Then
+            timeToWaitInSeconds = 90 - Form1.howLong
         Else
             'if it is not running, that means that this is the first time querying.
             'This means that the duration of delay is 0 seconds!
@@ -102,6 +104,8 @@ Public Class Dashboard1
                     }
                 }
             }"
+        Dim recon As Integer
+Dashboard1_Shown:
         Try
             For retries = 1 To Form1.maxErrorCount
                 If retries <> Form1.maxErrorCount Then
@@ -145,14 +149,26 @@ Public Class Dashboard1
                 Me.Close()
             End If
         Catch ex As Exception
-            Console.WriteLine("Error!")
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
-                Form1.Close()
-            End If
+            'Console.WriteLine("Error!")
+            'Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            'If result = DialogResult.Retry Then
+            '    Application.Restart()
+            'Else
+            '    Form1.Close()
+            'End If
             'Exit Sub
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                Label1.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo Dashboard1_Shown
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    Application.Restart()
+                End If
+            End If
+            Exit Sub
         Finally
             Form1.watch.Reset()
         End Try
@@ -207,6 +223,8 @@ Public Class Dashboard1
             name
           }
         }"
+        Dim recon As Integer
+createNewItem:
         Try
             For retries = 1 To Form1.maxErrorCount
                 If retries <> Form1.maxErrorCount Then
@@ -225,13 +243,25 @@ Public Class Dashboard1
                 End If
             Next
         Catch ex As Exception
-            Console.WriteLine("Error!")
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
-                Form1.Close()
+            'Console.WriteLine("Error!")
+            'Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            'If result = DialogResult.Retry Then
+            '    Application.Restart()
+            'Else
+            '    Form1.Close()
+            'End If
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                Label1.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo createNewItem
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    Application.Restart()
+                End If
             End If
+            Exit Sub
         End Try
         'START OLD CODE DONT DELETE
         'Await Form1.SendMondayRequest(createItemQuery)
@@ -293,6 +323,7 @@ Public Class Dashboard1
                     duplicateIDstoDelete.Add(rows.Cells("Item ID").Value)
                 Next
                 'loop to delete items from TiTO timeline board.
+
                 For Each deleteItemRequest As String In duplicateIDstoDelete
                     Dim requestString As String =
                         "mutation{
@@ -301,6 +332,8 @@ Public Class Dashboard1
                             }
                         }"
                     Label1.Text = $"Deleting Item with ID: {deleteItemRequest}"
+                    Dim recon As Integer
+deleteItemRequest:
                     Try
                         For retries = 1 To Form1.maxErrorCount
                             If retries <> Form1.maxErrorCount Then
@@ -316,12 +349,23 @@ Public Class Dashboard1
                             End If
                         Next
                     Catch ex As Exception
-                        Console.WriteLine("Error!")
-                        Dim xResult As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-                        If xResult = DialogResult.Retry Then
-                            Application.Restart()
-                        Else
-                            Form1.Close()
+                        'Console.WriteLine("Error!")
+                        'Dim xResult As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+                        'If xResult = DialogResult.Retry Then
+                        '    Application.Restart()
+                        'Else
+                        '    Form1.Close()
+                        'End If
+                        If recon >= 0 And recon < Form1.maxErrorCount Then
+                            recon += 1
+                            Label1.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                            Thread.Sleep(1000)
+                            GoTo deleteItemRequest
+                        ElseIf recon >= Form1.maxErrorCount Then
+                            MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            If DialogResult.OK Then
+                                Application.Restart()
+                            End If
                         End If
                     End Try
                     'START OLD CODE DONT DELETE

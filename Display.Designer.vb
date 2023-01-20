@@ -189,8 +189,10 @@ Partial Class Display
         '
         'Display
         '
+        Me.AcceptButton = Me.btnSwitch
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.CancelButton = Me.Button2
         Me.ClientSize = New System.Drawing.Size(416, 212)
         Me.Controls.Add(Me.lblDepartment1)
         Me.Controls.Add(Me.lblSubtasks)
@@ -206,6 +208,7 @@ Partial Class Display
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.lblUserWelcome)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Display"
         Me.Text = "Display"
         Me.ResumeLayout(False)

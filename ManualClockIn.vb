@@ -1,5 +1,6 @@
 ﻿Imports RestSharp
 Imports Newtonsoft.Json
+Imports System.Threading
 
 
 Public Class ManualClockIn
@@ -82,58 +83,58 @@ Public Class ManualClockIn
 
     Private Sub populateJobsList()
         For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tasks In groups.items
-                cbProjectsList.Items.Add(tasks.name)
+            For Each tsks In groups.items
+                cbProjectsList.Items.Add(tsks.name)
             Next
         Next
         cbProjectsList.SelectedIndex = 0
     End Sub
     Private Function filterJobs(ByVal category As String)
         For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tasks In groups.items
+            For Each tsks In groups.items
                 Select Case category
                     Case "Show All"
                         populateJobsList()
                     Case "R&D"
-                        If tasks.group.id = "topics" Then
-                            cbProjectsList.Items.Add(tasks.name)
+                        If tsks.group.id = "topics" Then
+                            cbProjectsList.Items.Add(tsks.name)
                         End If
                     Case "Jobs"
-                        If tasks.group.id = "group_title" Then
-                            cbProjectsList.Items.Add(tasks.name)
+                        If tsks.group.id = "group_title" Then
+                            cbProjectsList.Items.Add(tsks.name)
                         End If
                     Case "Admin"
-                        If tasks.group.id = "new_group1823" Then
-                            cbProjectsList.Items.Add(tasks.name)
+                        If tsks.group.id = "new_group1823" Then
+                            cbProjectsList.Items.Add(tsks.name)
                         End If
                     Case "Electronics R&D"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "ERD Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tasks.name)
+                                cbProjectsList.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Mechanical R&D"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "MRD Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tasks.name)
+                                cbProjectsList.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Enclosure"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "EN Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tasks.name)
+                                cbProjectsList.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Systems Designs"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "SD Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tasks.name)
+                                cbProjectsList.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Small Batch Manufacturing"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "SMB Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tasks.name)
+                                cbProjectsList.Items.Add(tsks.name)
                             End If
                         Next
                 End Select
@@ -170,7 +171,8 @@ Public Class ManualClockIn
             name
           }
         }"
-
+        Dim recon As Integer
+createNewItem:
         Try
             For retries = 1 To Form1.maxErrorCount
                 If retries <> Form1.maxErrorCount Then
@@ -181,6 +183,7 @@ Public Class ManualClockIn
                     Else
                         'successful response.
                         ToolLabel1.Text = "item successfully created!"
+                        recon = 0
                         'deserialize
                         newItemObj = JsonConvert.DeserializeObject(Of Root)(response(1))
                         Await getItemID(newItemObj)
@@ -192,12 +195,19 @@ Public Class ManualClockIn
                 End If
             Next
         Catch ex As Exception
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
-                Me.Close()
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                ToolLabel1.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo createNewItem
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    recon = 0
+                    Application.Restart()
+                End If
             End If
+            Exit Function
         End Try
 
         'START OLD CODE HERE
@@ -263,6 +273,8 @@ Public Class ManualClockIn
         changeColumnQuery =
             "mutation {change_multiple_column_values(item_id:" + personID + ", board_id:2628729848, column_values: """ + formattedJSON + """) {id}}"
 
+        Dim recon As Integer
+buildQuery:
         Try
             For retries = 1 To Form1.maxErrorCount
                 If retries <> Form1.maxErrorCount Then
@@ -276,6 +288,7 @@ Public Class ManualClockIn
                         MessageBox.Show("Manual login successfully created.", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information)
                         'start stopwatch
                         Form1.watch.Restart()
+                        recon = 0
                         Dashboard1.Show()
                         Me.Close()
                         Exit For
@@ -286,12 +299,16 @@ Public Class ManualClockIn
                 End If
             Next
         Catch ex As Exception
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Dashboard1.Show()
-                Me.Close()
-            Else
-                Application.Restart()
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                ToolLabel1.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo buildQuery
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    Application.Restart()
+                End If
             End If
             Exit Function
         End Try
@@ -368,7 +385,7 @@ Public Class ManualClockIn
         Loop
     End Sub
     Private Async Sub ManualClockIn_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        positionLoginScreen()
+        Me.positionLoginScreen()
         Me.TopMost = True
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DateTimePicker1.Format = DateTimePickerFormat.Custom

@@ -61,20 +61,31 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to .
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Public ReadOnly Property lastMondayUpdate() As String
+        Public ReadOnly Property banner_new() As System.Drawing.Bitmap
             Get
-                Return ResourceManager.GetString("lastMondayUpdate", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("banner-new", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Public ReadOnly Property LasermetPH_logo() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("LasermetPH_logo", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
         
         '''<summary>
         '''  Looks up a localized string similar to .
         '''</summary>
-        Public ReadOnly Property recentUser() As String
+        Public ReadOnly Property lastMondayUpdate() As String
             Get
-                Return ResourceManager.GetString("recentUser", resourceCulture)
+                Return ResourceManager.GetString("lastMondayUpdate", resourceCulture)
             End Get
         End Property
     End Module

@@ -22,6 +22,7 @@ Partial Class ManualClockIn
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ManualClockIn))
         Me.labelTimeIn = New System.Windows.Forms.Label()
         Me.btnTimeIn = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -36,7 +37,6 @@ Partial Class ManualClockIn
         Me.cbFilter = New System.Windows.Forms.ComboBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.btnCurrentTime = New System.Windows.Forms.Button()
-        Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -59,7 +59,7 @@ Partial Class ManualClockIn
         Me.btnTimeIn.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnTimeIn.Name = "btnTimeIn"
         Me.btnTimeIn.Size = New System.Drawing.Size(132, 35)
-        Me.btnTimeIn.TabIndex = 2
+        Me.btnTimeIn.TabIndex = 5
         Me.btnTimeIn.Text = "Submit Time In"
         Me.btnTimeIn.UseVisualStyleBackColor = True
         '
@@ -83,7 +83,7 @@ Partial Class ManualClockIn
         Me.cbProjectsList.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbProjectsList.Name = "cbProjectsList"
         Me.cbProjectsList.Size = New System.Drawing.Size(368, 28)
-        Me.cbProjectsList.TabIndex = 4
+        Me.cbProjectsList.TabIndex = 3
         '
         'DateTimePicker1
         '
@@ -93,13 +93,12 @@ Partial Class ManualClockIn
         Me.DateTimePicker1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DateTimePicker1.Name = "DateTimePicker1"
         Me.DateTimePicker1.Size = New System.Drawing.Size(184, 26)
-        Me.DateTimePicker1.TabIndex = 5
+        Me.DateTimePicker1.TabIndex = 0
         '
         'StatusStrip1
         '
         Me.StatusStrip1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!)
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolLabel1})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 364)
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 342)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
         Me.StatusStrip1.Size = New System.Drawing.Size(545, 22)
@@ -121,7 +120,7 @@ Partial Class ManualClockIn
         Me.cbSubtasks.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbSubtasks.Name = "cbSubtasks"
         Me.cbSubtasks.Size = New System.Drawing.Size(368, 28)
-        Me.cbSubtasks.TabIndex = 7
+        Me.cbSubtasks.TabIndex = 4
         '
         'Label2
         '
@@ -142,16 +141,18 @@ Partial Class ManualClockIn
         Me.btnBack.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.Size = New System.Drawing.Size(132, 35)
-        Me.btnBack.TabIndex = 9
+        Me.btnBack.TabIndex = 6
         Me.btnBack.Text = "Go Back"
         Me.btnBack.UseVisualStyleBackColor = True
         '
         'PictureBox1
         '
-        Me.PictureBox1.Location = New System.Drawing.Point(88, 18)
+        Me.PictureBox1.BackgroundImage = CType(resources.GetObject("PictureBox1.BackgroundImage"), System.Drawing.Image)
+        Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center
+        Me.PictureBox1.Location = New System.Drawing.Point(56, 18)
         Me.PictureBox1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(370, 95)
+        Me.PictureBox1.Size = New System.Drawing.Size(424, 110)
         Me.PictureBox1.TabIndex = 10
         Me.PictureBox1.TabStop = False
         '
@@ -164,7 +165,7 @@ Partial Class ManualClockIn
         Me.cbFilter.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cbFilter.Name = "cbFilter"
         Me.cbFilter.Size = New System.Drawing.Size(368, 28)
-        Me.cbFilter.TabIndex = 12
+        Me.cbFilter.TabIndex = 2
         '
         'Label3
         '
@@ -185,7 +186,7 @@ Partial Class ManualClockIn
         Me.btnCurrentTime.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnCurrentTime.Name = "btnCurrentTime"
         Me.btnCurrentTime.Size = New System.Drawing.Size(176, 32)
-        Me.btnCurrentTime.TabIndex = 13
+        Me.btnCurrentTime.TabIndex = 1
         Me.btnCurrentTime.Text = "Use Current Time"
         Me.btnCurrentTime.UseVisualStyleBackColor = True
         '
@@ -193,7 +194,7 @@ Partial Class ManualClockIn
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(545, 386)
+        Me.ClientSize = New System.Drawing.Size(545, 364)
         Me.Controls.Add(Me.btnCurrentTime)
         Me.Controls.Add(Me.cbFilter)
         Me.Controls.Add(Me.Label3)
@@ -207,13 +208,12 @@ Partial Class ManualClockIn
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnTimeIn)
         Me.Controls.Add(Me.labelTimeIn)
-        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Font = New System.Drawing.Font("Myriad Pro Light", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "ManualClockIn"
         Me.Text = "ManualClockIn"
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()

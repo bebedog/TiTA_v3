@@ -22,6 +22,7 @@ Partial Class Dashboard1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Dashboard1))
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.Label1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
@@ -85,6 +86,7 @@ Partial Class Dashboard1
         Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.StatusStrip1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Dashboard1"
         Me.Text = "Dashboard1"
         Me.StatusStrip1.ResumeLayout(False)

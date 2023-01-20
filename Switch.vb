@@ -1,4 +1,5 @@
 ﻿Imports Newtonsoft.Json
+Imports System.Threading
 Public Class Switch
     Dim idOfNewItem As String
     Dim selectedTaskProjectCode As String
@@ -61,50 +62,50 @@ Public Class Switch
     End Function
     Private Function filterJobs(ByVal category As String)
         For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tasks In groups.items
+            For Each tsks In groups.items
                 Select Case category
                     Case "Show All"
                         populateTasksComboBox()
                     Case "R&D"
-                        If tasks.group.id = "topics" Then
-                            cbTasks.Items.Add(tasks.name)
+                        If tsks.group.id = "topics" Then
+                            cbTasks.Items.Add(tsks.name)
                         End If
                     Case "Jobs"
-                        If tasks.group.id = "group_title" Then
-                            cbTasks.Items.Add(tasks.name)
+                        If tsks.group.id = "group_title" Then
+                            cbTasks.Items.Add(tsks.name)
                         End If
                     Case "Admin"
-                        If tasks.group.id = "new_group1823" Then
-                            cbTasks.Items.Add(tasks.name)
+                        If tsks.group.id = "new_group1823" Then
+                            cbTasks.Items.Add(tsks.name)
                         End If
                     Case "Electronics R&D"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "ERD Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tasks.name)
+                                cbTasks.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Mechanical R&D"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "MRD Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tasks.name)
+                                cbTasks.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Enclosure"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "EN Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tasks.name)
+                                cbTasks.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Systems Designs"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "SD Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tasks.name)
+                                cbTasks.Items.Add(tsks.name)
                             End If
                         Next
                     Case "Small Batch Manufacturing"
-                        For Each cvals In tasks.column_values
+                        For Each cvals In tsks.column_values
                             If cvals.title = "SMB Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tasks.name)
+                                cbTasks.Items.Add(tsks.name)
                             End If
                         Next
                 End Select
@@ -114,12 +115,12 @@ Public Class Switch
     Private Sub updateSubTasksComboBox()
         cbSubTasks.Items.Clear()
         For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tasks In groups.items
-                If tasks.name = cbTasks.Text Then
-                    selectedTaskProjectCode = tasks.column_values(0).text
-                    If tasks?.subitems IsNot Nothing Then
-                        For Each subtasks In tasks.subitems
-                            cbSubTasks.Items.Add(subtasks.name)
+            For Each tsks In groups.items
+                If tsks.name = cbTasks.Text Then
+                    selectedTaskProjectCode = tsks.column_values(0).text
+                    If tsks?.subitems IsNot Nothing Then
+                        For Each subtsks In tsks.subitems
+                            cbSubTasks.Items.Add(subtsks.name)
                         Next
                         cbSubTasks.SelectedIndex = 0
                     Else cbSubTasks.Items.Add("N/A")
@@ -279,6 +280,8 @@ Public Class Switch
           }
         }"
 
+        Dim recon As Integer
+createNewItem:
         Try
             For retries = 1 To Form1.maxErrorCount
                 If retries <> Form1.maxErrorCount Then
@@ -296,13 +299,18 @@ Public Class Switch
                 End If
             Next
         Catch ex As Exception
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Dashboard1.Show()
-                Me.Close()
-            Else
-                Form1.Close()
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                lblStatus.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo createNewItem
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    Application.Restart()
+                End If
             End If
+            Exit Function
         End Try
         'START OLD CODE HERE
         'Dim createItemResult As String = Await Form1.SendMondayRequest(createItemQuery)
@@ -322,6 +330,8 @@ Public Class Switch
                 }
             }"
 
+        Dim recon
+MarkAsDonePreviousLog:
         Try
             For retries = 1 To Form1.maxErrorCount
                 If retries <> Form1.maxErrorCount Then
@@ -337,12 +347,24 @@ Public Class Switch
                 End If
             Next
         Catch ex As Exception
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Dashboard1.Show()
-                Me.Close()
-            Else
-                Form1.Close()
+            'Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            'If result = DialogResult.Retry Then
+            '    Dashboard1.Show()
+            '    Me.Close()
+            'Else
+            '    Form1.Close()
+            'End If
+            'Exit Function
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                lblStatus.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo MarkAsDonePreviousLog
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    Application.Restart()
+                End If
             End If
             Exit Function
         End Try
@@ -370,7 +392,8 @@ Public Class Switch
                     id
                 }
             }"
-
+        Dim recon As Integer
+ChangeMultipleColumnValues:
         Try
             For retries = 1 To Form1.maxErrorCount
                 Dim response As Object = Await Form1.SendMondayRequestVersion2(ChangeMultipleColumnValuesQuery)
@@ -389,11 +412,23 @@ Public Class Switch
                 End If
             Next
         Catch ex As Exception
-            Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
-            If result = DialogResult.Retry Then
-                Application.Restart()
-            Else
-                Me.Close()
+            'Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
+            'If result = DialogResult.Retry Then
+            '    Application.Restart()
+            'Else
+            '    Me.Close()
+            'End If
+            'Exit Function
+            If recon >= 0 And recon < Form1.maxErrorCount Then
+                recon += 1
+                lblStatus.Text = $"Attempting to reconnect to Monday {recon}/{Form1.maxErrorCount}"
+                Thread.Sleep(1000)
+                GoTo ChangeMultipleColumnValues
+            ElseIf recon >= Form1.maxErrorCount Then
+                MessageBox.Show("Failed to connect to Monday. Press OK to restart TiTA", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                If DialogResult.OK Then
+                    Application.Restart()
+                End If
             End If
             Exit Function
         End Try

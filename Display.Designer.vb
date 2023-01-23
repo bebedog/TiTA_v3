@@ -191,6 +191,7 @@ Partial Class Display
         '
         'PictureBox1
         '
+        Me.PictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.PictureBox1.Image = Global.TiTA_v3.My.Resources.Resources.LaserTiTA_128x128
         Me.PictureBox1.Location = New System.Drawing.Point(122, -14)
         Me.PictureBox1.Name = "PictureBox1"

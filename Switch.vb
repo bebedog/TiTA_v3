@@ -1,9 +1,13 @@
 ﻿Imports Newtonsoft.Json
 Imports System.Threading
 Public Class Switch
+    'START of Variable Declaration
     Dim idOfNewItem As String
     Dim selectedTaskProjectCode As String
-    'Class Object for Serialization
+    'END of Variable Declaration
+
+
+    'START of Class Object Declaration
     Public Class Labels
         Public Property labels As String()
     End Class
@@ -24,7 +28,10 @@ Public Class Switch
         Public Property id As Integer
         Public Property kind As String
     End Class
-    'Class Object Declaration
+    'END of Class Object Declaration
+
+
+    'START of Class Object Declaration
     Public Class ColumnValue
         Public Property text As String
     End Class
@@ -51,6 +58,7 @@ Public Class Switch
         Public Property account_id As Integer
     End Class
     'END of Class Object Declaration
+
     Private Function populateTasksComboBox()
         'populate comboboxes first
         For Each groups In Form1.allTasks.data.boards(0).groups
@@ -491,7 +499,6 @@ ChangeMultipleColumnValues:
             c.Enabled = True
         Next
     End Sub
-
     Private Async Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         My.Settings.Save()
@@ -569,7 +576,6 @@ ChangeMultipleColumnValues:
         End If
 
     End Sub
-
     Private Async Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         My.Settings.Save()
@@ -649,7 +655,6 @@ ChangeMultipleColumnValues:
         End If
 
     End Sub
-
     Private Sub cbFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbFilter.SelectedIndexChanged
         cbTasks.Items.Clear()
         filterJobs(cbFilter.SelectedItem.ToString)
@@ -679,4 +684,5 @@ ChangeMultipleColumnValues:
             cbSubTasks.Enabled = False
         End If
     End Sub
+
 End Class

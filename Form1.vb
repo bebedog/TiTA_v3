@@ -4,6 +4,7 @@ Imports Squirrel
 Imports System.Threading.Tasks
 
 Public Class Form1
+    'START of Variable Declaration
     Dim resultsList As List(Of Object)
     Public watch As Stopwatch
     Public maxErrorCount As Integer = 30
@@ -15,22 +16,6 @@ Public Class Form1
     Public elapsedTime As Integer
     Public loadDelay As Integer
     Dim namesList
-
-    'Squirrel Objects
-    Public Class UpdateInfo
-        Public CurrentlyInstalledVersion As ReleaseEntry
-        Public FutureReleaseEntry As ReleaseEntry
-        Public ReleasesToApply As List(Of ReleaseEntry)
-    End Class
-
-    Public Class ReleaseEntry
-        Public Property SHA1 As String
-        Public Property Filename As String
-        Public Property Filesize As Long
-        Public Property IsDelta As Boolean
-    End Class
-
-
 
     'Stores no. of minutes since last update sent to Monday.com
     Public howLong
@@ -52,19 +37,37 @@ Public Class Form1
     Public currentSubTask As String
     Public currentTimeIn As String
     Public currentProjectNumber As String
+    'END of Variable Declaration
 
-    'Class Declaration for Deserialization (Errors)
+    'START of Squirrel Objects
+    Public Class UpdateInfo
+        Public CurrentlyInstalledVersion As ReleaseEntry
+        Public FutureReleaseEntry As ReleaseEntry
+        Public ReleasesToApply As List(Of ReleaseEntry)
+    End Class
+
+    Public Class ReleaseEntry
+        Public Property SHA1 As String
+        Public Property Filename As String
+        Public Property Filesize As Long
+        Public Property IsDelta As Boolean
+    End Class
+    'START of Squirrel Objects
+
+
+
+
+
+    'START of Class Declaration for Deserialization (Errors)
     Public Class Location1
         Public Property line As Integer
         Public Property column As Integer
     End Class
-
     Public Class Error1
         Public Property message As String
         Public Property locations As Location1()
         Public Property fields As String()
     End Class
-
     Public Class ErrorRoot
         Public Property errors As Error1()
         Public Property account_id As Integer
@@ -73,8 +76,9 @@ Public Class Form1
         Public Property error_message As String
         Public Property error_data As String
     End Class
+    'END of Class Declaration for Deserialization (Errors)
 
-    'Class Declaration for Serialization (Changing ColumnValues for Previous Log)
+    'START of Class Declaration for Serialization (Changing ColumnValues for Previous Log)
     Public Class ColumnValuesToChange
         Public Property text_1 As String ' START_Surname
         Public Property dup__of_time_in As String 'Timeout
@@ -177,26 +181,15 @@ Public Class Form1
         btnChangePW.Enabled = True
     End Sub
 
-    'Private Async Function CheckForUpdates() As Task
-    '    Dim manager As New UpdateManager($"D:\lasermet TiTA Updates")
-
-    '    Dim info As Object = Await manager.CheckForUpdate()
-
-    '    Dim manager As New UpdateManager($"https://github.com/bebedog/TiTA_v3/releases/tag/beta")
-    '    Dim response As Object = Await manager.CheckForUpdate()
-    '    Console.WriteLine(response)
-    '    Await manager.update
-
-    'End Function
-    'Private Async Function CheckForUpdates() As Task
-    '    Try
-    '        Using manager = Await UpdateManager.GitHubUpdateManager($"https://github.com/bebedog/TiTA_v3")
-    '            Await manager.UpdateApp()
-    '        End Using
-    '    Catch ex As Exception
-    '        MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
-    '    End Try
-    'End Function
+    Private Async Function CheckForUpdates() As Task
+        Try
+            Using manager = Await UpdateManager.GitHubUpdateManager($"https://github.com/bebedog/TiTA_v3")
+                Await manager.UpdateApp()
+            End Using
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Function
 
     Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.TopMost = True
@@ -251,10 +244,11 @@ Public Class Form1
                 }
                 }}"
         'QUERIES ENDS HERE
-        lblStatus.Text = "Checking for updates..."
-        'Await CheckForUpdates()
-        lblStatus.Text = "Fetching Accounts..."
+
         DisableAllControls()
+        lblStatus.Text = "Checking for updates..."
+        Await CheckForUpdates()
+        lblStatus.Text = "Fetching Accounts..."
         Dim queries As New List(Of String)
         'add all queries in this list
         queries.Add(fetchAccountQuery)
@@ -293,7 +287,6 @@ Public Class Form1
                     Throw New Exception("Could not fetch accounts.")
                     Exit Sub
                 End If
-
                 If goodQueryCounter = queries.Count Then
                     Exit For
                 End If
@@ -321,7 +314,6 @@ Public Class Form1
         'Else lblStatus.Text = "Accounts Fetched."
         'End If
         lblStatus.Text = "Accounts fetched."
-
         EnableAllControls()
 
     End Sub
@@ -334,6 +326,8 @@ Public Class Form1
         Else
             MessageBox.Show("Incorrect Password.")
             'Account Detail don't match.
+            tbPassword.Select()
+            tbPassword.Clear()
         End If
         TiTA_v3.My.Settings.recentUser = cbUsername.Text
         My.Settings.Save()

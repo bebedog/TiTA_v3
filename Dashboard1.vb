@@ -81,8 +81,8 @@ Public Class Dashboard1
                 timeToWaitInSeconds = 60 - elapsedTimeInSeconds
                 Timer1.Start()
             End If
-        ElseIf Form1.howLong < 90 Then
-            timeToWaitInSeconds = 90 - Form1.howLong
+            'ElseIf Form1.howLong < 90 Then
+            '    timeToWaitInSeconds = 90 - Form1.howLong
         Else
             'if it is not running, that means that this is the first time querying.
             'This means that the duration of delay is 0 seconds!

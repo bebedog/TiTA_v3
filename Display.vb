@@ -11,6 +11,8 @@
         Loop
     End Sub
     Private Async Sub Display_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        lunchAndBreakReminder.Enabled = True
+        lunchAndBreakReminder.Start()
         positionLoginScreen()
         Me.TopMost = True
         Dim elapsedTimeInSeconds As Integer
@@ -48,7 +50,6 @@
             Dashboard1.Show()
             Me.Close()
         End If
-
     End Sub
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         Me.Hide()
@@ -79,5 +80,37 @@
     End Sub
     Private Sub NotifyIcon1_BalloonTipClicked(sender As Object, e As EventArgs) Handles NotifyIcon1.BalloonTipClicked
         showToolTip()
+    End Sub
+
+    Private Async Sub lunchAndBreakReminder_Tick(sender As Object, e As EventArgs) Handles lunchAndBreakReminder.Tick
+        If TimeOfDay.ToString("HH:mm") = "12:00" Then
+            Dim dlgrslt = MessageBox.Show($"Your tita says it's time for lunch!{Environment.NewLine}Would you like to switch to lunch right now?", "Lunch Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+            If dlgrslt = DialogResult.Yes Then
+                'switch to lunch
+                Dashboard1.Show()
+                Me.Close()
+            Else
+                'no
+                lunchAndBreakReminder.Enabled = False
+                lunchAndBreakReminder.Stop()
+                Await Task.Delay(60000)
+                lunchAndBreakReminder.Enabled = True
+                lunchAndBreakReminder.Start()
+            End If
+        ElseIf TimeOfDay.ToString("HH:mm") = "16:00" Then
+            Dim dlgrslt = MessageBox.Show($"Your tita says it's time for snacks!{Environment.NewLine}Would you like to switch to lunch right now?", "Lunch Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+            If dlgrslt = DialogResult.Yes Then
+                'switch to break
+                Dashboard1.Show()
+                Me.Close()
+            Else
+                'no
+                lunchAndBreakReminder.Enabled = False
+                lunchAndBreakReminder.Stop()
+                Await Task.Delay(60000)
+                lunchAndBreakReminder.Enabled = True
+                lunchAndBreakReminder.Start()
+            End If
+        End If
     End Sub
 End Class

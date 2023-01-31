@@ -84,6 +84,8 @@
 
     Private Async Sub lunchAndBreakReminder_Tick(sender As Object, e As EventArgs) Handles lunchAndBreakReminder.Tick
         If TimeOfDay.ToString("HH:mm") = "12:00" Then
+            lunchAndBreakReminder.Enabled = False
+            lunchAndBreakReminder.Stop()
             Dim dlgrslt = MessageBox.Show($"Your tita says it's time for lunch!{Environment.NewLine}Would you like to switch to lunch right now?", "Lunch Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
             If dlgrslt = DialogResult.Yes Then
                 'switch to lunch
@@ -91,13 +93,13 @@
                 Me.Close()
             Else
                 'no
-                lunchAndBreakReminder.Enabled = False
-                lunchAndBreakReminder.Stop()
                 Await Task.Delay(60000)
                 lunchAndBreakReminder.Enabled = True
                 lunchAndBreakReminder.Start()
             End If
         ElseIf TimeOfDay.ToString("HH:mm") = "16:00" Then
+            lunchAndBreakReminder.Enabled = False
+            lunchAndBreakReminder.Stop()
             Dim dlgrslt = MessageBox.Show($"Your tita says it's time for snacks!{Environment.NewLine}Would you like to switch to lunch right now?", "Lunch Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
             If dlgrslt = DialogResult.Yes Then
                 'switch to break
@@ -105,8 +107,6 @@
                 Me.Close()
             Else
                 'no
-                lunchAndBreakReminder.Enabled = False
-                lunchAndBreakReminder.Stop()
                 Await Task.Delay(60000)
                 lunchAndBreakReminder.Enabled = True
                 lunchAndBreakReminder.Start()

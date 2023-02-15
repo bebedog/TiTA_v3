@@ -77,6 +77,18 @@ Namespace My
                 Me("lastMondayUpdate") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property lastSync() As String
+            Get
+                Return CType(Me("lastSync"),String)
+            End Get
+            Set
+                Me("lastSync") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

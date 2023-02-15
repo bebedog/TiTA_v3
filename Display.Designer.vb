@@ -40,7 +40,7 @@ Partial Class Display
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
-        Me.lunchAndBreakReminder = New System.Windows.Forms.Timer(Me.components)
+        Me.lunchTimer = New System.Windows.Forms.Timer(Me.components)
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -201,9 +201,9 @@ Partial Class Display
         Me.PictureBox1.TabIndex = 26
         Me.PictureBox1.TabStop = False
         '
-        'lunchAndBreakReminder
+        'lunchTimer
         '
-        Me.lunchAndBreakReminder.Enabled = True
+        Me.lunchTimer.Interval = 1000
         '
         'Display
         '
@@ -252,5 +252,5 @@ Partial Class Display
     Friend WithEvents NotifyIcon1 As NotifyIcon
     Friend WithEvents Timer1 As Timer
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents lunchAndBreakReminder As Timer
+    Friend WithEvents lunchTimer As Timer
 End Class

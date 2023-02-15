@@ -11,8 +11,6 @@
         Loop
     End Sub
     Private Async Sub Display_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        lunchAndBreakReminder.Enabled = True
-        lunchAndBreakReminder.Start()
         positionLoginScreen()
         Me.TopMost = True
         Dim elapsedTimeInSeconds As Integer
@@ -37,7 +35,6 @@
             c.Enabled = False
         Next
     End Sub
-
     Private Sub enableAllControls()
         For Each c As Control In Me.Controls
             c.Enabled = True
@@ -50,6 +47,7 @@
             Dashboard1.Show()
             Me.Close()
         End If
+
     End Sub
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         Me.Hide()
@@ -74,6 +72,8 @@
     Private Sub reminder()
         NotifyIcon1.ShowBalloonTip(0)
         NotifyIcon1.BalloonTipText = $"It has been an hour.{Environment.NewLine}Are you still working on {Form1.currentTask}?"
+        Timer1.Stop()
+        Timer1.Start()
     End Sub
     Private Sub NotifyIcon1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles NotifyIcon1.MouseDoubleClick
         showToolTip()
@@ -82,35 +82,7 @@
         showToolTip()
     End Sub
 
-    Private Async Sub lunchAndBreakReminder_Tick(sender As Object, e As EventArgs) Handles lunchAndBreakReminder.Tick
-        If TimeOfDay.ToString("HH:mm") = "12:00" Then
-            lunchAndBreakReminder.Enabled = False
-            lunchAndBreakReminder.Stop()
-            Dim dlgrslt = MessageBox.Show($"Your tita says it's time for lunch!{Environment.NewLine}Would you like to switch to lunch right now?", "Lunch Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
-            If dlgrslt = DialogResult.Yes Then
-                'switch to lunch
-                Dashboard1.Show()
-                Me.Close()
-            Else
-                'no
-                Await Task.Delay(60000)
-                lunchAndBreakReminder.Enabled = True
-                lunchAndBreakReminder.Start()
-            End If
-        ElseIf TimeOfDay.ToString("HH:mm") = "16:00" Then
-            lunchAndBreakReminder.Enabled = False
-            lunchAndBreakReminder.Stop()
-            Dim dlgrslt = MessageBox.Show($"Your tita says it's time for snacks!{Environment.NewLine}Would you like to switch to lunch right now?", "Lunch Reminder", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
-            If dlgrslt = DialogResult.Yes Then
-                'switch to break
-                Dashboard1.Show()
-                Me.Close()
-            Else
-                'no
-                Await Task.Delay(60000)
-                lunchAndBreakReminder.Enabled = True
-                lunchAndBreakReminder.Start()
-            End If
-        End If
+    Private Sub lunchTimer_Tick(sender As Object, e As EventArgs) Handles lunchTimer.Tick
+
     End Sub
 End Class

@@ -81,6 +81,7 @@ Public Class ManualClockIn
         Public Property account_id As Integer
     End Class
 
+
     Private Sub populateJobsList()
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tsks In groups.items
@@ -424,12 +425,23 @@ buildQuery:
 
     'Assign Create Item > Update column events to Time In button
     Private Async Sub btnTimeIn_Click(sender As Object, e As EventArgs) Handles btnTimeIn.Click
-        If validateTime(DateTimePicker1.Text) = True Then
-            Await createNewItem()
-            TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-            My.Settings.Save()
+
+        If Form1.checkBudgetHrs(cbProjectsList.Text, Form1.allTasks) = True Then
+
+            If validateTime(DateTimePicker1.Text) = True Then
+                Await createNewItem()
+                TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                My.Settings.Save()
+                Form1.watch.Start()
+            End If
+
+        Else
+            MessageBox.Show("Project has already reached its budget hours. Reach out to your lead for extension.", "Budget Hours reached for " + cbProjectsList.Text, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            'If DialogResult.OK Then
+            '    Me.Close()
+            '    Dashboard1.Show()
+            'End If
         End If
-        Form1.watch.Start()
     End Sub
 
     'Populate subtasks list based on selected task

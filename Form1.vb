@@ -18,7 +18,8 @@ Public Class Form1
     Dim namesList
     Dim apiKey As String = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIxNTg3NTczMCwidWlkIjozNjkzODg5OSwiaWFkIjoiMjAyMy0wMS0wM1QwMzoxNjoyOC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.WyM7DJEbXNeF4r6leiLcLbb9oFe57alDkwMhHWEkKrM"
 
-    Public projectListBoard As String = "2718204773"
+    Public projectListBoard As String = "2718204773
+"
 
     'Stores no. of minutes since last update sent to Monday.com
     Public howLong
@@ -346,7 +347,7 @@ Public Class Form1
 
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
         fetchMondayTimer.Enabled = True
-        fetchMondayTimer.Interval = 90000
+        fetchMondayTimer.Interval = 7200000
         fetchMondayTimer.Start()
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches

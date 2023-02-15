@@ -16,6 +16,9 @@ Public Class Form1
     Public elapsedTime As Integer
     Public loadDelay As Integer
     Dim namesList
+    Dim apiKey As String = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIxNTg3NTczMCwidWlkIjozNjkzODg5OSwiaWFkIjoiMjAyMy0wMS0wM1QwMzoxNjoyOC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.WyM7DJEbXNeF4r6leiLcLbb9oFe57alDkwMhHWEkKrM"
+
+    Public projectListBoard As String = "2718204773"
 
     'Stores no. of minutes since last update sent to Monday.com
     Public howLong
@@ -52,10 +55,7 @@ Public Class Form1
         Public Property Filesize As Long
         Public Property IsDelta As Boolean
     End Class
-    'START of Squirrel Objects
-
-
-
+    'END of Squirrel Objects
 
 
     'START of Class Declaration for Deserialization (Errors)
@@ -139,6 +139,26 @@ Public Class Form1
             Return False
         End If
     End Function
+
+    Public Function checkBudgetHrs(ByVal task As String, ByVal tasksList As Form1.Root) As Boolean
+
+        For Each group In tasksList.data.boards(0).groups
+            For Each item In group.items
+                If item.name = task Then
+                    If String.IsNullOrWhiteSpace(item.column_values(1).text) Or item.column_values(1).text.ToString = "0" Then
+                        Return True
+                    Else
+                        If item.column_values(1).text <= item.column_values(2).text Then
+                            Return False
+                        Else
+                            Return True
+                        End If
+                    End If
+                End If
+            Next
+        Next
+
+    End Function
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
         '0 - First Name
         '1 - Monday ID
@@ -148,13 +168,13 @@ Public Class Form1
         For Each x In accounts.data.boards(0).items
             If x.name = surname Then
                 'account found.
-                If x.column_values(2).text = password Then
+                If x.column_values(3).text = password Then
                     'account verified
                     'save all account details in a global variable.
                     fSurname = x.name
-                    fFirstName = x.column_values(0).text
-                    mondayID = x.column_values(1).text
-                    department = x.column_values(3).text
+                    fFirstName = x.column_values(1).text
+                    mondayID = x.column_values(2).text
+                    department = x.column_values(4).text
                     accountItemID = x.id
                     Return True
                 Else
@@ -191,19 +211,11 @@ Public Class Form1
         End Try
     End Function
 
-    Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.TopMost = True
-        Me.positionLoginScreen()
-        watch = Stopwatch.StartNew()
-        watch.Stop()
-        lblVersion.Text = $"v{titaVersion}"
-        Me.Text = $"Lasermet TiTA v{titaVersion}"
-        cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
-        timesinceLastUpdate()
+    Public Async Function fetchMondayData() As Task
         'QUERIES STARTS HERE
         Dim fetchTasksQuery As String =
             "query{
-                boards(ids: 2718204773){
+                boards(ids: " + projectListBoard + "){
                     groups(ids:[""topics"",""group_title"", ""new_group1823""]){
                         items{
                             name
@@ -213,7 +225,7 @@ Public Class Form1
                             subitems{
                                 name
                             }
-                            column_values(ids:[""text"", ""text6"", ""text64"", ""text79"", ""text0"", ""text_1""]){
+                            column_values(ids:[""text"", ""text6"", ""text64"", ""text79"", ""text0"", ""text_1"", ""dup__of_budget_expense"",""ytd_hours""]){
                                 title
                                 text
                             }
@@ -245,10 +257,8 @@ Public Class Form1
                 }}"
         'QUERIES ENDS HERE
 
-        DisableAllControls()
-        lblStatus.Text = "Checking for updates..."
-        Await CheckForUpdates()
         lblStatus.Text = "Fetching Accounts..."
+        DisableAllControls()
         Dim queries As New List(Of String)
         'add all queries in this list
         queries.Add(fetchAccountQuery)
@@ -285,14 +295,16 @@ Public Class Form1
                 Else
                     'max retries are all used.
                     Throw New Exception("Could not fetch accounts.")
-                    Exit Sub
+                    Exit Function
                 End If
+
                 If goodQueryCounter = queries.Count Then
                     Exit For
                 End If
             Next
             accounts = deserializedResults(0)
             namesList = deserializedResults(1)
+
             allTasks = deserializedResults(2)
             populateCB(namesList)
         Catch ex As Exception
@@ -302,8 +314,22 @@ Public Class Form1
             Else
                 Me.Close()
             End If
-            Exit Sub
+            Exit Function
         End Try
+    End Function
+
+    Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.TopMost = True
+        Me.positionLoginScreen()
+        watch = Stopwatch.StartNew()
+        watch.Stop()
+        lblVersion.Text = $"v{titaVersion}"
+        Me.Text = $"Lasermet TiTA v{titaVersion}"
+        cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
+        timesinceLastUpdate()
+
+        Await CheckForUpdates()
+        Await fetchMondayData()
 
         If TiTA_v3.My.Settings.recentUser <> "" Then
             cbUsername.SelectedItem = TiTA_v3.My.Settings.recentUser
@@ -317,7 +343,11 @@ Public Class Form1
         EnableAllControls()
 
     End Sub
+
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
+        fetchMondayTimer.Enabled = True
+        fetchMondayTimer.Interval = 90000
+        fetchMondayTimer.Start()
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
             MessageBox.Show($"Welcome back, {fFirstName}!", "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -332,6 +362,11 @@ Public Class Form1
         TiTA_v3.My.Settings.recentUser = cbUsername.Text
         My.Settings.Save()
     End Sub
+
+    Private Sub fetchMondayTimer_Tick(sender As Object, e As EventArgs) Handles fetchMondayTimer.Tick
+        fetchMondayData()
+    End Sub
+
     'Initiated after Manual Time In.
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         elapsedTime = elapsedTime + 1000
@@ -372,7 +407,7 @@ Public Class Form1
         Dim request = New RestRequest()
         request.Timeout = queryTimeOut
         request.Method = Method.Post
-        request.AddHeader("Authorization", "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjE1MjU2NzQ3OCwidWlkIjoxNTA5MzQwNywiaWFkIjoiMjAyMi0wMy0yNVQwMTo0Njo1My4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.F1TqwLS-QsuM8Ss3UcgskbNFUIer1dfwfoLyPMq1pbc")
+        request.AddHeader("Authorization", apiKey)
         request.AddQueryParameter("query", myQuery)
         Dim response = New RestResponse
         response = Await client.PostAsync(request)

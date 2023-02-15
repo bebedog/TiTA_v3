@@ -231,85 +231,87 @@ Public Class Switch
         btnSwitch.Enabled = True
     End Sub
     Private Async Sub btnSwitch_Click(sender As Object, e As EventArgs) Handles btnSwitch.Click
-        TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-        My.Settings.Save()
-        'NOTE to future programmers:
-        'WRITING/DELETING API calls to monday.com is very important.
-        'Thus, whenever an error is encountered by the program, instead of restarting the application,
-        'It should keep on looping until it gets a success result.
-        'Mark the previous log as done, and put in timeout column and tita
+        If Form1.checkBudgetHrs(cbTasks.SelectedItem, Form1.allTasks) = True Then
+            Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            If dialogResult = DialogResult.Yes Then
+                Try
+                    'Switch confirmed
+                    lblStatus.Text = "Marking X the previous log.."
+                    'Build Object to Change Column Value
+                    Dim payload = New ColumnValuesToChange()
+                    'Assign values to each property of the object.
+                    payload.text_1 = "X"
+                    payload.dup__of_time_in = DateTime.Now.ToString("HH:mm:ss")
+                    payload.text64 = Form1.titaVersion.ToString
 
-        Dim dialogResult = MessageBox.Show($"Are you sure you want to switch to {cbTasks.SelectedItem} {cbSubTasks.SelectedItem}?", "Task Switch", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-        If dialogResult = DialogResult.Yes Then
-            Try
-                'Switch confirmed
-                lblStatus.Text = "Marking X the previous log.."
-                'Build Object to Change Column Value
-                Dim payload = New ColumnValuesToChange()
-                'Assign values to each property of the object.
-                payload.text_1 = "X"
-                payload.dup__of_time_in = DateTime.Now.ToString("HH:mm:ss")
-                payload.text64 = Form1.titaVersion.ToString
+                    'Mark previous log as done
+                    disableAllControls()
+                    Await MarkAsDonePreviousLog(payload)
+                    lblStatus.Text = "Creating new log..."
 
-                'Mark previous log as done
-                disableAllControls()
-                Await MarkAsDonePreviousLog(payload)
-                lblStatus.Text = "Creating new log..."
-
-                'Create new item on monday.com board
-                'and save its id on idOfNewItem
-                idOfNewItem = Await createNewItem()
+                    'Create new item on monday.com board
+                    'and save its id on idOfNewItem
+                    idOfNewItem = Await createNewItem()
 
 
-                'Change the value of the createdItem
-                'But create first the values of the column.
-                Dim payload2 = New ColumnValuesToChange()
-                payload2.job = cbTasks.SelectedItem
-                payload2.text_1 = $"START_{Form1.fSurname}"
-                payload2.text = DateTime.Now.ToString("HH:mm:ss")
-                payload2.text64 = "3.0"
-                payload2.text4 = cbSubTasks.SelectedItem
+                    'Change the value of the createdItem
+                    'But create first the values of the column.
+                    Dim payload2 = New ColumnValuesToChange()
+                    payload2.job = cbTasks.SelectedItem
+                    payload2.text_1 = $"START_{Form1.fSurname}"
+                    payload2.text = DateTime.Now.ToString("HH:mm:ss")
+                    payload2.text64 = "3.0"
+                    payload2.text4 = cbSubTasks.SelectedItem
 
-                Dim payloadLabel As New Labels()
-                Dim labelList As New List(Of String)
-                labelList.Add(selectedTaskProjectCode)
-                payloadLabel.labels = labelList.ToArray
+                    Dim payloadLabel As New Labels()
+                    Dim labelList As New List(Of String)
+                    labelList.Add(selectedTaskProjectCode)
+                    payloadLabel.labels = labelList.ToArray
 
-                payload2.dropdown = payloadLabel
+                    payload2.dropdown = payloadLabel
 
 
 
 
-                Form1.currentProjectNumber = selectedTaskProjectCode
+                    Form1.currentProjectNumber = selectedTaskProjectCode
 
-                'create the payload for persons (a nested loop, so we need to construct a new payload for it)
-                Dim person As New Person()
-                Dim personIDandKind As New PersonsAndTeams()
-                Dim personValueList As New List(Of PersonsAndTeams)
-                personIDandKind.id = Form1.mondayID
-                personIDandKind.kind = "person"
-                personValueList.Add(personIDandKind)
-                person.personsAndTeams = personValueList.ToArray
-                payload2.person = person
+                    'create the payload for persons (a nested loop, so we need to construct a new payload for it)
+                    Dim person As New Person()
+                    Dim personIDandKind As New PersonsAndTeams()
+                    Dim personValueList As New List(Of PersonsAndTeams)
+                    personIDandKind.id = Form1.mondayID
+                    personIDandKind.kind = "person"
+                    personValueList.Add(personIDandKind)
+                    person.personsAndTeams = personValueList.ToArray
+                    payload2.person = person
 
-                'Send multiple column value change request to monday
-                Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
-                'Start Cooldown
-                Form1.watch.Start()
-                'save all details to form1
-                Form1.currentTask = cbTasks.SelectedItem
-                Form1.currentSubTask = cbSubTasks.SelectedItem
-                Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
-                'show display
-                Display.Show()
-                Me.Close()
-            Catch ex As Exception
-                MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Application.Restart()
-            End Try
+                    'Send multiple column value change request to monday
+                    Await ChangeMultipleColumnValues1(idOfNewItem, payload2)
+                    'Start Cooldown
+                    Form1.watch.Start()
+                    'save all details to form1
+                    Form1.currentTask = cbTasks.SelectedItem
+                    Form1.currentSubTask = cbSubTasks.SelectedItem
+                    Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
+                    'show display
+                    TiTA_v3.My.Settings.lastMondayUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    My.Settings.Save()
+                    Display.Show()
+                    Me.Close()
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Application.Restart()
+                End Try
+            Else
+                'user pressed no.
+                'do nothing.
+            End If
         Else
-            'user pressed no.
-            'do nothing.
+            MessageBox.Show("Project has already reached its budget hours. Reach out to your lead for extension.", "Budget Hours reached for " + cbTasks.Text, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            If DialogResult.OK Then
+                Me.Close()
+                Dashboard1.Show()
+            End If
         End If
     End Sub
     Public Async Function createNewItem() As Task(Of String)

@@ -36,6 +36,7 @@ Partial Class Form1
         Me.cbUsername = New System.Windows.Forms.ComboBox()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.btnChangePW = New System.Windows.Forms.Button()
+        Me.fetchMondayTimer = New System.Windows.Forms.Timer(Me.components)
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -191,4 +192,5 @@ Partial Class Form1
     Friend WithEvents btnChangePW As Button
     Friend WithEvents ToolStripProgressBar1 As ToolStripProgressBar
     Friend WithEvents lblVersion As ToolStripStatusLabel
+    Friend WithEvents fetchMondayTimer As Timer
 End Class

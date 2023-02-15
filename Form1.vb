@@ -280,7 +280,7 @@ Public Class Form1
                         If result(0) = "error" Then
                             'the result is an error.
                             'deserialize into ErrorRoot
-                            deserializedResults.Add(JsonConvert.DeserializeObject(Of ErrorRoot)(result(1)))
+                            'deserializedResults.Add(JsonConvert.DeserializeObject(Of ErrorRoot)(result(1)))
                             'badQuery.Add(query)
                             Console.WriteLine($"Something went wrong. Retrying... {retries + 1}/{maxErrorCount}")
                             ToolStripProgressBar1.Increment(-10)

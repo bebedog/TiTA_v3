@@ -30,7 +30,7 @@ Public Class adminDashboard
     Public taskList() As String = {"DWB", "OWTEN-C"}
     Public hoursList() As Integer = {11, 24}
     Public con As New OleDb.OleDbConnection
-
+    Public selectedProfile As String
     'database functions and subs.
     Public Sub connectToAccessDatabase()
         Try
@@ -110,7 +110,7 @@ Public Class adminDashboard
                             Console.WriteLine(response(1))
                         Else
                             Return JsonConvert.DeserializeObject(Of Root)(response(1))
-                            Exit For
+                            Exit While
                         End If
                     Catch ex As Exception
                         Dim dlgResult = MessageBox.Show(ex.Message + Environment.NewLine + "Error happened at fetchDataFromMonday", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
@@ -312,19 +312,69 @@ Public Class adminDashboard
             Throw New System.Exception("An error has occured at function: SendMondayRequestVersion2")
         End If
     End Function
-    Private Sub Chart1_Click(sender As Object, e As System.EventArgs) Handles Chart1.Click
+    Private Sub Chart1_Click(sender As Object, e As MouseEventArgs) Handles Chart1.Click
         Try
             Console.WriteLine("Click detected.")
             Dim pointindex As Integer
             Dim result As HitTestResult
-            result = Chart1.HitTest(Cursor.Position.X, Cursor.Position.Y)
-            If result.ChartElementType = ChartElementType.DataPoint Then
+            result = Chart1.HitTest(e.X, e.Y)
+            If result.ChartElementType = ChartElementType.DataPoint Or result.ChartElementType = ChartElementType.LegendItem Then
                 pointindex = result.PointIndex
                 Console.WriteLine(pointindex)
+                'MessageBox.Show("Selected Data is " + result.Series.Name)
+                Dim ptLowerLeft As New Point(Cursor.Position.X - 5, Cursor.Position.Y - 5)
+                contextMenuStrip.Show(ptLowerLeft)
+                btnExpandedView.Text = $"Expand to {result.Series.Name} charts"
+                selectedProfile = result.Series.Points(pointindex).AxisLabel
+                btnViewProfile.Text = $"View {result.Series.Points(pointindex).AxisLabel}'s profile"
             End If
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
+
+        'For Each series As Series In Chart1.Series
+        '    For Each dp As DataPoint In series.Points
+        '        dp.ToolTip = "#VALX, #VALY"
+        '    Next
+        'Next
+    End Sub
+
+    Private Sub ViewProfile(ByVal name As String, dgv As DataGridView)
+        'Dim personalDataTable As New DataTable
+        ''take all column header text and store it in a list of string   
+        'Dim listOfColumnValues As New List(Of String)
+        'For Each columns As DataGridViewColumn In dgv.Columns
+        '    'listOfColumnValues.Add(columns.HeaderText)
+        '    personalDataTable.Columns.Add(columns.HeaderText)
+        'Next
+
+        'Dim newRow As DataRow
+        'newRow = personalDataTable.NewRow()
+
+        'For Each row As DataGridViewRow In dgv.Rows
+        '    If row.Cells("Names").Value = name Then
+        '        'newRow = DataRow(row.Cells)
+        '        For Each cells As DataGridViewCell In row.Cells
+
+        '        Next
+        '    End If
+        'Next
+
+        Dim currentDataTable As DataTable = DirectCast(dgv.DataSource, DataTable)
+        Dim personalDatatable As New DataTable
+        For Each column As DataColumn In currentDataTable.Columns
+            personalDatatable.Columns.Add(column.ColumnName)
+        Next
+
+        For Each row As DataRow In currentDataTable.Rows
+            If row.Item("Names") = name Then
+                'This is the record that we need.
+                Dim newRow As DataRow = row.
+                ''newRow = personalDatatable.NewRow()
+                'newRow = row
+                personalDatatable.Rows.Add(newRow)
+            End If
+        Next
     End Sub
     Private Sub cbLogOption_SelectedValueChanged(sender As Object, e As EventArgs) Handles cbLogOption.SelectedValueChanged
         For Each metroPanels As Control In Me.Controls
@@ -597,9 +647,23 @@ Public Class adminDashboard
 
     End Sub
 
-    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        If TimeOfDay.ToString("HH:mm") = "10:55" Then
-            Console.WriteLine("Hello World")
+    Private Sub Chart1_MouseMove(sender As Object, e As MouseEventArgs) Handles Chart1.MouseMove
+        Dim result As HitTestResult
+        result = Chart1.HitTest(e.X, e.Y)
+        If result.ChartElementType = ChartElementType.DataPoint Or result.ChartElementType = ChartElementType.LegendItem Or result.ChartElementType = ChartElementType.AxisLabels Then
+            Me.Cursor = Cursors.Hand
+        Else
+            Me.Cursor = Cursors.Default
+        End If
+    End Sub
+
+    Private Sub contextMenuStrip_MouseLeave(sender As Object, e As EventArgs) Handles contextMenuStrip.MouseLeave
+        contextMenuStrip.Hide()
+    End Sub
+
+    Private Sub btnViewProfile_Click(sender As Object, e As EventArgs) Handles btnViewProfile.Click
+        If selectedProfile <> "" Or selectedProfile IsNot Nothing Then
+            ViewProfile(selectedProfile, DataGridView1)
         End If
     End Sub
 End Class

@@ -23,16 +23,12 @@ Partial Class adminDashboard
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim ChartArea3 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim ChartArea4 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend4 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Chart1 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.MetroTabControl1 = New MetroFramework.Controls.MetroTabControl()
         Me.MetroTabPage1 = New MetroFramework.Controls.MetroTabPage()
-        Me.Chart2 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.MetroTabPage2 = New MetroFramework.Controls.MetroTabPage()
         Me.MetroLabel1 = New MetroFramework.Controls.MetroLabel()
         Me.DailyPanel = New MetroFramework.Controls.MetroPanel()
@@ -55,30 +51,33 @@ Partial Class adminDashboard
         Me.lblStatus = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.contextMenuStrip = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.btnViewProfile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.btnExpandedView = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Chart1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MetroTabControl1.SuspendLayout()
         Me.MetroTabPage1.SuspendLayout()
-        CType(Me.Chart2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MetroTabPage2.SuspendLayout()
         Me.DailyPanel.SuspendLayout()
         Me.WeeklyPanel.SuspendLayout()
         Me.CustomPanel.SuspendLayout()
+        Me.contextMenuStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Chart1
         '
         Me.Chart1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        ChartArea3.AlignmentOrientation = CType((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Vertical Or System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal), System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations)
-        ChartArea3.Name = "ChartArea1"
-        Me.Chart1.ChartAreas.Add(ChartArea3)
-        Legend3.Name = "Legend1"
-        Me.Chart1.Legends.Add(Legend3)
+        ChartArea1.AlignmentOrientation = CType((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Vertical Or System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal), System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations)
+        ChartArea1.Name = "ChartArea1"
+        Me.Chart1.ChartAreas.Add(ChartArea1)
+        Legend1.Name = "Legend1"
+        Me.Chart1.Legends.Add(Legend1)
         Me.Chart1.Location = New System.Drawing.Point(6, 6)
         Me.Chart1.Name = "Chart1"
         Me.Chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.EarthTones
-        Me.Chart1.Size = New System.Drawing.Size(874, 254)
+        Me.Chart1.Size = New System.Drawing.Size(874, 558)
         Me.Chart1.TabIndex = 0
         Me.Chart1.Text = "Chart1"
         '
@@ -117,7 +116,6 @@ Partial Class adminDashboard
         '
         'MetroTabPage1
         '
-        Me.MetroTabPage1.Controls.Add(Me.Chart2)
         Me.MetroTabPage1.Controls.Add(Me.Chart1)
         Me.MetroTabPage1.HorizontalScrollbarBarColor = True
         Me.MetroTabPage1.HorizontalScrollbarHighlightOnWheel = False
@@ -130,23 +128,6 @@ Partial Class adminDashboard
         Me.MetroTabPage1.VerticalScrollbarBarColor = True
         Me.MetroTabPage1.VerticalScrollbarHighlightOnWheel = False
         Me.MetroTabPage1.VerticalScrollbarSize = 10
-        '
-        'Chart2
-        '
-        Me.Chart2.BackColor = System.Drawing.Color.LightCoral
-        ChartArea4.Name = "ChartArea1"
-        Me.Chart2.ChartAreas.Add(ChartArea4)
-        Legend4.Name = "Legend1"
-        Me.Chart2.Legends.Add(Legend4)
-        Me.Chart2.Location = New System.Drawing.Point(6, 264)
-        Me.Chart2.Name = "Chart2"
-        Series2.ChartArea = "ChartArea1"
-        Series2.Legend = "Legend1"
-        Series2.Name = "Series1"
-        Me.Chart2.Series.Add(Series2)
-        Me.Chart2.Size = New System.Drawing.Size(874, 300)
-        Me.Chart2.TabIndex = 2
-        Me.Chart2.Text = "Chart2"
         '
         'MetroTabPage2
         '
@@ -360,8 +341,23 @@ Partial Class adminDashboard
         Me.Button1.Text = "Button1"
         Me.Button1.UseVisualStyleBackColor = True
         '
-        'Timer1
+        'contextMenuStrip
         '
+        Me.contextMenuStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.btnViewProfile, Me.btnExpandedView})
+        Me.contextMenuStrip.Name = "contextMenuStrip"
+        Me.contextMenuStrip.Size = New System.Drawing.Size(155, 48)
+        '
+        'btnViewProfile
+        '
+        Me.btnViewProfile.Name = "btnViewProfile"
+        Me.btnViewProfile.Size = New System.Drawing.Size(154, 22)
+        Me.btnViewProfile.Text = "View Profile"
+        '
+        'btnExpandedView
+        '
+        Me.btnExpandedView.Name = "btnExpandedView"
+        Me.btnExpandedView.Size = New System.Drawing.Size(154, 22)
+        Me.btnExpandedView.Text = "Expanded View"
         '
         'adminDashboard
         '
@@ -387,7 +383,6 @@ Partial Class adminDashboard
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MetroTabControl1.ResumeLayout(False)
         Me.MetroTabPage1.ResumeLayout(False)
-        CType(Me.Chart2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MetroTabPage2.ResumeLayout(False)
         Me.DailyPanel.ResumeLayout(False)
         Me.DailyPanel.PerformLayout()
@@ -395,6 +390,7 @@ Partial Class adminDashboard
         Me.WeeklyPanel.PerformLayout()
         Me.CustomPanel.ResumeLayout(False)
         Me.CustomPanel.PerformLayout()
+        Me.contextMenuStrip.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -424,7 +420,9 @@ Partial Class adminDashboard
     Friend WithEvents MetroButton2 As MetroFramework.Controls.MetroButton
     Friend WithEvents pBar As MetroFramework.Controls.MetroProgressBar
     Friend WithEvents lblStatus As Label
-    Friend WithEvents Chart2 As DataVisualization.Charting.Chart
     Friend WithEvents Button1 As Button
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents contextMenuStrip As ContextMenuStrip
+    Friend WithEvents btnViewProfile As ToolStripMenuItem
+    Friend WithEvents btnExpandedView As ToolStripMenuItem
 End Class

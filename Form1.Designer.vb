@@ -150,6 +150,9 @@ Partial Class Form1
         Me.btnChangePW.Text = "Change Password"
         Me.btnChangePW.UseVisualStyleBackColor = True
         '
+        'fetchMondayTimer
+        '
+        '
         'Form1
         '
         Me.AcceptButton = Me.btnSignin

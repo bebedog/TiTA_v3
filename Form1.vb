@@ -346,9 +346,9 @@ Public Class Form1
     End Sub
 
     Private Sub btnSignin_Click(sender As Object, e As EventArgs) Handles btnSignin.Click
-        fetchMondayTimer.Enabled = True
-        fetchMondayTimer.Interval = 7200000
-        fetchMondayTimer.Start()
+        'fetchMondayTimer.Enabled = True
+        'fetchMondayTimer.Interval = 7200000
+        'fetchMondayTimer.Start()
         If checkAccountDetails(cbUsername.Text, tbPassword.Text, accounts) = True Then
             'Account detail matches
             MessageBox.Show($"Welcome back, {fFirstName}!", "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)

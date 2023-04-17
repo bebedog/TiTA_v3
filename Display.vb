@@ -11,6 +11,13 @@
         Loop
     End Sub
     Private Async Sub Display_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.TopMost = True
+        'Check if user has admin privilege(1) or not(0).
+        If (Form1.privilege = 1) Then
+            btnAdminTools.Enabled = True
+            btnAdminTools.Visible = True
+            Me.Size = New Point(600, 212)
+        End If
         lunchAndBreakReminder.Enabled = True
         lunchAndBreakReminder.Start()
         positionLoginScreen()
@@ -63,7 +70,7 @@
         Timer1.Start()
     End Sub
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        reminder()
+        reminder(Form1.currentTask)
     End Sub
     Private Sub showToolTip()
         Me.Show()
@@ -71,9 +78,15 @@
         Timer1.Stop()
         NotifyIcon1.Visible = False
     End Sub
-    Private Sub reminder()
+    Private Sub reminder(task)
+        If task = "Lunch" Then
+            NotifyIcon1.BalloonTipText = $"You've been on lunch for an hour."
+        ElseIf task = "Break" Then
+            NotifyIcon1.BalloonTipText = $"You've been on break for an hour."
+        Else
+            NotifyIcon1.BalloonTipText = $"It has been an hour.{Environment.NewLine}Are you still working on {task}?"
+        End If
         NotifyIcon1.ShowBalloonTip(0)
-        NotifyIcon1.BalloonTipText = $"It has been an hour.{Environment.NewLine}Are you still working on {Form1.currentTask}?"
     End Sub
     Private Sub NotifyIcon1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles NotifyIcon1.MouseDoubleClick
         showToolTip()
@@ -112,5 +125,10 @@
                 lunchAndBreakReminder.Start()
             End If
         End If
+    End Sub
+
+    Private Sub btnAdminTools_Click(sender As Object, e As EventArgs) Handles btnAdminTools.Click
+        Me.Hide()
+        adminTools.Show()
     End Sub
 End Class

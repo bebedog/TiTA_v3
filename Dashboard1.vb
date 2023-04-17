@@ -59,7 +59,6 @@ Public Class Dashboard1
         positionLoginScreen()
         lblQuotes.Text = Await getRandomQuotes()
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
-        Me.TopMost = True
         DataGridView1.Visible = False
         DataGridView1.Enabled = True
     End Sub

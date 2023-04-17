@@ -167,7 +167,21 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="addTask.Designer.vb">
+      <DependentUpon>addTask.vb</DependentUpon>
+    </Compile>
+    <Compile Include="addTask.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="adminTools.Designer.vb">
+      <DependentUpon>adminTools.vb</DependentUpon>
+    </Compile>
+    <Compile Include="adminTools.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="Class1.vb" />
+    <Compile Include="Class2.vb" />
     <Compile Include="Dashboard1.Designer.vb">
       <DependentUpon>Dashboard1.vb</DependentUpon>
     </Compile>
@@ -178,6 +192,12 @@
       <DependentUpon>Display.vb</DependentUpon>
     </Compile>
     <Compile Include="Display.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="listboxPractice.Designer.vb">
+      <DependentUpon>listboxPractice.vb</DependentUpon>
+    </Compile>
+    <Compile Include="listboxPractice.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
@@ -224,6 +244,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="addTask.resx">
+      <DependentUpon>addTask.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="adminTools.resx">
+      <DependentUpon>adminTools.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ChangePassword.resx">
       <DependentUpon>ChangePassword.vb</DependentUpon>
     </EmbeddedResource>
@@ -232,6 +258,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Display.resx">
       <DependentUpon>Display.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="listboxPractice.resx">
+      <DependentUpon>listboxPractice.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Switch.resx">
       <DependentUpon>Switch.vb</DependentUpon>

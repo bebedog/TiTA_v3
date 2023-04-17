@@ -4,6 +4,8 @@ Public Class Switch
     'START of Variable Declaration
     Dim idOfNewItem As String
     Dim selectedTaskProjectCode As String
+    Public myTasks As New List(Of String)
+    Public myCustomAutoComplete As New List(Of String)
     'END of Variable Declaration
 
 
@@ -58,12 +60,13 @@ Public Class Switch
         Public Property account_id As Integer
     End Class
     'END of Class Object Declaration
-
     Private Function populateTasksComboBox()
+        myTasks.Clear()
         'populate comboboxes first
         For Each groups In Form1.allTasks.data.boards(0).groups
             For Each tasks1 In groups.items
                 cbTasks.Items.Add(tasks1.name)
+                myTasks.Add(tasks1.name.ToString)
             Next
         Next
         cbTasks.SelectedIndex = 0
@@ -142,6 +145,7 @@ Public Class Switch
 
     End Sub
     Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.TopMost = True
         'stop Timer
         Me.Text = "Task Switch"
         Form1.Timer1.Stop()
@@ -153,10 +157,12 @@ Public Class Switch
         'Populate tasks combobox
         populateTasksComboBox()
         'set combo box to autocomplete
-        cbTasks.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-        cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
+        'cbTasks.AutoCompleteMode = AutoCompleteMode.SuggestAppend
+        'cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
         'Fetch Previous task on TiTA Timeline board on monday.com
         Await FetchPreviousTaskAndSubTask(Form1.currentID)
+
+
         'when fetchprevious task is finished, enable all controls
         enableAllControls()
 
@@ -674,8 +680,21 @@ ChangeMultipleColumnValues:
         Loop
     End Sub
     Private Sub cbTasks_TextUpdate(sender As Object, e As EventArgs) Handles cbTasks.TextUpdate
+        'cbTasks.DroppedDown = False
         cbSubTasks.Items.Clear()
+        cbTasks.Items.Clear()
+        myCustomAutoComplete.Clear()
+        For Each item As String In myTasks
+            If (item.ToLower.Contains(cbTasks.Text)) Then
+                myCustomAutoComplete.Add(item)
+            End If
+        Next
+        cbTasks.Items.AddRange(myCustomAutoComplete.ToArray)
+        cbTasks.SelectionStart = cbTasks.Text.Length
+        cbTasks.DroppedDown = True
+        cbTasks.Cursor = Cursors.Default
         cbSubTasks.Text = ""
+
         If cbTasks.Items.Contains(cbTasks.Text) Then
             btnSwitch.Enabled = True
             cbSubTasks.Enabled = True
@@ -687,4 +706,8 @@ ChangeMultipleColumnValues:
         End If
     End Sub
 
+    Private Sub btnAdminTools_Click(sender As Object, e As EventArgs) Handles btnAdminTools.Click
+        Me.Hide()
+
+    End Sub
 End Class

@@ -41,6 +41,7 @@ Partial Class Display
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.lunchAndBreakReminder = New System.Windows.Forms.Timer(Me.components)
+        Me.btnAdminTools = New System.Windows.Forms.Button()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -92,7 +93,7 @@ Partial Class Display
         Me.btnSwitch.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnSwitch.Location = New System.Drawing.Point(12, 134)
         Me.btnSwitch.Name = "btnSwitch"
-        Me.btnSwitch.Size = New System.Drawing.Size(186, 63)
+        Me.btnSwitch.Size = New System.Drawing.Size(190, 63)
         Me.btnSwitch.TabIndex = 15
         Me.btnSwitch.Text = "Switch Task"
         Me.btnSwitch.UseVisualStyleBackColor = True
@@ -194,7 +195,7 @@ Partial Class Display
         '
         Me.PictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.PictureBox1.Image = Global.TiTA_v3.My.Resources.Resources.LaserTiTA_128x128
-        Me.PictureBox1.Location = New System.Drawing.Point(122, -14)
+        Me.PictureBox1.Location = New System.Drawing.Point(106, -14)
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(294, 264)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -205,13 +206,25 @@ Partial Class Display
         '
         Me.lunchAndBreakReminder.Enabled = True
         '
+        'btnAdminTools
+        '
+        Me.btnAdminTools.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.btnAdminTools.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnAdminTools.Location = New System.Drawing.Point(400, 134)
+        Me.btnAdminTools.Name = "btnAdminTools"
+        Me.btnAdminTools.Size = New System.Drawing.Size(186, 63)
+        Me.btnAdminTools.TabIndex = 14
+        Me.btnAdminTools.Text = "Admin Tools"
+        Me.btnAdminTools.UseVisualStyleBackColor = True
+        Me.btnAdminTools.Visible = False
+        '
         'Display
         '
         Me.AcceptButton = Me.btnSwitch
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Button2
-        Me.ClientSize = New System.Drawing.Size(416, 212)
+        Me.ClientSize = New System.Drawing.Size(400, 212)
         Me.Controls.Add(Me.lblDepartment1)
         Me.Controls.Add(Me.lblSubtasks)
         Me.Controls.Add(Me.Label5)
@@ -221,6 +234,7 @@ Partial Class Display
         Me.Controls.Add(Me.lblDepartment)
         Me.Controls.Add(Me.lblTimeIn)
         Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.btnAdminTools)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.lblTask)
         Me.Controls.Add(Me.Label2)
@@ -253,4 +267,5 @@ Partial Class Display
     Friend WithEvents Timer1 As Timer
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents lunchAndBreakReminder As Timer
+    Friend WithEvents btnAdminTools As Button
 End Class

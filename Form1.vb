@@ -35,6 +35,7 @@ Public Class Form1
     Public department As String
     Public manualLogInID As String
     Public accountItemID As String
+    Public privilege As Integer
 
     'variables for Switch forms
     Public currentTask As String
@@ -49,7 +50,6 @@ Public Class Form1
         Public FutureReleaseEntry As ReleaseEntry
         Public ReleasesToApply As List(Of ReleaseEntry)
     End Class
-
     Public Class ReleaseEntry
         Public Property SHA1 As String
         Public Property Filename As String
@@ -177,6 +177,7 @@ Public Class Form1
                     mondayID = x.column_values(2).text
                     department = x.column_values(4).text
                     accountItemID = x.id
+                    privilege = Int32.Parse(x.column_values(5).text)
                     Return True
                 Else
                     Return False
@@ -259,7 +260,6 @@ Public Class Form1
         'QUERIES ENDS HERE
 
         lblStatus.Text = "Fetching Accounts..."
-        DisableAllControls()
         Dim queries As New List(Of String)
         'add all queries in this list
         queries.Add(fetchAccountQuery)
@@ -327,8 +327,8 @@ Public Class Form1
         lblVersion.Text = $"v{titaVersion}"
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
+        DisableAllControls()
         timesinceLastUpdate()
-
         Await CheckForUpdates()
         Await fetchMondayData()
 

@@ -258,6 +258,7 @@ Public Class Switch
                     'Create new item on monday.com board
                     'and save its id on idOfNewItem
                     idOfNewItem = Await createNewItem()
+                    Form1.currentID = idOfNewItem
 
 
                     'Change the value of the createdItem

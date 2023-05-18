@@ -41,8 +41,11 @@ Partial Class Display
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.lunchAndBreakReminder = New System.Windows.Forms.Timer(Me.components)
-        Me.btnAdminTools = New System.Windows.Forms.Button()
+        Me.btnAdminToolsAndLogout = New System.Windows.Forms.Button()
+        Me.ToolStrip1 = New System.Windows.Forms.ToolStrip()
+        Me.statusLabel = New System.Windows.Forms.ToolStripLabel()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.ToolStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'lblSubtasks
@@ -206,17 +209,32 @@ Partial Class Display
         '
         Me.lunchAndBreakReminder.Enabled = True
         '
-        'btnAdminTools
+        'btnAdminToolsAndLogout
         '
-        Me.btnAdminTools.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.btnAdminTools.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnAdminTools.Location = New System.Drawing.Point(400, 134)
-        Me.btnAdminTools.Name = "btnAdminTools"
-        Me.btnAdminTools.Size = New System.Drawing.Size(186, 63)
-        Me.btnAdminTools.TabIndex = 14
-        Me.btnAdminTools.Text = "Admin Tools"
-        Me.btnAdminTools.UseVisualStyleBackColor = True
-        Me.btnAdminTools.Visible = False
+        Me.btnAdminToolsAndLogout.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.btnAdminToolsAndLogout.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnAdminToolsAndLogout.Location = New System.Drawing.Point(400, 134)
+        Me.btnAdminToolsAndLogout.Name = "btnAdminToolsAndLogout"
+        Me.btnAdminToolsAndLogout.Size = New System.Drawing.Size(186, 63)
+        Me.btnAdminToolsAndLogout.TabIndex = 14
+        Me.btnAdminToolsAndLogout.Text = "Admin Tools"
+        Me.btnAdminToolsAndLogout.UseVisualStyleBackColor = True
+        Me.btnAdminToolsAndLogout.Visible = False
+        '
+        'ToolStrip1
+        '
+        Me.ToolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.ToolStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusLabel})
+        Me.ToolStrip1.Location = New System.Drawing.Point(0, 205)
+        Me.ToolStrip1.Name = "ToolStrip1"
+        Me.ToolStrip1.Size = New System.Drawing.Size(400, 25)
+        Me.ToolStrip1.TabIndex = 27
+        Me.ToolStrip1.Text = "ToolStrip1"
+        '
+        'statusLabel
+        '
+        Me.statusLabel.Name = "statusLabel"
+        Me.statusLabel.Size = New System.Drawing.Size(0, 22)
         '
         'Display
         '
@@ -224,7 +242,8 @@ Partial Class Display
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Button2
-        Me.ClientSize = New System.Drawing.Size(400, 212)
+        Me.ClientSize = New System.Drawing.Size(400, 230)
+        Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.lblDepartment1)
         Me.Controls.Add(Me.lblSubtasks)
         Me.Controls.Add(Me.Label5)
@@ -234,7 +253,7 @@ Partial Class Display
         Me.Controls.Add(Me.lblDepartment)
         Me.Controls.Add(Me.lblTimeIn)
         Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.btnAdminTools)
+        Me.Controls.Add(Me.btnAdminToolsAndLogout)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.lblTask)
         Me.Controls.Add(Me.Label2)
@@ -245,6 +264,8 @@ Partial Class Display
         Me.Name = "Display"
         Me.Text = "Display"
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ToolStrip1.ResumeLayout(False)
+        Me.ToolStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -267,5 +288,7 @@ Partial Class Display
     Friend WithEvents Timer1 As Timer
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents lunchAndBreakReminder As Timer
-    Friend WithEvents btnAdminTools As Button
+    Friend WithEvents btnAdminToolsAndLogout As Button
+    Friend WithEvents ToolStrip1 As ToolStrip
+    Friend WithEvents statusLabel As ToolStripLabel
 End Class

@@ -25,4 +25,9 @@
         addTask.Show()
         Me.Hide()
     End Sub
+
+    Private Sub btnAddLogs_Click(sender As Object, e As EventArgs) Handles btnAddLogs.Click
+        AddManualLogs.Show()
+        Me.Hide()
+    End Sub
 End Class

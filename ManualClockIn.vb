@@ -81,85 +81,154 @@ Public Class ManualClockIn
         Public Property account_id As Integer
     End Class
 
-
     Private Sub populateJobsList()
-        For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tsks In groups.items
-                cbProjectsList.Items.Add(tsks.name)
+        cbProjectsList.Items.Clear()
+        If Form1.department = "UK" Then
+            For Each groups In Form1.UKTasks.data.boards(0).groups
+                For Each tsks In groups.items
+                    cbProjectsList.Items.Add(tsks.name + " - " + tsks.column_values(0).text)
+                Next
             Next
-        Next
-        cbProjectsList.SelectedIndex = 0
+            cbProjectsList.SelectedIndex = 0
+        Else
+            For Each groups In Form1.allTasks.data.boards(0).groups
+                For Each tsks In groups.items
+                    cbProjectsList.Items.Add(tsks.name)
+                Next
+            Next
+            cbProjectsList.SelectedIndex = 0
+        End If
+
     End Sub
+
     Private Function filterJobs(ByVal category As String)
-        For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tsks In groups.items
-                Select Case category
-                    Case "Show All"
-                        populateJobsList()
-                    Case "R&D"
-                        If tsks.group.id = "topics" Then
-                            cbProjectsList.Items.Add(tsks.name)
-                        End If
-                    Case "Jobs"
-                        If tsks.group.id = "group_title" Then
-                            cbProjectsList.Items.Add(tsks.name)
-                        End If
-                    Case "Admin"
-                        If tsks.group.id = "new_group1823" Then
-                            cbProjectsList.Items.Add(tsks.name)
-                        End If
-                    Case "Electronics R&D"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "ERD Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tsks.name)
+        If Form1.department = "UK" Then
+            For Each groups In Form1.UKTasks.data.boards(0).groups
+                For Each tosks In groups.items
+                    Select Case category
+                        Case "Show All"
+                            populateJobsList()
+                            GoTo go_to_end_of_for
+                        Case "Lasermet Lab Testing"
+                            If tosks.group.id = "topics" Then
+                                cbProjectsList.Items.Add(tosks.name + " - " + tosks.column_values(0).text)
                             End If
-                        Next
-                    Case "Mechanical R&D"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "MRD Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tsks.name)
+                        Case "Lasermet Europe GmbH Testing"
+                            If tosks.group.id = "new_group15371" Then
+                                cbProjectsList.Items.Add(tosks.name + " - " + tosks.column_values(0).text)
                             End If
-                        Next
-                    Case "Enclosure"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "EN Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tsks.name)
+                        Case "Calibration"
+                            If tosks.group.id = "new_group82548" Then
+                                cbProjectsList.Items.Add(tosks.name + " - " + tosks.column_values(0).text)
                             End If
-                        Next
-                    Case "Systems Designs"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "SD Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tsks.name)
-                            End If
-                        Next
-                    Case "Small Batch Manufacturing"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "SMB Tag" And cvals.text = "x" Then
-                                cbProjectsList.Items.Add(tsks.name)
-                            End If
-                        Next
-                End Select
+                    End Select
+                Next
             Next
-        Next
+        Else
+            For Each groups In Form1.allTasks.data.boards(0).groups
+                For Each tsks In groups.items
+                    Select Case category
+                        Case "Show All"
+                            populateJobsList()
+                            GoTo go_to_end_of_for
+                        Case "R&D"
+                            If tsks.group.id = "topics" Then
+                                cbProjectsList.Items.Add(tsks.name)
+                            End If
+                        Case "Jobs"
+                            If tsks.group.id = "group_title" Then
+                                cbProjectsList.Items.Add(tsks.name)
+                            End If
+                        Case "Admin"
+                            If tsks.group.id = "new_group1823" Then
+                                cbProjectsList.Items.Add(tsks.name)
+                            End If
+                        Case "Electronics R&D"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "ERD Tag" And cvals.text = "x" Then
+                                    cbProjectsList.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Mechanical R&D"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "MRD Tag" And cvals.text = "x" Then
+                                    cbProjectsList.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Enclosure"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "EN Tag" And cvals.text = "x" Then
+                                    cbProjectsList.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Systems Designs"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "SD Tag" And cvals.text = "x" Then
+                                    cbProjectsList.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Small Batch Manufacturing"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "SMB Tag" And cvals.text = "x" Then
+                                    cbProjectsList.Items.Add(tsks.name)
+                                End If
+                            Next
+                    End Select
+                Next
+            Next
+go_to_end_of_for:
+        End If
+
     End Function
+
+    Private Function doesGroupContainItems(groupTitle As String)
+        For Each groups In Form1.UKTasks.data.boards(0).groups
+            If groups.title = groupTitle Then
+                Dim itemCount = groups.items.Length
+                If itemCount <> 0 Then
+                    Return True
+                End If
+            End If
+        Next
+        Return False
+    End Function
+
     Private Sub populateSubtasks()
         cbSubtasks.Items.Clear()
-        For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each items In groups.items
-                If items.name = cbProjectsList.SelectedItem Then
-                    projectCode = items.column_values(0).text.ToString
-                    If items?.subitems IsNot Nothing Then
-                        For Each subtasks In items.subitems
-                            cbSubtasks.Items.Add(subtasks.name)
+        If Form1.department = "UK" Then
+            For Each groups In Form1.UKTasks.data.boards(0).groups
+                For Each items In groups.items
+                    If cbProjectsList.Text = items.name + " - " + items.column_values(0).text Then
+                        projectCode = items.column_values(0).text
+                        If items?.subitems IsNot Nothing Then
+                            For Each subtask In items.subitems
+                                cbSubtasks.Items.Add(subtask.name)
+                                cbSubtasks.SelectedIndex = 0
+                            Next
+                        Else
+                            cbSubtasks.Items.Add("N/A")
                             cbSubtasks.SelectedIndex = 0
-                        Next
-                    Else cbSubtasks.Items.Add("N/A")
-                        cbSubtasks.SelectedIndex = 0
+                        End If
                     End If
-
-                End If
+                Next
             Next
-        Next
+        Else
+            For Each groups In Form1.allTasks.data.boards(0).groups
+                For Each items In groups.items
+                    If items.name = cbProjectsList.SelectedItem Then
+                        projectCode = items.column_values(0).text.ToString
+                        If items?.subitems IsNot Nothing Then
+                            For Each subtasks In items.subitems
+                                cbSubtasks.Items.Add(subtasks.name)
+                                cbSubtasks.SelectedIndex = 0
+                            Next
+                        Else cbSubtasks.Items.Add("N/A")
+                            cbSubtasks.SelectedIndex = 0
+                        End If
+                    End If
+                Next
+            Next
+        End If
     End Sub
     'Add new item to TiTO timeline
     Public Async Function createNewItem() As Task
@@ -246,7 +315,7 @@ createNewItem:
         mutatePOST.job = currentJob
         mutatePOST.text = logInTime
         mutatePOST.text_1 = "START_" + Form1.fSurname
-        mutatePOST.text64 = "3.0"
+        mutatePOST.text64 = Form1.titaVersion
         mutatePOST.text4 = subtask
 
         'Set entry to Project Code column: JSON Format
@@ -272,7 +341,7 @@ createNewItem:
         Dim formattedJSON = newJSON.Replace("""", "\""")
         Dim changeColumnQuery As String
         changeColumnQuery =
-            "mutation {change_multiple_column_values(item_id:" + personID + ", board_id:2628729848, column_values: """ + formattedJSON + """) {id}}"
+            "mutation {change_multiple_column_values(item_id:" + personID + ", board_id:2628729848, column_values: """ + formattedJSON + """, create_labels_if_missing: true) {id}}"
 
         Dim recon As Integer
 buildQuery:
@@ -393,7 +462,20 @@ buildQuery:
         DateTimePicker1.CustomFormat = "HH:mm:ss"
         DateTimePicker1.MinDate = DateAdd(DateInterval.Day, -1, DateTime.Today)
         DateTimePicker1.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Today)
-        cbFilter.Items.AddRange(Form1.taskCategories)
+        If Form1.department = "UK" Then
+            For Each category In Form1.UKtaskCategories
+                If category = "Show All" Then
+                    cbFilter.Items.Add(category)
+                Else
+                    If doesGroupContainItems(category) = True Then
+                        cbFilter.Items.Add(category)
+                    End If
+                End If
+            Next
+        Else
+            cbFilter.Items.AddRange(Form1.taskCategories)
+        End If
+
         cbFilter.SelectedIndex = 0
         populateJobsList()
     End Sub

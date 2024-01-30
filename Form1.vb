@@ -12,11 +12,12 @@ Public Class Form1
     Public queryTimeOut As Integer = 15000
     Public titaVersion As String = TiTA_v3.My.Application.Info.Version.ToString
     Public allTasks As Root
+    Public UKTasks As Root
     Public accounts
     Public elapsedTime As Integer
     Public loadDelay As Integer
     Dim namesList
-    Dim apiKey As String = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIxNTg3NTczMCwidWlkIjozNjkzODg5OSwiaWFkIjoiMjAyMy0wMS0wM1QwMzoxNjoyOC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.WyM7DJEbXNeF4r6leiLcLbb9oFe57alDkwMhHWEkKrM"
+    Dim apiKey As String = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjE1MjU2NzQ3OCwiYWFpIjoxMSwidWlkIjoxNTA5MzQwNywiaWFkIjoiMjAyMi0wMy0yNVQwMTo0Njo1My4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.lin5hxWOEzA2OeKffCZALMKXkLVS7vMYbn7B_M6BaOc"
 
     Public projectListBoard As String = "2718204773
 "
@@ -26,7 +27,7 @@ Public Class Form1
 
     'Task categories
     Public taskCategories() As String = {"Show All", "R&D", "Jobs", "Admin", "Electronics R&D", "Mechanical R&D", "Enclosure", "Systems Designs", "Small Batch Manufacturing"}
-
+    Public UKtaskCategories() As String = {"Show All", "Lasermet Lab Testing", "Lasermet Europe GmbH Testing", "Calibration"}
     'Variable for the ID of the current log
     Public currentID As String
     Public fSurname As String
@@ -89,6 +90,7 @@ Public Class Form1
 
     'Start Root Classes Declaration
     Public Class Group
+        Public Property title As String
         Public Property id As String
         Public Property items As Item()
     End Class
@@ -142,22 +144,26 @@ Public Class Form1
     End Function
 
     Public Function checkBudgetHrs(ByVal task As String, ByVal tasksList As Form1.Root) As Boolean
-
-        For Each group In tasksList.data.boards(0).groups
-            For Each item In group.items
-                If item.name = task Then
-                    If String.IsNullOrWhiteSpace(item.column_values(1).text) Or item.column_values(1).text.ToString = "0" Then
-                        Return True
-                    Else
-                        If item.column_values(1).text <= item.column_values(2).text Then
-                            Return False
-                        Else
+        If department = "UK" Then
+            Return True
+        Else
+            For Each group In tasksList.data.boards(0).groups
+                For Each item In group.items
+                    If item.name = task Then
+                        If String.IsNullOrWhiteSpace(item.column_values(1).text) Or item.column_values(1).text.ToString = "0" Then
                             Return True
+                        Else
+                            If item.column_values(1).text <= item.column_values(2).text Then
+                                Return False
+                            Else
+                                Return True
+                            End If
                         End If
                     End If
-                End If
+                Next
             Next
-        Next
+        End If
+
 
     End Function
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
@@ -219,6 +225,7 @@ Public Class Form1
             "query{
                 boards(ids: " + projectListBoard + "){
                     groups(ids:[""topics"",""group_title"", ""new_group1823""]){
+                        id
                         items{
                             name
                             group{
@@ -234,6 +241,28 @@ Public Class Form1
                         }
                     }
                 }
+            }"
+
+        Dim fetchUKTaskQuery As String =
+            "query{
+                 boards(ids:2821516243){
+                    groups(ids: [""topics"", ""new_group15371"", ""new_group82548""]){
+                        id
+                        title
+                        items{
+                            group{id}
+                            name
+                            subitems{
+                                name
+                            }
+                             column_values(ids: [""job_no_""]){
+                                title
+                                value
+                                text
+                            }
+                        }
+                    }
+                 }
             }"
         Dim fetchAccountQuery As String =
             "query{
@@ -265,6 +294,7 @@ Public Class Form1
         queries.Add(fetchAccountQuery)
         queries.Add(fetchNames)
         queries.Add(fetchTasksQuery)
+        queries.Add(fetchUKTaskQuery)
         Try
             Dim deserializedResults As New List(Of Object)
             Dim isError As New Boolean
@@ -307,6 +337,10 @@ Public Class Form1
             namesList = deserializedResults(1)
 
             allTasks = deserializedResults(2)
+
+            UKTasks = deserializedResults(3)
+
+            Console.WriteLine("UK Tasks: ", UKTasks)
             populateCB(namesList)
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
@@ -328,7 +362,7 @@ Public Class Form1
         Me.Text = $"Lasermet TiTA v{titaVersion}"
         cbUsername.AutoCompleteSource = AutoCompleteSource.ListItems
         DisableAllControls()
-        timesinceLastUpdate()
+        'timesinceLastUpdate()
         Await CheckForUpdates()
         Await fetchMondayData()
 
@@ -342,6 +376,9 @@ Public Class Form1
         'End If
         lblStatus.Text = "Accounts fetched."
         EnableAllControls()
+
+        'this was temporarily added.
+        'AddManualLogs.Show()
 
     End Sub
 

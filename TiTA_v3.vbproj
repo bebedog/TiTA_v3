@@ -167,6 +167,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddManualLogs.Designer.vb">
+      <DependentUpon>AddManualLogs.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AddManualLogs.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="addTask.Designer.vb">
       <DependentUpon>addTask.vb</DependentUpon>
     </Compile>
@@ -245,6 +251,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddManualLogs.resx">
+      <DependentUpon>AddManualLogs.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="addTask.resx">
       <DependentUpon>addTask.vb</DependentUpon>
     </EmbeddedResource>

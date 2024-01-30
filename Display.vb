@@ -53,7 +53,6 @@ Public Class Display
         Public Property data As Data
         Public Property account_id As Integer
     End Class
-
     'END of Class Object Declaration
 
     Public Sub positionLoginScreen()
@@ -82,7 +81,6 @@ Public Class Display
             btnAdminToolsAndLogout.Visible = True
             btnAdminToolsAndLogout.Text = "Log Out"
             Me.Size = New Point(600, 230)
-
         Else
 
             ToolStrip1.Visible = False

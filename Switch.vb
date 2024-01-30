@@ -62,106 +62,190 @@ Public Class Switch
     'END of Class Object Declaration
     Private Function populateTasksComboBox()
         myTasks.Clear()
+        cbTasks.Items.Clear()
         'populate comboboxes first
-        For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tasks1 In groups.items
-                cbTasks.Items.Add(tasks1.name)
-                myTasks.Add(tasks1.name.ToString)
+        If Form1.department = "UK" Then
+            ' Show a different task list
+            For Each groups In Form1.UKTasks.data.boards(0).groups
+                For Each tasks2 In groups.items
+                    cbTasks.Items.Add(tasks2.name.ToString + " - " + tasks2.column_values(0).text)
+                    myTasks.Add(tasks2.name.ToString + " - " + tasks2.column_values(0).text)
+                Next
             Next
-        Next
+        Else
+            For Each groups In Form1.allTasks.data.boards(0).groups
+                For Each tasks1 In groups.items
+                    cbTasks.Items.Add(tasks1.name)
+                    myTasks.Add(tasks1.name.ToString)
+                Next
+            Next
+        End If
         cbTasks.SelectedIndex = 0
     End Function
+
     Private Function filterJobs(ByVal category As String)
-        For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tsks In groups.items
-                Select Case category
-                    Case "Show All"
-                        populateTasksComboBox()
-                    Case "R&D"
-                        If tsks.group.id = "topics" Then
-                            cbTasks.Items.Add(tsks.name)
-                        End If
-                    Case "Jobs"
-                        If tsks.group.id = "group_title" Then
-                            cbTasks.Items.Add(tsks.name)
-                        End If
-                    Case "Admin"
-                        If tsks.group.id = "new_group1823" Then
-                            cbTasks.Items.Add(tsks.name)
-                        End If
-                    Case "Electronics R&D"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "ERD Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tsks.name)
+        If Form1.department = "UK" Then
+            For Each groups In Form1.UKTasks.data.boards(0).groups
+                For Each tosks In groups.items
+                    Select Case category
+                        Case "Show All"
+                            populateTasksComboBox()
+                            GoTo end_of_for
+                        Case "Lasermet Lab Testing"
+                            If tosks.group.id = "topics" Then
+                                cbTasks.Items.Add(tosks.name + " - " + tosks.column_values(0).text)
                             End If
-                        Next
-                    Case "Mechanical R&D"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "MRD Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tsks.name)
+                        Case "Lasermet Europe GmbH Testing"
+                            If tosks.group.id = "new_group15371" Then
+                                cbTasks.Items.Add(tosks.name + " - " + tosks.column_values(0).text)
                             End If
-                        Next
-                    Case "Enclosure"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "EN Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tsks.name)
+                        Case "Calibration"
+                            If tosks.group.id = "new_group82548" Then
+                                cbTasks.Items.Add(tosks.name + " - " + tosks.column_values(0).text)
                             End If
-                        Next
-                    Case "Systems Designs"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "SD Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tsks.name)
-                            End If
-                        Next
-                    Case "Small Batch Manufacturing"
-                        For Each cvals In tsks.column_values
-                            If cvals.title = "SMB Tag" And cvals.text = "x" Then
-                                cbTasks.Items.Add(tsks.name)
-                            End If
-                        Next
-                End Select
+                    End Select
+                Next
             Next
-        Next
+        Else
+            For Each groups In Form1.allTasks.data.boards(0).groups
+                For Each tsks In groups.items
+                    Select Case category
+                        Case "Show All"
+                            populateTasksComboBox()
+                            GoTo end_of_for
+                        Case "R&D"
+                            If tsks.group.id = "topics" Then
+                                cbTasks.Items.Add(tsks.name)
+                            End If
+                        Case "Jobs"
+                            If tsks.group.id = "group_title" Then
+                                cbTasks.Items.Add(tsks.name)
+                            End If
+                        Case "Admin"
+                            If tsks.group.id = "new_group1823" Then
+                                cbTasks.Items.Add(tsks.name)
+                            End If
+                        Case "Electronics R&D"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "ERD Tag" And cvals.text = "x" Then
+                                    cbTasks.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Mechanical R&D"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "MRD Tag" And cvals.text = "x" Then
+                                    cbTasks.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Enclosure"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "EN Tag" And cvals.text = "x" Then
+                                    cbTasks.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Systems Designs"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "SD Tag" And cvals.text = "x" Then
+                                    cbTasks.Items.Add(tsks.name)
+                                End If
+                            Next
+                        Case "Small Batch Manufacturing"
+                            For Each cvals In tsks.column_values
+                                If cvals.title = "SMB Tag" And cvals.text = "x" Then
+                                    cbTasks.Items.Add(tsks.name)
+                                End If
+                            Next
+
+                    End Select
+                Next
+            Next
+        End If
+end_of_for:
+
     End Function
     Private Sub updateSubTasksComboBox()
         cbSubTasks.Items.Clear()
-        For Each groups In Form1.allTasks.data.boards(0).groups
-            For Each tsks In groups.items
-                If tsks.name = cbTasks.Text Then
-                    selectedTaskProjectCode = tsks.column_values(0).text
-                    If tsks?.subitems IsNot Nothing Then
-                        For Each subtsks In tsks.subitems
-                            cbSubTasks.Items.Add(subtsks.name)
-                        Next
-                        cbSubTasks.SelectedIndex = 0
-                    Else cbSubTasks.Items.Add("N/A")
-                        cbSubTasks.SelectedIndex = 0
+        If Form1.department = "UK" Then
+            For Each groups In Form1.UKTasks.data.boards(0).groups
+                For Each task In groups.items
+                    If cbTasks.Text = task.name + " - " + task.column_values(0).text Then
+                        selectedTaskProjectCode = task.column_values(0).text
+                        If task?.subitems IsNot Nothing Then
+                            For Each subtask In task.subitems
+                                cbSubTasks.Items.Add(subtask.name)
+                            Next
+                            cbSubTasks.SelectedIndex = 0
+                        Else
+                            cbSubTasks.Items.Add("N/A")
+                            cbSubTasks.SelectedIndex = 0
+                        End If
                     End If
-                End If
+                Next
             Next
-        Next
-
-
+        Else
+            For Each groups In Form1.allTasks.data.boards(0).groups
+                For Each tsks In groups.items
+                    If tsks.name = cbTasks.Text Then
+                        selectedTaskProjectCode = tsks.column_values(0).text
+                        If tsks?.subitems IsNot Nothing Then
+                            For Each subtsks In tsks.subitems
+                                cbSubTasks.Items.Add(subtsks.name)
+                            Next
+                            cbSubTasks.SelectedIndex = 0
+                        Else cbSubTasks.Items.Add("N/A")
+                            cbSubTasks.SelectedIndex = 0
+                        End If
+                    End If
+                Next
+            Next
+        End If
 
     End Sub
+    Private Function doesGroupContainItems(groupTitle As String)
+        For Each groups In Form1.UKTasks.data.boards(0).groups
+            If groups.title = groupTitle Then
+                Dim itemCount = groups.items.Length
+                If itemCount = 0 Then
+                    Return False
+                Else
+                    Return True
+                End If
+            End If
+        Next
+        Return False
+    End Function
+
     Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        cbFilter.Items.Clear()
         Me.TopMost = True
         'stop Timer
         Me.Text = "Task Switch"
         Form1.Timer1.Stop()
-        cbFilter.Items.AddRange(Form1.taskCategories)
+        If Form1.department = "UK" Then
+            For Each category In Form1.UKtaskCategories
+                If category = "Show All" Then
+                    cbFilter.Items.Add(category)
+                Else
+                    If doesGroupContainItems(category) = True Then
+                        cbFilter.Items.Add(category)
+                    End If
+                End If
+            Next
+        Else
+            cbFilter.Items.AddRange(Form1.taskCategories)
+        End If
         cbFilter.SelectedIndex = 0
         positionLoginScreen()
         'upon load, disable all controls
         disableAllControls()
         'Populate tasks combobox
         populateTasksComboBox()
+        updateSubTasksComboBox()
         'set combo box to autocomplete
         'cbTasks.AutoCompleteMode = AutoCompleteMode.SuggestAppend
         'cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
         'Fetch Previous task on TiTA Timeline board on monday.com
         Await FetchPreviousTaskAndSubTask(Form1.currentID)
-
 
         'when fetchprevious task is finished, enable all controls
         enableAllControls()
@@ -267,7 +351,7 @@ Public Class Switch
                     payload2.job = cbTasks.SelectedItem
                     payload2.text_1 = $"START_{Form1.fSurname}"
                     payload2.text = DateTime.Now.ToString("HH:mm:ss")
-                    payload2.text64 = "3.0"
+                    payload2.text64 = Form1.titaVersion
                     payload2.text4 = cbSubTasks.SelectedItem
 
                     Dim payloadLabel As New Labels()
@@ -666,7 +750,12 @@ ChangeMultipleColumnValues:
     End Sub
     Private Sub cbFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbFilter.SelectedIndexChanged
         cbTasks.Items.Clear()
-        filterJobs(cbFilter.SelectedItem.ToString)
+        If Form1.department = "UK" Then
+            filterJobs(cbFilter.SelectedItem.ToString)
+        Else
+            filterJobs(cbFilter.SelectedItem.ToString)
+        End If
+
         cbTasks.SelectedIndex = 0
     End Sub
     Public Sub positionLoginScreen()

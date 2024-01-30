@@ -23,7 +23,7 @@ Partial Class adminTools
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.btnAddTask = New System.Windows.Forms.Button()
-        Me.Button2 = New System.Windows.Forms.Button()
+        Me.btnAddLogs = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
@@ -40,18 +40,18 @@ Partial Class adminTools
         Me.btnAddTask.Text = "Add Task"
         Me.btnAddTask.UseVisualStyleBackColor = True
         '
-        'Button2
+        'btnAddLogs
         '
-        Me.Button2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.btnAddLogs.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button2.Enabled = False
-        Me.Button2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button2.Location = New System.Drawing.Point(12, 77)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(171, 59)
-        Me.Button2.TabIndex = 0
-        Me.Button2.Text = "Coming Soon"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.btnAddLogs.Enabled = False
+        Me.btnAddLogs.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnAddLogs.Location = New System.Drawing.Point(12, 77)
+        Me.btnAddLogs.Name = "btnAddLogs"
+        Me.btnAddLogs.Size = New System.Drawing.Size(171, 59)
+        Me.btnAddLogs.TabIndex = 0
+        Me.btnAddLogs.Text = "Add Logs"
+        Me.btnAddLogs.UseVisualStyleBackColor = True
         '
         'Button3
         '
@@ -85,7 +85,7 @@ Partial Class adminTools
         Me.ClientSize = New System.Drawing.Size(195, 274)
         Me.ControlBox = False
         Me.Controls.Add(Me.Button3)
-        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.btnAddLogs)
         Me.Controls.Add(Me.Button4)
         Me.Controls.Add(Me.btnAddTask)
         Me.Name = "adminTools"
@@ -95,7 +95,7 @@ Partial Class adminTools
     End Sub
 
     Friend WithEvents btnAddTask As Button
-    Friend WithEvents Button2 As Button
+    Friend WithEvents btnAddLogs As Button
     Friend WithEvents Button3 As Button
     Friend WithEvents Button4 As Button
 End Class

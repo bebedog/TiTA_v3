@@ -8,6 +8,7 @@ Public Class Form1
     Dim resultsList As List(Of Object)
     Public watch As Stopwatch
     Public maxErrorCount As Integer = 30
+    Public elapsedDutyHours As Stopwatch = Stopwatch.StartNew()
 
     Public queryTimeOut As Integer = 15000
     Public titaVersion As String = TiTA_v3.My.Application.Info.Version.ToString
@@ -90,31 +91,52 @@ Public Class Form1
 
     'Start Root Classes Declaration
     Public Class Group
-        Public Property title As String
         Public Property id As String
-        Public Property items As Item()
     End Class
+
     Public Class Subitem
         Public Property name As String
     End Class
-    Public Class ColumnValue
+    Public Class Column
         Public Property title As String
+    End Class
+    Public Class ColumnValue
         Public Property text As String
+        Public Property column As Column
+
     End Class
+
     Public Class Item
-        Public Property name As String
-        Public Property subitems As Subitem()
-        Public Property column_values As ColumnValue()
         Public Property id As String
+        Public Property name As String
         Public Property group As Group
+        Public Property subitems As IList(Of Subitem)
+        Public Property column_values As IList(Of ColumnValue)
     End Class
+    Public Class ItemsPage
+        Public Property cursor As String
+        Public Property items As IList(Of Item)
+    End Class
+
+    Public Class Groups
+        Public Property id As String
+        Public Property title As String
+        Public Property items_page As ItemsPage
+    End Class
+
     Public Class Board
-        Public Property items As Item()
-        Public Property groups As Group()
+        Public Property groups As IList(Of Groups)
+        Public Property items_page As ItemsPage
+    End Class
+    Public Class NextItemPage
+        Public Property cursor As String
+        Public Property items As IList(Of Item)
     End Class
     Public Class Data
-        Public Property boards As Board()
+        Public Property boards As IList(Of Board)
+        Public Property next_items_page As NextItemPage
     End Class
+
     Public Class Root
         Public Property data As Data
         Public Property account_id As Integer
@@ -148,7 +170,7 @@ Public Class Form1
             Return True
         Else
             For Each group In tasksList.data.boards(0).groups
-                For Each item In group.items
+                For Each item In group.items_page.items
                     If item.name = task Then
                         If String.IsNullOrWhiteSpace(item.column_values(1).text) Or item.column_values(1).text.ToString = "0" Then
                             Return True
@@ -172,7 +194,7 @@ Public Class Form1
         '2 - Password
         '3 - Department
 
-        For Each x In accounts.data.boards(0).items
+        For Each x In accounts.data.boards(0).items_page.items
             If x.name = surname Then
                 'account found.
                 If x.column_values(3).text = password Then
@@ -192,7 +214,7 @@ Public Class Form1
         Next
     End Function
     Public Function populateCB(ByVal namesList As Root)
-        For Each x In namesList.data.boards(0).items
+        For Each x In namesList.data.boards(0).items_page.items
             cbUsername.Items.Add(x.name)
         Next
     End Function
@@ -221,71 +243,97 @@ Public Class Form1
 
     Public Async Function fetchMondayData() As Task
         'QUERIES STARTS HERE
+        ' For this query, this postman sample is used: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-63cd8496-4c62-43d0-8448-68bf58704dd3
         Dim fetchTasksQuery As String =
-            "query{
-                boards(ids: " + projectListBoard + "){
-                    groups(ids:[""topics"",""group_title"", ""new_group1823""]){
-                        id
-                        items{
-                            name
-                            group{
+            "
+                query{
+                    boards(ids: 2718204773){
+                        groups(ids: [""topics"", ""group_title"", ""new_group1823""]){
                             id
-                            }
-                            subitems{
-                                name
-                            }
-                            column_values(ids:[""text"", ""text6"", ""text64"", ""text79"", ""text0"", ""text_1"", ""dup__of_budget_expense"",""ytd_hours""]){
-                                title
-                                text
+                            items_page{
+                                cursor
+                                items{
+                                    name
+                                    group{
+                                        id
+                                    }
+                                    subitems{
+                                        name
+                                    }
+                                    column_values(ids:[""text"", ""text6"", ""text64""]){
+                                        column{
+                                            title
+                                        }
+                                        text
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }"
-
+           "
+        'This query uses postman sample: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-4b6ae90b-accc-4e3e-83c8-b880d0374f94?tab=body
         Dim fetchUKTaskQuery As String =
-            "query{
-                 boards(ids:2821516243){
+            "
+            query{
+                boards(ids:2821516243){
                     groups(ids: [""topics"", ""new_group15371"", ""new_group82548""]){
                         id
                         title
-                        items{
-                            group{id}
-                            name
-                            subitems{
+                        items_page{
+                            items{
+                                group{
+                                    id
+                                }
                                 name
-                            }
-                             column_values(ids: [""job_no_""]){
-                                title
-                                value
-                                text
+                                subitems{
+                                    name
+                                }
+                                column_values(ids:""job_no""){
+                                    column{
+                                        title
+                                    }
+                                    value
+                                    text
+                                }
                             }
                         }
                     }
-                 }
-            }"
+                }
+            }
+"
+
+        'This query uses this postman sample: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-c4754e6f-0424-4423-87e2-c1e4291b7ca7
         Dim fetchAccountQuery As String =
             "query{
                 boards(ids:3428362986){
-                    items{
+                    items_page{
+                        items{
                         id    
                         name
                         column_values{
-                            title
-                            text
+                            column{
+                                title
+                                }
+                         text
+                            }
                         }
                     }
                 }
             }"
+        'This query uses this postman sample: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-7127ee01-7ea5-49f1-9275-7ca542836b54?tab=body
         Dim fetchNames As String =
-            "query{
-                boards(ids:[3428362986]) 
-                {
-                  items{
+           "query{
+        boards(ids: 3428362986){
+            items_page{
+                items{
                     name
                     id
                 }
-                }}"
+            }
+        }
+    }"
+
         'QUERIES ENDS HERE
 
         lblStatus.Text = "Fetching Accounts..."
@@ -293,10 +341,15 @@ Public Class Form1
         'add all queries in this list
         queries.Add(fetchAccountQuery)
         queries.Add(fetchNames)
-        queries.Add(fetchTasksQuery)
-        queries.Add(fetchUKTaskQuery)
+        'queries.Add(fetchTasksQuery)
+        'queries.Add(fetchUKTaskQuery)
+
+        ' Due to monday's update, fetchTasksQuery and fetchTaskQueryUK should have a different approach
+        ' because they can only handle 25 items/page of tasks, and we need all of them pages.
         Try
             Dim deserializedResults As New List(Of Object)
+            Dim phTaskObject As New Root
+            Dim ukTaskObject As New Root
             Dim isError As New Boolean
             Dim badQuery As New List(Of String)
             Console.WriteLine("Trying to fetch....")
@@ -305,6 +358,111 @@ Public Class Form1
                 ToolStripProgressBar1.Maximum = maxErrorCount
                 Dim goodQueryCounter As Integer = 0
                 If retries <> maxErrorCount Then
+                    ' Fetch PH tasks
+                    Dim phTask = Await SendMondayRequestVersion2(fetchTasksQuery)
+                    If phTask(0) = "error" Then
+                        ToolStripProgressBar1.Increment(-10)
+                        Exit For
+                    Else
+                        phTaskObject = JsonConvert.DeserializeObject(Of Root)(phTask(1))
+                        ' Iterate through all groups in PH tasks
+                        For Each group In phTaskObject.data.boards(0).groups
+                            Console.WriteLine(group)
+                            Dim currrIndex = phTaskObject.data.boards(0).groups.IndexOf(group)
+                            'check if item page of that group contains a cursor
+                            If group.items_page.cursor IsNot vbNullString Then
+                                ' this items page still has a next page. So we query again.
+                                Dim nextPageQuery = "query {
+                                          next_items_page (limit: 100,cursor: """ + group.items_page.cursor + """) {
+                                            cursor
+                                            items {
+                                              name
+                                              group {
+                                                id
+                                              }
+                                              subitems{
+                                                name
+                                              }
+                                              column_values(ids: [""text"", ""text6"", ""text64""]){
+                                                column{
+                                                    title
+                                                }
+                                                text
+                                              }
+                                            }
+                                          }
+                                        }
+                                   "
+                                Dim nextPageQueryResult = Await SendMondayRequestVersion2(nextPageQuery)
+                                If nextPageQueryResult(0) = "error" Then
+                                    'something went wrong.
+                                    Console.WriteLine($"Something went wrong. Retrying... {retries + 1} / {maxErrorCount}")
+                                    ToolStripProgressBar1.Increment(-10)
+                                Else
+                                    Dim nextPage = JsonConvert.DeserializeObject(Of Root)(nextPageQueryResult(1))
+                                    ' add the new page to the list of string.
+                                    For Each items In nextPage.data.next_items_page.items
+                                        phTaskObject.data.boards(0).groups(currrIndex).items_page.items.Add(items)
+                                        Console.WriteLine(allTasks)
+                                    Next
+                                End If
+                            End If
+                        Next
+                    End If
+                    ' Fetch UK tasks
+                    Dim UKTasks = Await SendMondayRequestVersion2(fetchUKTaskQuery)
+                    If UKTasks(0) = "error" Then
+                        'error api call
+                        ToolStripProgressBar1.Increment(-10)
+                        Exit For
+                    Else
+                        'successful api call
+                        ukTaskObject = JsonConvert.DeserializeObject(Of Root)(UKTasks(1))
+                        'Iterate through all groups in UK tasks
+                        For Each group In ukTaskObject.data.boards(0).groups
+                            Dim currIndex = ukTaskObject.data.boards(0).groups.IndexOf(group)
+                            'check if this group contains cursor.
+                            If group.items_page.cursor IsNot vbNullString Then
+                                ' this group contains a cursor, that means it has pending pages to be fetched.
+                                Dim nextPageQuery = "query {
+                                          next_items_page (limit: 100, cursor: """ + group.items_page.cursor + """) {
+                                            cursor
+                                            items{
+                                              group{
+                                                id
+                                              }
+                                              name
+                                              subitems{
+                                                name
+                                              }
+                                              column_values(ids: ""job_no""){
+                                                column{
+                                                  title
+                                                }
+                                                value
+                                                text
+                                              }
+                                            }
+                                          }
+                                        }"
+                                Dim nextPageQueryResult = Await SendMondayRequestVersion2(nextPageQuery)
+                                If nextPageQueryResult(0) = "error" Then
+                                    'something went wrong.
+                                    Console.WriteLine($"Something went wrong. Retrying... {retries + 1} / {maxErrorCount}")
+                                    ToolStripProgressBar1.Increment(-10)
+                                Else
+                                    'deserialize json
+                                    Dim nextPage = JsonConvert.DeserializeObject(Of Root)(nextPageQueryResult(1))
+                                    'add each items to their respective groups
+                                    For Each item In nextPage.data.next_items_page.items
+                                        ukTaskObject.data.boards(0).groups(currIndex).items_page.items.Add(item)
+                                    Next
+                                End If
+                            End If
+                        Next
+
+                    End If
+
                     For Each query In queries
                         Dim result = (Await SendMondayRequestVersion2(query))
                         If result(0) = "error" Then
@@ -336,12 +494,16 @@ Public Class Form1
             accounts = deserializedResults(0)
             namesList = deserializedResults(1)
 
-            allTasks = deserializedResults(2)
+            allTasks = phTaskObject
 
-            UKTasks = deserializedResults(3)
+            UKTasks = ukTaskObject
 
-            Console.WriteLine("UK Tasks: ", UKTasks)
+
+            'UKTasks = deserializedResults(3)
+
+            'Console.WriteLine("UK Tasks: ", UKTasks)
             populateCB(namesList)
+            ToolStripProgressBar1.Value = ToolStripProgressBar1.Maximum
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
             If result = DialogResult.Retry Then
@@ -390,6 +552,7 @@ Public Class Form1
             'Account detail matches
             MessageBox.Show($"Welcome back, {fFirstName}!", "Log In Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Me.Visible = False
+            elapsedDutyHours.Start()
             Dashboard1.Show()
         Else
             MessageBox.Show("Incorrect Password.")

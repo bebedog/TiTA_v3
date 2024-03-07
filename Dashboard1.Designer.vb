@@ -28,8 +28,10 @@ Partial Class Dashboard1
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.lblQuotes = New System.Windows.Forms.Label()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'StatusStrip1
@@ -70,18 +72,28 @@ Partial Class Dashboard1
         '
         Me.lblQuotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.lblQuotes.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblQuotes.Location = New System.Drawing.Point(12, 9)
+        Me.lblQuotes.Location = New System.Drawing.Point(306, 12)
         Me.lblQuotes.Name = "lblQuotes"
-        Me.lblQuotes.Size = New System.Drawing.Size(734, 269)
+        Me.lblQuotes.Size = New System.Drawing.Size(440, 266)
         Me.lblQuotes.TabIndex = 3
         Me.lblQuotes.Text = """Time is gold."""
         Me.lblQuotes.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'PictureBox1
+        '
+        Me.PictureBox1.Location = New System.Drawing.Point(12, 12)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(288, 266)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.PictureBox1.TabIndex = 4
+        Me.PictureBox1.TabStop = False
         '
         'Dashboard1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(758, 303)
+        Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.lblQuotes)
         Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.StatusStrip1)
@@ -92,6 +104,7 @@ Partial Class Dashboard1
         Me.StatusStrip1.ResumeLayout(False)
         Me.StatusStrip1.PerformLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -102,4 +115,5 @@ Partial Class Dashboard1
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Timer1 As Timer
     Friend WithEvents lblQuotes As Label
+    Friend WithEvents PictureBox1 As PictureBox
 End Class

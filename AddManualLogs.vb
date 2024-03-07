@@ -71,7 +71,7 @@ Public Class AddManualLogs
     Public Sub populateTasks()
         Dim allTasks = Form1.allTasks
         For Each group In allTasks.data.boards(0).groups
-            For Each item In group.items
+            For Each item In group.items_page.items
                 Dim itemName = item.name
                 Dim mySubitems As New List(Of String)
                 Dim projectNumber As String

@@ -54,6 +54,7 @@ Public Class Switch
         Public Property change_multiple_column_values As ChangeMultipleColumnValues
         Public Property create_item As CreateItem
         Public Property boards As Board()
+        Public Property items As Item()
     End Class
     Public Class Root
         Public Property data As Data
@@ -67,14 +68,14 @@ Public Class Switch
         If Form1.department = "UK" Then
             ' Show a different task list
             For Each groups In Form1.UKTasks.data.boards(0).groups
-                For Each tasks2 In groups.items
+                For Each tasks2 In groups.items_page.items
                     cbTasks.Items.Add(tasks2.name.ToString + " - " + tasks2.column_values(0).text)
                     myTasks.Add(tasks2.name.ToString + " - " + tasks2.column_values(0).text)
                 Next
             Next
         Else
             For Each groups In Form1.allTasks.data.boards(0).groups
-                For Each tasks1 In groups.items
+                For Each tasks1 In groups.items_page.items
                     cbTasks.Items.Add(tasks1.name)
                     myTasks.Add(tasks1.name.ToString)
                 Next
@@ -86,7 +87,7 @@ Public Class Switch
     Private Function filterJobs(ByVal category As String)
         If Form1.department = "UK" Then
             For Each groups In Form1.UKTasks.data.boards(0).groups
-                For Each tosks In groups.items
+                For Each tosks In groups.items_page.items
                     Select Case category
                         Case "Show All"
                             populateTasksComboBox()
@@ -108,7 +109,7 @@ Public Class Switch
             Next
         Else
             For Each groups In Form1.allTasks.data.boards(0).groups
-                For Each tsks In groups.items
+                For Each tsks In groups.items_page.items
                     Select Case category
                         Case "Show All"
                             populateTasksComboBox()
@@ -127,31 +128,31 @@ Public Class Switch
                             End If
                         Case "Electronics R&D"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "ERD Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "ERD Tag" And cvals.text = "x" Then
                                     cbTasks.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Mechanical R&D"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "MRD Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "MRD Tag" And cvals.text = "x" Then
                                     cbTasks.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Enclosure"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "EN Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "EN Tag" And cvals.text = "x" Then
                                     cbTasks.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Systems Designs"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "SD Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "SD Tag" And cvals.text = "x" Then
                                     cbTasks.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Small Batch Manufacturing"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "SMB Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "SMB Tag" And cvals.text = "x" Then
                                     cbTasks.Items.Add(tsks.name)
                                 End If
                             Next
@@ -167,7 +168,7 @@ end_of_for:
         cbSubTasks.Items.Clear()
         If Form1.department = "UK" Then
             For Each groups In Form1.UKTasks.data.boards(0).groups
-                For Each task In groups.items
+                For Each task In groups.items_page.items
                     If cbTasks.Text = task.name + " - " + task.column_values(0).text Then
                         selectedTaskProjectCode = task.column_values(0).text
                         If task?.subitems IsNot Nothing Then
@@ -184,7 +185,7 @@ end_of_for:
             Next
         Else
             For Each groups In Form1.allTasks.data.boards(0).groups
-                For Each tsks In groups.items
+                For Each tsks In groups.items_page.items
                     If tsks.name = cbTasks.Text Then
                         selectedTaskProjectCode = tsks.column_values(0).text
                         If tsks?.subitems IsNot Nothing Then
@@ -204,7 +205,7 @@ end_of_for:
     Private Function doesGroupContainItems(groupTitle As String)
         For Each groups In Form1.UKTasks.data.boards(0).groups
             If groups.title = groupTitle Then
-                Dim itemCount = groups.items.Length
+                Dim itemCount = groups.items_page.items.Count
                 If itemCount = 0 Then
                     Return False
                 Else
@@ -254,15 +255,15 @@ end_of_for:
     End Sub
     Public Async Function FetchPreviousTaskAndSubTask(ByVal itemID As String) As Task
         Dim queryFetchPreviousTask =
-                "query{
-                boards(ids: 2628729848){
-                    items(ids: " + itemID + "){
-                        column_values(ids: [""job"", ""text4""]){
+            "
+                query{
+                    items(ids:" + itemID + "){
+                        column_values(ids:[""job"",""text4""]){
                             text
                         }
                     }
                 }
-            }"
+            "
 
         Try
             For retries = 0 To Form1.maxErrorCount
@@ -274,8 +275,8 @@ end_of_for:
                     Else
                         'success
                         Dim jsonObj = JsonConvert.DeserializeObject(Of Root)(response(1))
-                        Dim previousTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
-                        Dim previousSubTask As String = jsonObj.data.boards(0).items(0).column_values(0).text
+                        Dim previousTask As String = jsonObj.data.items(0).column_values(0).text
+                        Dim previousSubTask As String = jsonObj.data.items(0).column_values(1).text
                         cbTasks.SelectedItem = previousTask
                         cbSubTasks.SelectedItem = previousSubTask
                         Exit For

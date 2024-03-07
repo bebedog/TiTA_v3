@@ -44,6 +44,8 @@ Partial Class Display
         Me.btnAdminToolsAndLogout = New System.Windows.Forms.Button()
         Me.ToolStrip1 = New System.Windows.Forms.ToolStrip()
         Me.statusLabel = New System.Windows.Forms.ToolStripLabel()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.elpasedDutyTimer = New System.Windows.Forms.Timer(Me.components)
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ToolStrip1.SuspendLayout()
         Me.SuspendLayout()
@@ -225,7 +227,7 @@ Partial Class Display
         '
         Me.ToolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.ToolStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.statusLabel})
-        Me.ToolStrip1.Location = New System.Drawing.Point(0, 205)
+        Me.ToolStrip1.Location = New System.Drawing.Point(0, 226)
         Me.ToolStrip1.Name = "ToolStrip1"
         Me.ToolStrip1.Size = New System.Drawing.Size(400, 25)
         Me.ToolStrip1.TabIndex = 27
@@ -236,13 +238,29 @@ Partial Class Display
         Me.statusLabel.Name = "statusLabel"
         Me.statusLabel.Size = New System.Drawing.Size(0, 22)
         '
+        'Label3
+        '
+        Me.Label3.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(12, 200)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(382, 23)
+        Me.Label3.TabIndex = 28
+        Me.Label3.Text = "You have been working for: XX:XX:XX"
+        Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'elpasedDutyTimer
+        '
+        '
         'Display
         '
         Me.AcceptButton = Me.btnSwitch
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Button2
-        Me.ClientSize = New System.Drawing.Size(400, 230)
+        Me.ClientSize = New System.Drawing.Size(400, 251)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.ToolStrip1)
         Me.Controls.Add(Me.lblDepartment1)
         Me.Controls.Add(Me.lblSubtasks)
@@ -291,4 +309,6 @@ Partial Class Display
     Friend WithEvents btnAdminToolsAndLogout As Button
     Friend WithEvents ToolStrip1 As ToolStrip
     Friend WithEvents statusLabel As ToolStripLabel
+    Friend WithEvents Label3 As Label
+    Friend WithEvents elpasedDutyTimer As Timer
 End Class

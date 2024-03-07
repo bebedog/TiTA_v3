@@ -85,14 +85,14 @@ Public Class ManualClockIn
         cbProjectsList.Items.Clear()
         If Form1.department = "UK" Then
             For Each groups In Form1.UKTasks.data.boards(0).groups
-                For Each tsks In groups.items
+                For Each tsks In groups.items_page.items
                     cbProjectsList.Items.Add(tsks.name + " - " + tsks.column_values(0).text)
                 Next
             Next
             cbProjectsList.SelectedIndex = 0
         Else
             For Each groups In Form1.allTasks.data.boards(0).groups
-                For Each tsks In groups.items
+                For Each tsks In groups.items_page.items
                     cbProjectsList.Items.Add(tsks.name)
                 Next
             Next
@@ -104,7 +104,7 @@ Public Class ManualClockIn
     Private Function filterJobs(ByVal category As String)
         If Form1.department = "UK" Then
             For Each groups In Form1.UKTasks.data.boards(0).groups
-                For Each tosks In groups.items
+                For Each tosks In groups.items_page.items
                     Select Case category
                         Case "Show All"
                             populateJobsList()
@@ -126,7 +126,7 @@ Public Class ManualClockIn
             Next
         Else
             For Each groups In Form1.allTasks.data.boards(0).groups
-                For Each tsks In groups.items
+                For Each tsks In groups.items_page.items
                     Select Case category
                         Case "Show All"
                             populateJobsList()
@@ -145,31 +145,31 @@ Public Class ManualClockIn
                             End If
                         Case "Electronics R&D"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "ERD Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "ERD Tag" And cvals.text = "x" Then
                                     cbProjectsList.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Mechanical R&D"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "MRD Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "MRD Tag" And cvals.text = "x" Then
                                     cbProjectsList.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Enclosure"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "EN Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "EN Tag" And cvals.text = "x" Then
                                     cbProjectsList.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Systems Designs"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "SD Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "SD Tag" And cvals.text = "x" Then
                                     cbProjectsList.Items.Add(tsks.name)
                                 End If
                             Next
                         Case "Small Batch Manufacturing"
                             For Each cvals In tsks.column_values
-                                If cvals.title = "SMB Tag" And cvals.text = "x" Then
+                                If cvals.column.title = "SMB Tag" And cvals.text = "x" Then
                                     cbProjectsList.Items.Add(tsks.name)
                                 End If
                             Next
@@ -184,7 +184,7 @@ go_to_end_of_for:
     Private Function doesGroupContainItems(groupTitle As String)
         For Each groups In Form1.UKTasks.data.boards(0).groups
             If groups.title = groupTitle Then
-                Dim itemCount = groups.items.Length
+                Dim itemCount = groups.items_page.items.Count
                 If itemCount <> 0 Then
                     Return True
                 End If
@@ -197,7 +197,7 @@ go_to_end_of_for:
         cbSubtasks.Items.Clear()
         If Form1.department = "UK" Then
             For Each groups In Form1.UKTasks.data.boards(0).groups
-                For Each items In groups.items
+                For Each items In groups.items_page.items
                     If cbProjectsList.Text = items.name + " - " + items.column_values(0).text Then
                         projectCode = items.column_values(0).text
                         If items?.subitems IsNot Nothing Then
@@ -214,7 +214,7 @@ go_to_end_of_for:
             Next
         Else
             For Each groups In Form1.allTasks.data.boards(0).groups
-                For Each items In groups.items
+                For Each items In groups.items_page.items
                     If items.name = cbProjectsList.SelectedItem Then
                         projectCode = items.column_values(0).text.ToString
                         If items?.subitems IsNot Nothing Then

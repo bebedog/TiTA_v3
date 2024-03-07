@@ -1,6 +1,7 @@
 ﻿Imports System.Threading
 Imports Newtonsoft.Json
 Imports QuoteBank
+Imports RestSharp
 
 Public Class Dashboard1
 
@@ -9,12 +10,22 @@ Public Class Dashboard1
     Dim duplicateIDstoDelete As New List(Of String)
     Public newItemID
     Public newItemObj
-
+    Public myCat As String
+    Public thisCat As Cats
 
 
     'Timer and StopWatch
     Dim elapsedTimeInSeconds As Integer
     Dim timeToWaitInSeconds As Integer
+
+    Public Class Cats
+        Public Property breeds As IList(Of Object)
+        Public Property id As String
+        Public Property url As String
+        Public Property width As Integer
+        Public Property height As Integer
+    End Class
+
 
 
     Public Class ChangeMultipleColumnValues
@@ -25,13 +36,17 @@ Public Class Dashboard1
         Public Property name As String
         Public Property column_values As ColumnValue()
     End Class
+    Public Class Column
+        Public Property title As String
+    End Class
     Public Class ColumnValue
 
         Public Property text As String
-        Public Property title As String
+        Public Property column As Column
         Public Property value As String
     End Class
     Public Class Item
+        Public Property id As String
         Public Property name As String
         Public Property column_values As ColumnValue()
     End Class
@@ -45,7 +60,11 @@ Public Class Dashboard1
         Public Property id As String
         Public Property name As String
     End Class
+    Public Class ItemsPageByColumnValues
+        Public Property items As Item()
+    End Class
     Public Class Data
+        Public Property items_page_by_column_values As ItemsPageByColumnValues
         Public Property items_by_column_values As ItemsByColumnValue()
         Public Property change_multiple_column_values As ChangeMultipleColumnValues
         Public Property create_item As CreateItem
@@ -58,6 +77,11 @@ Public Class Dashboard1
     Private Async Sub Dashboard1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         positionLoginScreen()
         lblQuotes.Text = Await getRandomQuotes()
+        myCat = Await getRandomCat()
+        PictureBox1.ImageLocation = myCat
+
+
+
         Me.Text = $"{Form1.fFirstName} {Form1.fSurname} | {Form1.mondayID} | {Form1.department}"
         DataGridView1.Visible = False
         DataGridView1.Enabled = True
@@ -91,18 +115,28 @@ Public Class Dashboard1
         Console.WriteLine($"Time to wait: {timeToWaitInSeconds} seconds")
         Await Task.Delay(timeToWaitInSeconds * 1000) 'The delay method takes time in milliseconds. Thus the x1000.
         'END Check the stopwatch if it is running and apply delay
+        'The postman sample used in this query: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-63cd8496-4c62-43d0-8448-68bf58704dd3
         Dim fetchStatus As String =
-            "query{
-                items_by_column_values(board_id: 2628729848, column_id: ""text_1"", column_value: ""START_" + Form1.fSurname + """){
-                    id
-                    name
-                    column_values(ids:[""text"",""job"", ""text4""]){
-                        title
-                        text
-                        value
+            "
+                query{
+                    items_page_by_column_values(board_id: 2628729848, columns:{
+                        column_id:""text_1"",
+                        column_values: ""START_" + Form1.fSurname + """
+                    }){
+                        items{
+                            id
+                            name
+                            column_values(ids:[""text"", ""job"", ""text4""]){
+                                column{
+                                    title
+                                }
+                                text
+                                value
+                            }
+                        }
                     }
                 }
-            }"
+"
         Dim recon As Integer
 Dashboard1_Shown:
         Try
@@ -122,7 +156,7 @@ Dashboard1_Shown:
                 End If
             Next
             ShowDuplicateLogs(previousLog, DataGridView1)
-            Dim count As Integer = previousLog.data.items_by_column_values.Length
+            Dim count As Integer = previousLog.data.items_page_by_column_values.items.Count
             If count = 0 Then
                 'no previous log found | Manual Clock-in form goes here.
                 Label1.Text = "No previous log found. Clock In Manually?"
@@ -143,7 +177,7 @@ Dashboard1_Shown:
             Else
                 'only one log found. This is the ideal result.
                 Me.Label1.Text = "Success"
-                Form1.currentID = previousLog.data.items_by_column_values(0).id
+                Form1.currentID = previousLog.data.items_page_by_column_values.items(0).id
                 Switch.Show()
                 Me.Close()
             End If
@@ -284,7 +318,7 @@ createNewItem:
         duplicateLogs.Columns.Add("Time-in", GetType(String))
         duplicateLogs.Columns.Add("Item ID", GetType(String))
         Dim btn As New DataGridViewButtonColumn()
-        For Each c In results.data.items_by_column_values
+        For Each c In results.data.items_page_by_column_values.items
             duplicateLogs.Rows.Add(c.column_values(0).text, c.column_values(2).text, c.id)
         Next
         targetDataGridView.Columns.Add(btn)
@@ -417,5 +451,27 @@ deleteItemRequest:
     Public Async Function getRandomQuotes() As Task(Of String)
         Dim englishQuotes As Quotes.English = New Quotes.English()
         Return englishQuotes.Motivation
+    End Function
+
+    Public Async Function getRandomCat() As Task(Of String)
+        Dim options = New RestClientOptions("https://api.thecatapi.com/v1/images/search")
+        options.ThrowOnAnyError = True
+        options.MaxTimeout = 15000 '15 seconds.
+        Dim client = New RestClient(options)
+        Dim request = New RestRequest()
+        request.Timeout = 15000
+        request.Method = Method.Get
+        request.AddQueryParameter("api_key", "live_NY4X17UNYHPtm44x8L3aCpH5iKvm2wSj0RVjWlu1b0s2GE8brbxndYEIb38BTG4q")
+        Dim response = New RestResponse
+        response = Await client.GetAsync(request)
+
+        If response.IsSuccessStatusCode Then
+            Dim x = response.Content.Substring(1, response.Content.Length - 2)
+
+            thisCat = JsonConvert.DeserializeObject(Of Cats)(x)
+            Return thisCat.url
+        Else
+            Throw New System.Exception("An error occured when fetching cats.")
+        End If
     End Function
 End Class

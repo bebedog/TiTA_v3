@@ -68,6 +68,8 @@ Public Class Display
     End Sub
     Private Async Sub Display_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.TopMost = True
+        elpasedDutyTimer.Enabled = True
+        elpasedDutyTimer.Start()
         'Check if user has admin privilege(1) or not(0).
         If (Form1.privilege = 1) Then
             btnAdminToolsAndLogout.Enabled = True
@@ -182,6 +184,16 @@ Public Class Display
                 lunchAndBreakReminder.Start()
             End If
         End If
+        Dim time = Form1.elapsedDutyHours.Elapsed
+        Label3.Text = String.Format("You have been working for: {0} Hours, {1} Minutes and {2} Seconds", time.Hours, time.Minutes, time.Seconds)
+    End Sub
+
+    Private Sub elpasedDutyTimer_Tick(sender As Object, e As EventArgs) Handles elpasedDutyTimer.Tick
+        If Form1.elapsedDutyHours.Elapsed.TotalSeconds > 32400 Then
+            elpasedDutyTimer.Enabled = False
+            elpasedDutyTimer.Stop()
+            Dim dlgrslt = MessageBox.Show("Your TiTA noticed that you've been working for 9 hours straight! Consider getting some rest!", "Friendly reminder from TiTA", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
     End Sub
 
     Private Async Sub btnAdminTools_Click(sender As Object, e As EventArgs) Handles btnAdminToolsAndLogout.Click
@@ -291,5 +303,6 @@ MarkAsDonePreviousLog:
         'End Try
         'END OLD CODE HERE
     End Function
+
 
 End Class

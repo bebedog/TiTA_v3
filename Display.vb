@@ -86,7 +86,7 @@ Public Class Display
         Else
 
             ToolStrip1.Visible = False
-            Me.Size = New Point(400, 212)
+            Me.Size = New Point(400, 230)
 
         End If
         lunchAndBreakReminder.Enabled = True

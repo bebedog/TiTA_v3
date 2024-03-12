@@ -87,6 +87,7 @@ Partial Class Dashboard1
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox1.TabIndex = 4
         Me.PictureBox1.TabStop = False
+        Me.PictureBox1.WaitOnLoad = True
         '
         'Dashboard1
         '

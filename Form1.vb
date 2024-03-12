@@ -14,7 +14,7 @@ Public Class Form1
     Public titaVersion As String = TiTA_v3.My.Application.Info.Version.ToString
     Public allTasks As Root
     Public UKTasks As Root
-    Public accounts
+    Public accounts As Root
     Public elapsedTime As Integer
     Public loadDelay As Integer
     Dim namesList
@@ -28,7 +28,7 @@ Public Class Form1
 
     'Task categories
     Public taskCategories() As String = {"Show All", "R&D", "Jobs", "Admin", "Electronics R&D", "Mechanical R&D", "Enclosure", "Systems Designs", "Small Batch Manufacturing"}
-    Public UKtaskCategories() As String = {"Show All", "Lasermet Lab Testing", "Lasermet Europe GmbH Testing", "Calibration"}
+    Public UKtaskCategories() As String = {"Show All", "Lasermet Lab Testing", "Lasermet Europe GmbH Testing", "Calibration", "Admin", "Other Lab Duties"}
     'Variable for the ID of the current log
     Public currentID As String
     Public fSurname As String
@@ -169,24 +169,61 @@ Public Class Form1
         If department = "UK" Then
             Return True
         Else
+            ''OLD CODE START
+            'For Each group In tasksList.data.boards(0).groups
+            '    For Each item In group.items_page.items
+            '        If item.name = task Then
+            '            If String.IsNullOrWhiteSpace(item.column_values(1).text) Or item.column_values(1).text.ToString = "0" Then
+            '                Return True
+            '            Else
+            '                If item.column_values(1).text <= item.column_values(2).text Then
+            '                    Return False
+            '                Else
+            '                    Return True
+            '                End If
+            '            End If
+            '        End If
+            '    Next
+            'Next
+            ''OLD CODE END
+
+            ' For the new code, I've already incorporated the column title so it'll be easier to compare.
+            ' Loop through the group
             For Each group In tasksList.data.boards(0).groups
+                'Find the task in task list
                 For Each item In group.items_page.items
                     If item.name = task Then
-                        If String.IsNullOrWhiteSpace(item.column_values(1).text) Or item.column_values(1).text.ToString = "0" Then
-                            Return True
-                        Else
-                            If item.column_values(1).text <= item.column_values(2).text Then
-                                Return False
-                            Else
-                                Return True
+                        ' task found
+                        ' loop through columns and look for budget hours
+                        For Each column In item.column_values
+                            If (column.column.title = "Budget Hours") Then
+                                ' Budget hours column found.
+                                If String.IsNullOrWhiteSpace(column.text) Or column.text.ToString = "0" Then
+                                    ' this task does not have a budget hours so anyone can time in.
+                                    Return True
+                                Else
+                                    'this task does have an integer value in place.
+                                    ' we find the ytd hours in this task
+                                    For Each column2 In item.column_values
+                                        If column2.column.title = "YTD Hours" Then
+                                            ' YTD Hours column found
+                                            If String.IsNullOrWhiteSpace(column2.text) Or column.text <= column2.text Then
+                                                ' YTD Hours column has nothing in it
+                                                ' OR
+                                                ' YTD Hours is way past its budget hours.
+                                                Return False
+                                            Else
+                                                Return True
+                                            End If
+                                        End If
+                                    Next
+                                End If
                             End If
-                        End If
+                        Next
                     End If
                 Next
             Next
         End If
-
-
     End Function
     Public Function checkAccountDetails(ByVal surname As String, ByVal password As String, ByVal accounts As Root) As Boolean
         '0 - First Name
@@ -213,11 +250,11 @@ Public Class Form1
             End If
         Next
     End Function
-    Public Function populateCB(ByVal namesList As Root)
-        For Each x In namesList.data.boards(0).items_page.items
-            cbUsername.Items.Add(x.name)
+    Public Sub populateCB()
+        For Each account In accounts.data.boards(0).items_page.items
+            cbUsername.Items.Add(account.name)
         Next
-    End Function
+    End Sub
     Public Sub DisableAllControls()
         tbPassword.Enabled = False
         cbUsername.Enabled = False
@@ -260,7 +297,7 @@ Public Class Form1
                                     subitems{
                                         name
                                     }
-                                    column_values(ids:[""text"", ""text6"", ""text64""]){
+                                    column_values{
                                         column{
                                             title
                                         }
@@ -277,37 +314,36 @@ Public Class Form1
             "
             query{
                 boards(ids:2821516243){
-                    groups(ids: [""topics"", ""new_group15371"", ""new_group82548""]){
+                    groups(ids: [""topics"", ""new_group15371"", ""new_group82548"", ""new_group56008""]){
                         id
                         title
                         items_page{
+                            cursor
                             items{
-                                group{
-                                    id
-                                }
-                                name
-                                subitems{
                                     name
-                                }
-                                column_values(ids:""job_no""){
-                                    column{
-                                        title
+                                    group{
+                                        id
                                     }
-                                    value
-                                    text
+                                    subitems{
+                                        name
+                                    }
+                                    column_values{
+                                        column{
+                                            title
+                                        }
+                                        text
+                                    }
                                 }
-                            }
                         }
                     }
                 }
             }
 "
-
         'This query uses this postman sample: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-c4754e6f-0424-4423-87e2-c1e4291b7ca7
-        Dim fetchAccountQuery As String =
-            "query{
+        Dim fetchAccountQuery As String = "query{
                 boards(ids:3428362986){
                     items_page{
+                        cursor
                         items{
                         id    
                         name
@@ -322,8 +358,7 @@ Public Class Form1
                 }
             }"
         'This query uses this postman sample: https://interstellar-zodiac-223984.postman.co/workspace/My-Workspace~e1229d4d-0716-4512-8c82-8155033a6f8b/request/10748988-7127ee01-7ea5-49f1-9275-7ca542836b54?tab=body
-        Dim fetchNames As String =
-           "query{
+        Dim fetchNames As String = "query{
         boards(ids: 3428362986){
             items_page{
                 items{
@@ -350,6 +385,7 @@ Public Class Form1
             Dim deserializedResults As New List(Of Object)
             Dim phTaskObject As New Root
             Dim ukTaskObject As New Root
+            Dim accountsListObject As New Root
             Dim isError As New Boolean
             Dim badQuery As New List(Of String)
             Console.WriteLine("Trying to fetch....")
@@ -383,7 +419,7 @@ Public Class Form1
                                               subitems{
                                                 name
                                               }
-                                              column_values(ids: [""text"", ""text6"", ""text64""]){
+                                              column_values{
                                                 column{
                                                     title
                                                 }
@@ -408,6 +444,7 @@ Public Class Form1
                                 End If
                             End If
                         Next
+                        goodQueryCounter += 1
                     End If
                     ' Fetch UK tasks
                     Dim UKTasks = Await SendMondayRequestVersion2(fetchUKTaskQuery)
@@ -425,26 +462,26 @@ Public Class Form1
                             If group.items_page.cursor IsNot vbNullString Then
                                 ' this group contains a cursor, that means it has pending pages to be fetched.
                                 Dim nextPageQuery = "query {
-                                          next_items_page (limit: 100, cursor: """ + group.items_page.cursor + """) {
+                                          next_items_page (limit: 100,cursor: """ + group.items_page.cursor + """) {
                                             cursor
-                                            items{
-                                              group{
+                                            items {
+                                              name
+                                              group {
                                                 id
                                               }
-                                              name
                                               subitems{
                                                 name
                                               }
-                                              column_values(ids: ""job_no""){
+                                              column_values{
                                                 column{
-                                                  title
+                                                    title
                                                 }
-                                                value
                                                 text
                                               }
                                             }
                                           }
-                                        }"
+                                        }
+                                   "
                                 Dim nextPageQueryResult = Await SendMondayRequestVersion2(nextPageQuery)
                                 If nextPageQueryResult(0) = "error" Then
                                     'something went wrong.
@@ -460,49 +497,83 @@ Public Class Form1
                                 End If
                             End If
                         Next
-
+                        goodQueryCounter += 1
                     End If
 
-                    For Each query In queries
-                        Dim result = (Await SendMondayRequestVersion2(query))
-                        If result(0) = "error" Then
-                            'the result is an error.
-                            'deserialize into ErrorRoot
-                            'deserializedResults.Add(JsonConvert.DeserializeObject(Of ErrorRoot)(result(1)))
-                            'badQuery.Add(query)
-                            Console.WriteLine($"Something went wrong. Retrying... {retries + 1}/{maxErrorCount}")
-                            ToolStripProgressBar1.Increment(-10)
-                            Exit For
-                        Else
-                            'the result is success.
-                            'deserialize into Root
-                            deserializedResults.Add(JsonConvert.DeserializeObject(Of Root)(result(1)))
-                            goodQueryCounter += 1
-                            ToolStripProgressBar1.Increment(10)
+                    ' Fetch Account Details
+                    Dim accountsList = Await SendMondayRequestVersion2(fetchAccountQuery)
+                    If accountsList(0) = "error" Then
+                        'something went wrong.
+                        ToolStripProgressBar1.Increment(-10)
+                    Else
+                        accountsListObject = JsonConvert.DeserializeObject(Of Root)(accountsList(1))
+                        Dim firstCursor = accountsListObject.data.boards(0).items_page.cursor
+                        If (firstCursor IsNot vbNullString) Then
+                            'keep on requesting until we get the whole accounts list.
+                            Dim stillHasCursor = True
+                            Dim cursor = firstCursor
+                            While stillHasCursor
+                                Dim nextPageQuery = "
+                                                query {
+                                                  next_items_page (limit: 100, cursor: """ + cursor + """) {
+                                                    cursor
+                                                    items {
+                                                      name
+                                                      group {
+                                                        id
+                                                      }
+                                                      subitems{
+                                                        name
+                                                      }
+                                                      column_values{
+                                                        column{
+                                                            title
+                                                        }
+                                                        text
+                                                      }
+                                                    }
+                                                  }
+                                                }"
+                                Dim nextPage = Await SendMondayRequestVersion2(nextPageQuery)
+                                If nextPage(0) = "error" Then
+                                    'something went wrong
+                                    ToolStripProgressBar1.Increment(-10)
+                                    Exit For
+                                Else
+                                    Dim nextPageObject = JsonConvert.DeserializeObject(Of Root)(nextPage(1))
+                                    For Each account In nextPageObject.data.next_items_page.items
+                                        accountsListObject.data.boards(0).items_page.items.Add(account)
+                                    Next
+                                    'check if nextPage still has account
+                                    If nextPageObject.data.next_items_page.cursor IsNot vbNullString Then
+                                        ' still has cursor
+                                        cursor = nextPageObject.data.next_items_page.cursor
+                                    Else
+                                        'end loop
+                                        stillHasCursor = False
+                                    End If
+                                End If
+                            End While
                         End If
-                    Next
+                        goodQueryCounter += 1
+                    End If
                 Else
                     'max retries are all used.
                     Throw New Exception("Could not fetch accounts.")
                     Exit Function
                 End If
 
-                If goodQueryCounter = queries.Count Then
+                If goodQueryCounter = 3 Then
                     Exit For
                 End If
             Next
-            accounts = deserializedResults(0)
-            namesList = deserializedResults(1)
-
+            accounts = accountsListObject
             allTasks = phTaskObject
-
             UKTasks = ukTaskObject
-
-
+            'namesList = deserializedResults(1)
             'UKTasks = deserializedResults(3)
-
             'Console.WriteLine("UK Tasks: ", UKTasks)
-            populateCB(namesList)
+            populateCB()
             ToolStripProgressBar1.Value = ToolStripProgressBar1.Maximum
         Catch ex As Exception
             Dim result As DialogResult = MessageBox.Show(ex.Message + Environment.NewLine + "Would you like to retry?", "Oops, something went wrong!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error)
@@ -612,11 +683,11 @@ Public Class Form1
         request.AddQueryParameter("query", myQuery)
         Dim response = New RestResponse
         response = Await client.PostAsync(request)
-        'If response.IsSuccessStatusCode = True Then
-        '    Return response.Content
-        'Else
-        '    Return False
-        'End If
+        Try
+
+        Catch ex As Exception
+
+        End Try
         If response.IsSuccessStatusCode Then
             'response has a statuscode of 200
             'but it might have a parse error, which still is status 200.

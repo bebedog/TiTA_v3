@@ -78,7 +78,8 @@ Public Class Dashboard1
         positionLoginScreen()
         lblQuotes.Text = Await getRandomQuotes()
         myCat = Await getRandomCat()
-        PictureBox1.ImageLocation = myCat
+        PictureBox1.LoadAsync(myCat)
+
 
 
 
@@ -464,14 +465,17 @@ deleteItemRequest:
         request.AddQueryParameter("api_key", "live_NY4X17UNYHPtm44x8L3aCpH5iKvm2wSj0RVjWlu1b0s2GE8brbxndYEIb38BTG4q")
         Dim response = New RestResponse
         response = Await client.GetAsync(request)
+        Try
+            If response.IsSuccessStatusCode Then
+                Dim x = response.Content.Substring(1, response.Content.Length - 2)
+                thisCat = JsonConvert.DeserializeObject(Of Cats)(x)
+                Return thisCat.url
+            ElseIf response.StatusCode <> Net.HttpStatusCode.OK Then
+                Return "https://www.searchenginejournal.com/wp-content/uploads/2020/08/404-pages-sej-5f3ee7ff4966b-760x400.webp"
+            End If
+        Catch ex As Exception
+            Return "https://www.searchenginejournal.com/wp-content/uploads/2020/08/404-pages-sej-5f3ee7ff4966b-760x400.webp"
+        End Try
 
-        If response.IsSuccessStatusCode Then
-            Dim x = response.Content.Substring(1, response.Content.Length - 2)
-
-            thisCat = JsonConvert.DeserializeObject(Of Cats)(x)
-            Return thisCat.url
-        Else
-            Throw New System.Exception("An error occured when fetching cats.")
-        End If
     End Function
 End Class

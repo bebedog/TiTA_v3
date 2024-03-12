@@ -47,8 +47,7 @@ Public Class AddManualLogs
     End Sub
     Public Sub populateUsers()
         Dim accounts = Form1.accounts
-
-        For Each x In accounts.data.boards(0).items
+        For Each x In accounts.data.boards(0).items_page.items
             cbName.Items.Add(x.name)
         Next
     End Sub
@@ -150,7 +149,7 @@ Public Class AddManualLogs
         'find mondayID of selected user
         Dim selectedUser = cbName.SelectedItem
         Dim selectedMondayID As String
-        For Each names In Form1.accounts.data.boards(0).items
+        For Each names In Form1.accounts.data.boards(0).items_page.items
             If selectedUser = names.name Then
                 selectedMondayID = names.column_values(2).text
             End If

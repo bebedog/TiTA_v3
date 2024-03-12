@@ -86,7 +86,19 @@ Public Class ManualClockIn
         If Form1.department = "UK" Then
             For Each groups In Form1.UKTasks.data.boards(0).groups
                 For Each tsks In groups.items_page.items
-                    cbProjectsList.Items.Add(tsks.name + " - " + tsks.column_values(0).text)
+                    'cbProjectsList.Items.Add(tsks.name + " - " + tsks.column_values(0).text)
+                    Dim jobNo As String = ""
+                    For Each column In tsks.column_values
+                        If column.column.title = "Job No." Then
+                            jobNo = column.text
+                        End If
+                    Next
+
+                    If String.IsNullOrEmpty(jobNo) Then
+                        cbProjectsList.Items.Add(tsks.name)
+                    Else
+                        cbProjectsList.Items.Add(tsks.name + " - " + jobNo)
+                    End If
                 Next
             Next
             cbProjectsList.SelectedIndex = 0
@@ -196,19 +208,43 @@ go_to_end_of_for:
     Private Sub populateSubtasks()
         cbSubtasks.Items.Clear()
         If Form1.department = "UK" Then
+            'For Each groups In Form1.UKTasks.data.boards(0).groups
+            '    For Each items In groups.items_page.items
+            '        If cbProjectsList.Text = items.name + " - " + items.column_values(0).text Then
+            '            projectCode = items.column_values(0).text
+            '            If items?.subitems IsNot Nothing Then
+            '                For Each subtask In items.subitems
+            '                    cbSubtasks.Items.Add(subtask.name)
+            '                    cbSubtasks.SelectedIndex = 0
+            '                Next
+            '            Else
+            '                cbSubtasks.Items.Add("N/A")
+            '                cbSubtasks.SelectedIndex = 0
+            '            End If
+            '        End If
+            '    Next
+            'Next
+
             For Each groups In Form1.UKTasks.data.boards(0).groups
                 For Each items In groups.items_page.items
-                    If cbProjectsList.Text = items.name + " - " + items.column_values(0).text Then
-                        projectCode = items.column_values(0).text
-                        If items?.subitems IsNot Nothing Then
+                    Dim jobNo As String = ""
+                    For Each columns In items.column_values
+                        If columns.column.title = "Job No." Then
+                            'job number found. return it to jobNo string holder
+                            jobNo = columns.text
+                        End If
+                    Next
+                    If cbProjectsList.Text = items.name + " - " + jobNo Then
+                        projectCode = jobNo
+                        If items.subitems.Count > 0 Then
+                            ' There are subitems
+                            cbSubtasks.Items.Add("N/A")
+                        Else
                             For Each subtask In items.subitems
                                 cbSubtasks.Items.Add(subtask.name)
-                                cbSubtasks.SelectedIndex = 0
                             Next
-                        Else
-                            cbSubtasks.Items.Add("N/A")
-                            cbSubtasks.SelectedIndex = 0
                         End If
+                        cbSubtasks.SelectedIndex = 0
                     End If
                 Next
             Next
@@ -216,7 +252,7 @@ go_to_end_of_for:
             For Each groups In Form1.allTasks.data.boards(0).groups
                 For Each items In groups.items_page.items
                     If items.name = cbProjectsList.SelectedItem Then
-                        projectCode = items.column_values(0).text.ToString
+                        projectCode = items.column_values(2).text.ToString
                         If items?.subitems IsNot Nothing Then
                             For Each subtasks In items.subitems
                                 cbSubtasks.Items.Add(subtasks.name)

@@ -2,7 +2,12 @@
 Imports TiTA_v3.Class2
 
 Public Class addTask
+    Public Class Column
+        Public Property title As String
+    End Class
+
     Public Class ColumnValue
+        Public Property column As Column
         Public Property text As String
     End Class
 
@@ -10,22 +15,34 @@ Public Class addTask
         Public Property column_values As ColumnValue()
     End Class
 
+    Public Class ItemsPage
+        Public Property cursor As String
+        Public Property items As IList(Of Item)
+    End Class
+
     Public Class Group
-        Public Property items As Item()
+        Public Property items_page As ItemsPage
     End Class
 
     Public Class Board
         Public Property groups As Group()
     End Class
+    Public Class NextItemsPage
+        Public Property cursor As Object
+        Public Property items As IList(Of Item)
+    End Class
 
     Public Class Data
         Public Property boards As Board()
+        Public Property next_items_page As NextItemsPage
     End Class
 
     Public Class Root
         Public Property data As Data
         Public Property account_id As Integer
     End Class
+
+    Public taskList As New Root
 
     Private projectNumbers As New Root
     Private myAddTaskResponse As New AddNewTaskResponse
@@ -75,41 +92,144 @@ Public Class addTask
     End Sub
 
     Private Async Function btnAuto_ClickAsync(sender As Object, e As EventArgs) As Task Handles btnAuto.Click
+        'disable all control
         disableAllControl()
-        Dim myQuery = "        query{
-            boards(ids:2718204773){
-                groups(ids: ""topics""){
-                    items{
-                        column_values(ids:""text""){
-                            text
-                        }
-                    }
-                }
-                }
-            }"
-        Dim result As Object = Await Form1.SendMondayRequestVersion2(myQuery)
-        Dim myInteger As New List(Of Integer)
-        If result(0) = "success" Then
-            projectNumbers = JsonConvert.DeserializeObject(Of Root)(result(1))
-            For Each items In projectNumbers.data.boards(0).groups(0).items
-                Dim myProjectNumber As String() = items.column_values(0).text.Split("-")
-                If myProjectNumber.Length > 1 Then
-                    myInteger.Add(Int32.Parse(myProjectNumber(1)))
+
+        ' query monday boards and fetch all projects
+        ' the code below employs loops that will make sure to take all items found in the board.
+        Dim myQuery = "query{
+                            boards(ids: 2718204773){
+                                groups(ids: [""topics"", ""group_title"", ""new_group84073""]){
+                                    items_page(limit: 50){
+                                        cursor
+                                        items{
+                                            column_values(ids: ""text""){
+                                                column{
+                                                    title
+                                                }
+                                                text
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }"
+        Dim result = Await Form1.SendMondayRequestVersion2(myQuery)
+        If result(0) = "error" Then
+            'something wrong with the result
+            MessageBox.Show("Something went wrong when fetching for project numbers!", "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Else
+            ' deserialize the resulting object
+            Dim resultObject = JsonConvert.DeserializeObject(Of Root)(result(1))
+
+            ' iterate through group
+            For Each group In resultObject.data.boards(0).groups
+                ' check if cursor is blank.
+                If String.IsNullOrWhiteSpace(group.items_page.cursor) Then
+                    'no cursor, so no need to request more.
+                Else
+                    'cursor is present. loop query until no more cursor.
+                    Dim isCursor = True
+                    Dim firstCursor = group.items_page.cursor
+                    While isCursor
+                        Dim query = "query{
+                                        next_items_page(cursor: """ + firstCursor + """){
+                                            cursor
+                                                items{
+                                                    name
+                                                    column_values(ids: [""text""]){
+                                                        text
+                                                    }
+                                                }
+                                        }
+                                    }"
+                        Dim nextPageResult = Await Form1.SendMondayRequestVersion2(query)
+                        If nextPageResult(0) = "success" Then
+                            Dim nextPageObject = JsonConvert.DeserializeObject(Of Root)(nextPageResult(1))
+                            'iterate through this new page, and add it to taskList
+                            For Each item In nextPageObject.data.next_items_page.items
+                                group.items_page.items.Add(item)
+                            Next
+
+                            If String.IsNullOrWhiteSpace(nextPageObject.data.next_items_page.cursor) Then
+                                'no more cursor. end loop!
+                                isCursor = False
+                            Else
+                                'replace with new cursor
+                                firstCursor = nextPageObject.data.next_items_page.cursor
+                            End If
+                        End If
+                    End While
                 End If
             Next
-            myInteger.Sort(Function(x, y)
-                               Return x.CompareTo(y)
-                           End Function)
-            Dim currentDate = Date.Now
-            Dim myOutput As String
-            If myInteger(myInteger.Count - 1).ToString.Count = 2 Then
-                myOutput = "PH" + currentDate.ToString("yyyy") + "-0" + (myInteger(myInteger.Count - 1) + 1).ToString
-            Else
-                myOutput = "PH" + currentDate.ToString("yyyy") + "-0" + (myInteger(myInteger.Count - 1) + 1).ToString
-            End If
-            tbProjectNo.Text = myOutput
+            'save to global variable.
+            taskList = resultObject
         End If
+
+        ' put all project number found in the search on a string
+        Dim projectNumbers As New List(Of String)
+        For Each groups In taskList.data.boards(0).groups
+            For Each item In groups.items_page.items
+                projectNumbers.Add(item.column_values(0).text)
+            Next
+        Next
+
+        Console.WriteLine(projectNumbers)
+
+        Dim filtered As List(Of String) = projectNumbers.FindAll(Function(p) p.StartsWith("PH20"))
+        ' The new project number format is: PHYYYY-XXXX
+
+        Dim lastNumbers As New List(Of Integer)
+        For Each projectNo In filtered
+            lastNumbers.Add(Convert.ToInt32(projectNo.Split("-")(1)))
+        Next
+
+        lastNumbers.Sort(Function(x, y) y.CompareTo(x))
+
+
+        Console.WriteLine(filtered)
+        tbProjectNo.Text = "PH" + DateTime.Now().ToString("yyyy") + "-" + (lastNumbers(0) + 1).ToString()
+
         enableAllControls()
+
+        ' 
+
+
+
+        'Dim myQuery = "        query{
+        '    boards(ids:2718204773){
+        '        groups(ids: ""topics""){
+        '            items{
+        '                column_values(ids:""text""){
+        '                    text
+        '                }
+        '            }
+        '        }
+        '        }
+        '    }"
+        'Dim result As Object = Await Form1.SendMondayRequestVersion2(myQuery)
+        'Dim myInteger As New List(Of Integer)
+        'If result(0) = "success" Then
+        '    projectNumbers = JsonConvert.DeserializeObject(Of Root)(result(1))
+        '    For Each items In projectNumbers.data.boards(0).groups(0).items
+        '        Dim myProjectNumber As String() = items.column_values(0).text.Split("-")
+        '        If myProjectNumber.Length > 1 Then
+        '            myInteger.Add(Int32.Parse(myProjectNumber(1)))
+        '        End If
+        '    Next
+        '    myInteger.Sort(Function(x, y)
+        '                       Return x.CompareTo(y)
+        '                   End Function)
+        '    Dim currentDate = Date.Now
+        '    Dim myOutput As String
+        '    If myInteger(myInteger.Count - 1).ToString.Count = 2 Then
+        '        myOutput = "PH" + currentDate.ToString("yyyy") + "-0" + (myInteger(myInteger.Count - 1) + 1).ToString
+        '    Else
+        '        myOutput = "PH" + currentDate.ToString("yyyy") + "-0" + (myInteger(myInteger.Count - 1) + 1).ToString
+        '    End If
+        '    tbProjectNo.Text = myOutput
+        'End If
+        'enableAllControls()
     End Function
 
     Private Sub disableAllControl()
@@ -135,9 +255,10 @@ Public Class addTask
 
         If tbProjectName.Text = "" Or tbProjectName.Text = "" Or isChanged = False Then
             MessageBox.Show("One or more required fields are left blank.", "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            tbProjectName.Clear()
-            tbProjectNo.Clear()
-            tbProjectNo.Select()
+            'tbProjectName.Clear()
+            'tbProjectNo.Clear()
+            'tbProjectNo.Select()
+            enableAllControls()
         Else
             Console.WriteLine("Adding new task...")
             Dim myQuery = ""
@@ -169,7 +290,11 @@ Public Class addTask
                 'add all the values for the payload.
                 Dim myMondayId = myAddTaskResponse.data.create_item.id
                 payload.text = tbProjectNo.Text
-                payload.dup__of_budget_expense = tbBudgetHours.Text
+                If String.IsNullOrWhiteSpace(tbBudgetHours.Text) Then
+                    'do nothing
+                Else
+                    payload.dup__of_budget_expense = Convert.ToInt32(tbBudgetHours.Text)
+                End If
                 If chckEN.Checked = True Then
                     payload.text64 = "x"
                 End If
@@ -226,11 +351,7 @@ Public Class addTask
                         Exit While
                     End If
                 End While
-
                 'Console.WriteLine(mySerializedPayload)
-
-
-
             Catch ex As Exception
                 MessageBox.Show("Exception thrown!" + ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Finally
@@ -245,7 +366,7 @@ Public Class addTask
                 For Each checkBox As Control In control.Controls
                     DirectCast(checkBox, CheckBox).Checked = False
                 Next
-            ElseIf TypeOf control Is ComBoBox Then
+            ElseIf TypeOf control Is ComboBox Then
                 DirectCast(control, ComboBox).SelectedIndex = 0
             ElseIf TypeOf control Is TextBox Then
                 DirectCast(control, TextBox).Clear()

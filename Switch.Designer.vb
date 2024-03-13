@@ -37,6 +37,7 @@ Partial Class Switch
         Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.btnRefreshTask = New System.Windows.Forms.Button()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
@@ -125,7 +126,7 @@ Partial Class Switch
         Me.cbFilter.FormattingEnabled = True
         Me.cbFilter.Location = New System.Drawing.Point(102, 12)
         Me.cbFilter.Name = "cbFilter"
-        Me.cbFilter.Size = New System.Drawing.Size(309, 28)
+        Me.cbFilter.Size = New System.Drawing.Size(214, 28)
         Me.cbFilter.TabIndex = 5
         '
         'Label3
@@ -180,11 +181,21 @@ Partial Class Switch
         Me.StatusStrip1.TabIndex = 3
         Me.StatusStrip1.Text = "StatusStrip1"
         '
+        'btnRefreshTask
+        '
+        Me.btnRefreshTask.Location = New System.Drawing.Point(322, 12)
+        Me.btnRefreshTask.Name = "btnRefreshTask"
+        Me.btnRefreshTask.Size = New System.Drawing.Size(89, 28)
+        Me.btnRefreshTask.TabIndex = 28
+        Me.btnRefreshTask.Text = "Refresh Task"
+        Me.btnRefreshTask.UseVisualStyleBackColor = True
+        '
         'Switch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(425, 223)
+        Me.Controls.Add(Me.btnRefreshTask)
         Me.Controls.Add(Me.cbFilter)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.StatusStrip1)
@@ -223,4 +234,5 @@ Partial Class Switch
     Friend WithEvents lblStatus As ToolStripStatusLabel
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
     Friend WithEvents StatusStrip1 As StatusStrip
+    Friend WithEvents btnRefreshTask As Button
 End Class

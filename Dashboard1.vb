@@ -175,6 +175,7 @@ Dashboard1_Shown:
                 DataGridView1.Visible = True
                 DataGridView1.Enabled = True
                 lblQuotes.Visible = False
+                PictureBox1.Visible = False
             Else
                 'only one log found. This is the ideal result.
                 Me.Label1.Text = "Success"
@@ -462,10 +463,10 @@ deleteItemRequest:
         Dim request = New RestRequest()
         request.Timeout = 15000
         request.Method = Method.Get
-        request.AddQueryParameter("api_key", "live_NY4X17UNYHPtm44x8L3aCpH5iKvm2wSj0RVjWlu1b0s2GE8brbxndYEIb38BTG4q")
+        request.AddQueryParameter("api_key", "hehe")
         Dim response = New RestResponse
-        response = Await client.GetAsync(request)
         Try
+            response = Await client.GetAsync(request)
             If response.IsSuccessStatusCode Then
                 Dim x = response.Content.Substring(1, response.Content.Length - 2)
                 thisCat = JsonConvert.DeserializeObject(Of Cats)(x)

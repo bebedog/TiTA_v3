@@ -610,6 +610,10 @@ Public Class Form1
         lblStatus.Text = "Accounts fetched."
         EnableAllControls()
 
+        ''debugging add task
+        'Me.Hide()
+        'addTask.Show()
+
         'this was temporarily added.
         'AddManualLogs.Show()
 

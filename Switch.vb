@@ -323,6 +323,7 @@ end_of_for:
     End Function
 
     Private Async Sub DisplayAndSwitch_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        disableAllControls()
         If Form1.department = "UK" Then
             Button2.Visible = False
             Button3.Visible = False
@@ -357,7 +358,7 @@ end_of_for:
         cbFilter.SelectedIndex = 0
         positionLoginScreen()
         'upon load, disable all controls
-        disableAllControls()
+
         'Populate tasks combobox
         populateTasksComboBox()
         updateSubTasksComboBox()
@@ -369,8 +370,6 @@ end_of_for:
 
         'when fetchprevious task is finished, enable all controls
         enableAllControls()
-
-
     End Sub
     Public Async Function FetchPreviousTaskAndSubTask(ByVal itemID As String) As Task
         Dim queryFetchPreviousTask =
@@ -712,6 +711,7 @@ ChangeMultipleColumnValues:
         If dialogResult = DialogResult.Yes Then
             disableAllControls()
             selectedTaskProjectCode = "Lunch"
+            Form1.currentProjectNumber = "Lunch"
             'Switch confirmed
             lblStatus.Text = "Marking X the previous log.."
             'Build Object to Change Column Value
@@ -765,6 +765,7 @@ ChangeMultipleColumnValues:
             Form1.watch.Start()
 
             'save all details to form1
+
             Form1.currentTask = cbTasks.SelectedItem
             Form1.currentSubTask = cbSubTasks.SelectedItem
             Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
@@ -825,6 +826,8 @@ ChangeMultipleColumnValues:
 
             payload2.dropdown = payloadLabel
             selectedTaskProjectCode = "Break"
+            Form1.currentSubTask = cbSubTasks.SelectedItem
+            Form1.currentProjectNumber = "Break"
 
             'create the payload for persons (a nested loop, so we need to construct a new payload for it)
             Dim person As New Person()
@@ -845,7 +848,7 @@ ChangeMultipleColumnValues:
 
             'save all details to form1
             Form1.currentTask = cbTasks.SelectedItem
-            Form1.currentSubTask = "Break"
+            Form1.currentSubTask = cbSubTasks.SelectedItem
             Form1.currentTimeIn = DateTime.Now.ToString("HH:mm:ss")
 
             'show display
@@ -904,5 +907,56 @@ ChangeMultipleColumnValues:
     Private Sub btnAdminTools_Click(sender As Object, e As EventArgs) Handles btnAdminTools.Click
         Me.Hide()
 
+    End Sub
+
+    Private Async Sub btnRefreshTask_Click(sender As Object, e As EventArgs) Handles btnRefreshTask.Click
+        disableAllControls()
+        Await Form1.fetchMondayData()
+        If Form1.department = "UK" Then
+            Button2.Visible = False
+            Button3.Visible = False
+            btnSwitch.Size = New Size(401, 80)
+        Else
+            Button2.Visible = True
+            Button3.Visible = True
+            btnSwitch.Size = New Size(129, 80)
+        End If
+
+        cbFilter.Items.Clear()
+
+        Me.TopMost = True
+        'stop Timer
+        Me.Text = "Task Switch"
+
+        Form1.Timer1.Stop()
+
+        If Form1.department = "UK" Then
+            For Each category In Form1.UKtaskCategories
+                If category = "Show All" Then
+                    cbFilter.Items.Add(category)
+                Else
+                    If doesGroupContainItems(category) = True Then
+                        cbFilter.Items.Add(category)
+                    End If
+                End If
+            Next
+        Else
+            cbFilter.Items.AddRange(Form1.taskCategories)
+        End If
+        cbFilter.SelectedIndex = 0
+        positionLoginScreen()
+        'upon load, disable all controls
+
+        'Populate tasks combobox
+        populateTasksComboBox()
+        updateSubTasksComboBox()
+        'set combo box to autocomplete
+        'cbTasks.AutoCompleteMode = AutoCompleteMode.SuggestAppend
+        'cbTasks.AutoCompleteSource = AutoCompleteSource.ListItems
+        'Fetch Previous task on TiTA Timeline board on monday.com
+        Await FetchPreviousTaskAndSubTask(Form1.currentID)
+
+        'when fetchprevious task is finished, enable all controls
+        enableAllControls()
     End Sub
 End Class
